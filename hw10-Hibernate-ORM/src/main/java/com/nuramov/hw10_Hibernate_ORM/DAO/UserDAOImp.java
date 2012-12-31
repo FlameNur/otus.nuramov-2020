@@ -14,40 +14,57 @@ public class UserDAOImp implements UserDAO {
 
     @Override
     public User findById(long id) {
-        User user;
+        User user = null;
+        Transaction transaction = null;
+
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             // Находим пользователя (User) по id
             user = session.get(User.class, id);
             session.getTransaction().commit();
+        } catch (Exception e) {
+            if(transaction != null) {
+                transaction.rollback();
+            }
         }
         return user;
     }
 
     @Override
     public void save(User user) {
+        Transaction transaction = null;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             // Сохраняем пользователя (User) в БД
             session.save(user);
             session.getTransaction().commit();
+        } catch (Exception e) {
+            if(transaction != null) {
+                transaction.rollback();
+            }
         }
     }
 
     @Override
     public void update(User user) {
+        Transaction transaction = null;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             // Обновляем данные пользователя (User) в БД
             session.update(user);
             session.getTransaction().commit();
+        } catch (Exception e) {
+            if(transaction != null) {
+                transaction.rollback();
+            }
         }
     }
 
     @Override
     public void delete(User user) {
+        Transaction transaction = null;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             // Сначала присваиваем полю phone значение null, чтобы в случае удаления пользователя (User) из БД
             // не был удален Phone, на котрого ссылаются другие пользователи
             user.setPhone(null);
@@ -55,6 +72,10 @@ public class UserDAOImp implements UserDAO {
             // Удаляем пользователя (User) из БД
             session.delete(user);
             session.getTransaction().commit();
+        } catch (Exception e) {
+            if(transaction != null) {
+                transaction.rollback();
+            }
         }
     }
 }

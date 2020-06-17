@@ -1,54 +1,66 @@
 package com.nuramov.hw02DIYarrayList;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        List<Integer> list = new DIYarrayList<>();
-        //Random random = new Random();
-
-        //int min = 100;
-        //int max = 200;
-        //int diff = max - min;
-        /*
-        for (int i = 0; i < 30; i++) {
-            //list.add(random.nextInt(diff));
-            list.add(i);
-        }
-
-        for(Integer i : list) {
-            System.out.print(i + " ");
-        }
-
-
+        List<Integer> list1 = new DIYarrayList<>();
         List<Integer> list2 = new DIYarrayList<>();
-        list2.add(100);
-        list2.add(101);
+        List<Integer> list3 = new DIYarrayList<>();
 
-        list.addAll(3, list2);
+        for (int i = 0; i < 27; i++) {
+            list1.add(i);
+        }
 
-        for(Integer i : list) {
-            System.out.print(i + " ");
+        System.out.print("Содержание list1: ");
+        for (int i = 0; i < list1.size(); i++) {
+            System.out.print(list1.get(i) + " ");
         }
         System.out.println();
 
-         */
+        System.out.print("Проверяем метод Collections.addAll: ");
+        Collections.addAll(list1, 27, 28, 29);
+        for (int i = 0; i < list1.size(); i++) {
+            System.out.print(list1.get(i) + " ");
+        }
+        System.out.println();
 
-        Collections.addAll(list, 31, 32, 33);
-
-        for(int i = 0; i < list.size(); i++) {
-            System.out.print(list.get(i) + " ");
+        for (int i = 100; i < 130; i++) {
+            list2.add(i);
         }
 
+        System.out.print("Содержание list2: ");
+        for (int i = 0; i < list2.size(); i++) {
+            System.out.print(list2.get(i) + " ");
+        }
+        System.out.println();
+
+        for (int i = 30; i > 0; i--) {
+            list3.add(i);
+        }
+
+        System.out.print("Содержание list3: ");
+        for (int i = 0; i < list3.size(); i++) {
+            System.out.print(list3.get(i) + " ");
+        }
+        System.out.println();
+
+        System.out.print("Проверяем метод Collections.sort: ");
+        Collections.sort(list3);
+        for (int i = 0; i < list3.size(); i++) {
+            System.out.print(list3.get(i) + " ");
+        }
+        System.out.println();
 
 
-        /*
-        Проверить, что на ней работают методы из java.util.Collections:
-            addAll(Collection<? super T> c, T... elements)
-            static <T> void copy(List<? super T> dest, List<? extends T> src)
-            static <T> void sort(List<T> list, Comparator<? super T> c)
-         */
+        // Пока не работает.
+        System.out.print("Проверяем метод Collections.copy: ");
+        Collections.copy(list2, list1);
+        for (int i = 0; i < list1.size(); i++) {
+            System.out.print(list1.get(i) + " ");
+        }
+        System.out.println();
+
+
     }
 }

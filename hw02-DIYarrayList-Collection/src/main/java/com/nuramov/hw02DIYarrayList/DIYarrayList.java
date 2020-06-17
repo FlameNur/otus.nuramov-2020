@@ -13,6 +13,7 @@ public class DIYarrayList<T> implements List<T> {
     private T[] elementData;
 
     // Конструктор с инициализацией размера массива
+    @SuppressWarnings("unchecked")
     public DIYarrayList(int initialCapacity) {
         if (initialCapacity >= 0) {
             elementData = (T[]) new Object[initialCapacity];
@@ -22,12 +23,13 @@ public class DIYarrayList<T> implements List<T> {
     }
 
     // Конструктор с дефолтным размером массива. Размер массива по дефолту равен 10
+    @SuppressWarnings("unchecked")
     public DIYarrayList() {
         elementData = (T[]) new Object[defaultCapacity];
     }
 
     // Проверка корректности значения index для методов add() и addAll()
-    private void rangeCheckForAdd(int index) {
+    private void checkIndex(int index) {
         if (index > size || index < 0) {
             throw new IndexOutOfBoundsException("Illegal index: "+ index);
         }
@@ -35,6 +37,7 @@ public class DIYarrayList<T> implements List<T> {
 
     // Добавляет все элементы одного списока в конец другого списка (в список-назначения)
     @Override
+    @SuppressWarnings("unchecked")
     public boolean addAll(Collection<? extends T> c) {
         T[] a = (T[]) c.toArray();
         int aLength = a.length;
@@ -49,8 +52,9 @@ public class DIYarrayList<T> implements List<T> {
 
     // Добавляет все элементы одного списока в заданный индекс другого списка (в список-назначения)
     @Override
+    @SuppressWarnings("unchecked")
     public boolean addAll(int index, Collection<? extends T> c) {
-        rangeCheckForAdd(index);
+        checkIndex(index);
 
         T[] a = (T[]) c.toArray();
         int aLength = a.length;
@@ -69,15 +73,11 @@ public class DIYarrayList<T> implements List<T> {
 
     // Возвращает количество элементов в списке
     @Override
-    public int size() {
-        return size;
-    }
+    public int size() { return size; }
 
     // Проверяет список на наличие элементов (пустой или нет)
     @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
+    public boolean isEmpty() { return size == 0; }
 
     // Добавляет единичный элемент в список
     @Override
@@ -90,9 +90,10 @@ public class DIYarrayList<T> implements List<T> {
         return true;
     }
 
+    // Добавляет единичный элемент в список по индексу
     @Override
     public void add(int index, T element) {
-        rangeCheckForAdd(index);
+        checkIndex(index);
 
         if (size == elementData.length) {
             elementData = Arrays.copyOf(elementData, elementData.length + 1);
@@ -102,19 +103,126 @@ public class DIYarrayList<T> implements List<T> {
         size++;
     }
 
-
-
-    // Ниже методы, которые необходимо переопределить или выбросить исключение UnsupportedOperationException
-
+    // Позволяет получить элемент списка по индексу
     @Override
-    public boolean contains(Object o) {
-        return false;
+    public T get(int index) {
+        checkIndex(index);
+        return elementData[index];
+    }
+
+    // Сортирует содержание списка (без этого метода не работает метод Collections.sort())
+    public void sort(Comparator<? super T> c) {
+        Arrays.sort(elementData, 0, size, c);
     }
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return new Iterator<T>() {
+            private int nextElement = 0;
+
+            @Override
+            public boolean hasNext() {
+                return nextElement < size && elementData[nextElement] != null;
+            }
+
+            @Override
+            public T next() {
+                nextElement++;
+                return elementData[nextElement - 1];
+            }
+        };
     }
+
+    @Override
+    public ListIterator<T> listIterator() {
+        return new ListIterator<>() {
+            private int nextElement = 0;
+            private int previousElement = -1;
+
+            @Override
+            public boolean hasNext() {
+                return nextElement < size && elementData[nextElement] != null;
+            }
+
+            @Override
+            public T next() {
+                nextElement++;
+                previousElement++;
+                return elementData[nextElement - 1];
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return previousElement >= 0 && previousElement < size && elementData[previousElement] != null;
+            }
+
+            @Override
+            public T previous() {
+                return null;
+            }
+
+            @Override
+            public int nextIndex() {
+                return 0;
+            }
+
+            @Override
+            public int previousIndex() {
+                return 0;
+            }
+
+            @Override
+            public void remove() {
+
+            }
+
+            @Override
+            public void set(T t) {
+
+            }
+
+            @Override
+            public void add(T t) {
+
+            }
+        };
+    }
+
+
+
+
+
+
+
+    // Не поддерживается
+    @Override
+    public boolean contains(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    // Не поддерживается
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    // Не поддерживается
+    @Override
+    public List<T> subList(int fromIndex, int toIndex) {
+        throw new UnsupportedOperationException();
+    }
+
+    // Не поддерживается
+    @Override
+    public ListIterator<T> listIterator(int index) {
+        throw new UnsupportedOperationException();
+    }
+
+
+
+    // Ниже методы, которые необходимо переопределить или выбросить исключение UnsupportedOperationException
+
+
 
     @Override
     public Object[] toArray() {
@@ -132,11 +240,6 @@ public class DIYarrayList<T> implements List<T> {
     }
 
     @Override
-    public boolean containsAll(Collection<?> c) {
-        return false;
-    }
-
-    @Override
     public boolean removeAll(Collection<?> c) {
         return false;
     }
@@ -147,18 +250,8 @@ public class DIYarrayList<T> implements List<T> {
     }
 
     @Override
-    public void sort(Comparator<? super T> c) {
-
-    }
-
-    @Override
     public void clear() {
 
-    }
-
-    @Override
-    public T get(int index) {
-        return null;
     }
 
     @Override
@@ -181,18 +274,4 @@ public class DIYarrayList<T> implements List<T> {
         return 0;
     }
 
-    @Override
-    public ListIterator<T> listIterator() {
-        return null;
-    }
-
-    @Override
-    public ListIterator<T> listIterator(int index) {
-        return null;
-    }
-
-    @Override
-    public List<T> subList(int fromIndex, int toIndex) {
-        return null;
-    }
 }

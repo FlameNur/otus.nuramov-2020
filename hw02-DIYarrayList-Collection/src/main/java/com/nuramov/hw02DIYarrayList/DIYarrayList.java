@@ -138,6 +138,7 @@ public class DIYarrayList<T> implements List<T> {
         return new ListIterator<>() {
             private int nextElement = 0;
             private int previousElement = -1;
+            private int currentElement = -1;
 
             @Override
             public boolean hasNext() {
@@ -148,7 +149,8 @@ public class DIYarrayList<T> implements List<T> {
             public T next() {
                 nextElement++;
                 previousElement++;
-                return elementData[nextElement - 1];
+                currentElement = previousElement;
+                return elementData[currentElement];
             }
 
             @Override
@@ -158,41 +160,58 @@ public class DIYarrayList<T> implements List<T> {
 
             @Override
             public T previous() {
-                return null;
+                nextElement--;
+                previousElement--;
+                currentElement = nextElement;
+                return elementData[currentElement];
             }
 
             @Override
             public int nextIndex() {
-                return 0;
+                return nextElement;
             }
 
             @Override
             public int previousIndex() {
-                return 0;
+                return previousElement;
             }
 
             @Override
             public void remove() {
-
+                DIYarrayList.this.remove(currentElement);
             }
 
             @Override
             public void set(T t) {
-
+                DIYarrayList.this.set(currentElement, t);
             }
 
             @Override
             public void add(T t) {
-
+                DIYarrayList.this.add(currentElement, t);
             }
         };
     }
 
+    // Устанавливает новый элемент в требуемый индекс списка
+    @Override
+    public T set(int index, T element) {
+        checkIndex(index);
+        return elementData[index] = element;
+    }
 
+    // Удаляет элемент из списка по индексу
+    @Override
+    public T remove(int index) {
+        checkIndex(index);
 
+        T removedElement = elementData[index];
 
-
-
+        System.arraycopy(elementData, index + 1, elementData,index, size - index);
+        elementData = Arrays.copyOf(elementData, elementData.length - 1);
+        size--;
+        return removedElement;
+    }
 
     // Не поддерживается
     @Override
@@ -218,60 +237,51 @@ public class DIYarrayList<T> implements List<T> {
         throw new UnsupportedOperationException();
     }
 
-
-
-    // Ниже методы, которые необходимо переопределить или выбросить исключение UnsupportedOperationException
-
-
-
-    @Override
-    public Object[] toArray() {
-        return new Object[0];
-    }
-
-    @Override
-    public <T1> T1[] toArray(T1[] a) {
-        return null;
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        return false;
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        return false;
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        return false;
-    }
-
-    @Override
-    public void clear() {
-
-    }
-
-    @Override
-    public T set(int index, T element) {
-        return null;
-    }
-
-    @Override
-    public T remove(int index) {
-        return null;
-    }
-
+    // Не поддерживается
     @Override
     public int indexOf(Object o) {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
+    // Не поддерживается
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
+    // Не поддерживается
+    @Override
+    public Object[] toArray() {
+        throw new UnsupportedOperationException();
+    }
+
+    // Не поддерживается
+    @Override
+    public <T1> T1[] toArray(T1[] a) {
+        throw new UnsupportedOperationException();
+    }
+
+    // Не поддерживается
+    @Override
+    public boolean remove(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    // Не поддерживается
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    // Не поддерживается
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    // Не поддерживается
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException();
+    }
 }

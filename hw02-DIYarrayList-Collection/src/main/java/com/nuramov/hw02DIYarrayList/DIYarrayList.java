@@ -213,16 +213,113 @@ public class DIYarrayList<T> implements List<T> {
         return removedElement;
     }
 
-    // Не поддерживается
+    // Об'null'яет элементы списка
     @Override
-    public boolean contains(Object o) {
-        throw new UnsupportedOperationException();
+    public void clear() {
+        if(size > 0) {
+            for (int i = 0; i < size; i++) {
+                elementData[i] = null;
+            }
+        }
     }
 
-    // Не поддерживается
+    // Переводит список в массив
+    @Override
+    public Object[] toArray() {
+        return Arrays.copyOfRange(elementData, 0, size);
+    }
+
+    // Переводит список в заданный массив
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T[] toArray(T[] a) {
+        if (a.length < size) {
+            return (T[]) Arrays.copyOfRange(elementData, 0, size, a.getClass());
+        }
+        System.arraycopy(elementData, 0, a, 0, size);
+        if (a.length > size) {
+            a[size] = null;
+        }
+        return a;
+    }
+
+    // Удаляет заданный объект в массиве
+    @Override
+    public boolean remove(Object o) {
+        if(o == null) return false;
+        for (int i = 0; i < size; i++) {
+            if(o.equals(elementData[i])) {
+                remove(i);
+            }
+        }
+        return true;
+    }
+
+    // Возвращает индекс требуемого элемента
+    @Override
+    public int indexOf(Object o) {
+        if(o == null) {
+            for (int i = 0; i < size; i++) {
+                if(elementData[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                if(o.equals(elementData[i])) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    // Возвращает true, если элемент имеется в списке
+    @Override
+    public boolean contains(Object o) {
+        return indexOf(o) >= 0;
+    }
+
+    // Возвращает последний индекс требуемого элемента, если требуемый элемент встречается несколько раз
+    @Override
+    public int lastIndexOf(Object o) {
+        if(o == null) {
+            for (int i = size - 1; i >= 0; i--) {
+                if(elementData[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = size - 1; i >= 0; i--) {
+                if(o.equals(elementData[i])) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    // Возвращает true, если элементы коллекции имеются в списке
     @Override
     public boolean containsAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
+        for(Object o: c) {
+            if(!contains(o)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Возвращает true, если удалил все элементы коллекции в списке
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        boolean elementsAreRemoved = false;
+        for (Object o : c) {
+            if(remove(o)) {
+                elementsAreRemoved = true;
+            }
+        }
+        return elementsAreRemoved;
     }
 
     // Не поддерживается
@@ -239,49 +336,7 @@ public class DIYarrayList<T> implements List<T> {
 
     // Не поддерживается
     @Override
-    public int indexOf(Object o) {
-        throw new UnsupportedOperationException();
-    }
-
-    // Не поддерживается
-    @Override
-    public int lastIndexOf(Object o) {
-        throw new UnsupportedOperationException();
-    }
-
-    // Не поддерживается
-    @Override
-    public Object[] toArray() {
-        throw new UnsupportedOperationException();
-    }
-
-    // Не поддерживается
-    @Override
-    public <T1> T1[] toArray(T1[] a) {
-        throw new UnsupportedOperationException();
-    }
-
-    // Не поддерживается
-    @Override
-    public boolean remove(Object o) {
-        throw new UnsupportedOperationException();
-    }
-
-    // Не поддерживается
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    // Не поддерживается
-    @Override
     public boolean retainAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    // Не поддерживается
-    @Override
-    public void clear() {
         throw new UnsupportedOperationException();
     }
 }

@@ -207,7 +207,7 @@ public class DIYarrayList<T> implements List<T> {
 
         T removedElement = elementData[index];
 
-        System.arraycopy(elementData, index + 1, elementData,index, size - index);
+        System.arraycopy(elementData, index + 1, elementData,index, size - index - 1);
         elementData = Arrays.copyOf(elementData, elementData.length - 1);
         size--;
         return removedElement;
@@ -250,6 +250,7 @@ public class DIYarrayList<T> implements List<T> {
         for (int i = 0; i < size; i++) {
             if(o.equals(elementData[i])) {
                 remove(i);
+                i--;
             }
         }
         return true;

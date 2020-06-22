@@ -142,9 +142,18 @@ public class Main {
         }
         System.out.println();
 
+        System.out.println("Проверка метода .remove(index): ");
+        list1.remove(5);
+        System.out.print("Содержание list1 после .remove(index): ");
+        for (Integer i : list1) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+
         System.out.println("Проверка метода .remove(Object o): ");
         List<Integer> list5 = new DIYarrayList<>();
         list5.add(10);
+        list5.add(20);
         list5.add(20);
         list5.add(30);
         list5.add(40);
@@ -186,13 +195,23 @@ public class Main {
         list5.add(40);
         list5.add(40);
         list5.add(40);
+        list5.add(10);
+        list5.add(10);
+        list5.add(10);
+        list5.add(10);
+        list5.add(10);
+        list5.add(10);
+        list5.add(10);
+        list5.add(10);
         System.out.print(list5.lastIndexOf(40));
         System.out.println();
 
         System.out.println("Проверка метода .removeAll: ");
         List<Integer> list6 = new DIYarrayList<>();
-        list6.add(40);
+        list6.add(4000);
         list6.add(10);
+        list6.add(70);
+
 
         System.out.println("list5 до .removeAll: ");
         for (Integer x : list5) {
@@ -207,6 +226,21 @@ public class Main {
         }
         System.out.println();
 
+        System.out.println("Проверка метода .addAll(Collection<? extends T> c): ");
+        list5.addAll(list6);
+        for (Integer x : list5) {
+            System.out.print(x + " ");
+        }
+        System.out.println();
 
+        System.out.println("Проверка метода .addAll(int index, Collection<? extends T> c): ");
+        List<Integer> list7 = new DIYarrayList<>();
+        list7.add(5555);
+        list7.add(8888);
+        list5.addAll(5, list7);
+        for (Integer x : list5) {
+            System.out.print(x + " ");
+        }
+        System.out.println();
     }
 }

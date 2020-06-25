@@ -8,7 +8,7 @@ package com.nuramov.hw02DIYarrayList;
 import java.util.*;
 
 public class DIYarrayList<T> implements List<T> {
-    private int defaultCapacity = 10;
+    private static final int DEFAULT_CAPACITY = 10;
     private int size = 0;
     private T[] elementData;
 
@@ -25,7 +25,7 @@ public class DIYarrayList<T> implements List<T> {
     // Конструктор с дефолтным размером массива. Размер массива по дефолту равен 10
     @SuppressWarnings("unchecked")
     public DIYarrayList() {
-        elementData = (T[]) new Object[defaultCapacity];
+        elementData = (T[]) new Object[DEFAULT_CAPACITY];
     }
 
     // Проверка корректности значения index для методов add() и addAll()
@@ -41,9 +41,10 @@ public class DIYarrayList<T> implements List<T> {
     public boolean addAll(Collection<? extends T> c) {
         T[] a = (T[]) c.toArray();
         int aLength = a.length;
+        int sizeGrowing = elementData.length * 2 + 1;
         if (aLength == 0) return false;
         if (aLength > (elementData.length - size)) {
-            elementData = Arrays.copyOf(elementData, size + aLength + 1);  // +1 к размеру массива (в запас)
+            elementData = Arrays.copyOf(elementData, size + aLength + sizeGrowing);
         }
         System.arraycopy(a, 0, elementData, size, aLength);
         size = size + aLength;
@@ -58,9 +59,10 @@ public class DIYarrayList<T> implements List<T> {
 
         T[] a = (T[]) c.toArray();
         int aLength = a.length;
+        int sizeGrowing = elementData.length * 2 + 1;
         if (aLength == 0) return false;
         if (aLength > (elementData.length - size)) {
-            elementData = Arrays.copyOf(elementData, size + aLength + 1);  // +1 к размеру массива (в запас)
+            elementData = Arrays.copyOf(elementData, size + aLength + sizeGrowing);
         }
         int numMoved = size - index;
         if (numMoved > 0) {
@@ -82,8 +84,9 @@ public class DIYarrayList<T> implements List<T> {
     // Добавляет единичный элемент в список
     @Override
     public boolean add(T e) {
+        int sizeGrowing = elementData.length * 2 + 1;
         if (size == elementData.length) {
-            elementData = Arrays.copyOf(elementData, elementData.length + 1);
+            elementData = Arrays.copyOf(elementData, elementData.length + sizeGrowing);
         }
         elementData[size] = e;
         size++;
@@ -95,8 +98,9 @@ public class DIYarrayList<T> implements List<T> {
     public void add(int index, T element) {
         checkIndex(index);
 
+        int sizeGrowing = elementData.length * 2 + 1;
         if (size == elementData.length) {
-            elementData = Arrays.copyOf(elementData, elementData.length + 1);
+            elementData = Arrays.copyOf(elementData, elementData.length + sizeGrowing);
         }
         System.arraycopy(elementData, index, elementData,index + 1, size - index);
         elementData[index] = element;
@@ -108,11 +112,6 @@ public class DIYarrayList<T> implements List<T> {
     public T get(int index) {
         checkIndex(index);
         return elementData[index];
-    }
-
-    // Сортирует содержание списка (без этого метода не работает метод Collections.sort())
-    public void sort(Comparator<? super T> c) {
-        Arrays.sort(elementData, 0, size, c);
     }
 
     @Override
@@ -219,6 +218,7 @@ public class DIYarrayList<T> implements List<T> {
         if(size > 0) {
             for (int i = 0; i < size; i++) {
                 elementData[i] = null;
+                size = 0;
             }
         }
     }
@@ -232,9 +232,9 @@ public class DIYarrayList<T> implements List<T> {
     // Переводит список в заданный массив
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T[] toArray(T[] a) {
+    public <R> R[] toArray(R[] a) {
         if (a.length < size) {
-            return (T[]) Arrays.copyOfRange(elementData, 0, size, a.getClass());
+            return (R[]) Arrays.copyOfRange(elementData, 0, size, a.getClass());
         }
         System.arraycopy(elementData, 0, a, 0, size);
         if (a.length > size) {
@@ -321,6 +321,17 @@ public class DIYarrayList<T> implements List<T> {
             }
         }
         return elementsAreRemoved;
+    }
+
+    @Override
+    public String toString() {
+        String str = "";
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < this.size; i++) {
+            result.append(get(i)).append(" ");
+        }
+        str = result.toString();
+        return str;
     }
 
     // Не поддерживается

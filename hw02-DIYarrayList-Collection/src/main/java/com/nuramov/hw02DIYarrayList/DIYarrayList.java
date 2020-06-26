@@ -31,7 +31,7 @@ public class DIYarrayList<T> implements List<T> {
     // Проверка корректности значения index для методов add() и addAll()
     private void checkIndex(int index) {
         if (index > size || index < 0) {
-            throw new IndexOutOfBoundsException("Illegal index: "+ index);
+            throw new IndexOutOfBoundsException("Illegal value");
         }
     }
 
@@ -206,9 +206,7 @@ public class DIYarrayList<T> implements List<T> {
     @Override
     public T remove(int index) {
         checkIndex(index);
-
         T removedElement = elementData[index];
-
         System.arraycopy(elementData, index + 1, elementData,index, size - index - 1);
         elementData = Arrays.copyOf(elementData, elementData.length - 1);
         size--;
@@ -222,8 +220,8 @@ public class DIYarrayList<T> implements List<T> {
             for (int i = 0; i < size; i++) {
                 elementData[i] = null;
             }
+            size = 0;
         }
-        size = 0;
     }
 
     // Переводит список в массив
@@ -249,13 +247,7 @@ public class DIYarrayList<T> implements List<T> {
     // Удаляет заданный первый объект в списке
     @Override
     public boolean remove(Object o) {
-        if(o == null) return false;
-        for (int i = 0; i < size; i++) {
-            if(o.equals(elementData[i])) {
-                remove(i);
-                return true;
-            }
-        }
+        remove(indexOf(o));
         return true;
     }
 
@@ -316,14 +308,15 @@ public class DIYarrayList<T> implements List<T> {
 
     // Удаляет все объекты, соотвествующие заданному
     private boolean removeAllSameObjects(Object o) {
-        if(o == null) return false;
+        boolean b = false;
         for (int i = 0; i < size; i++) {
             if(o.equals(elementData[i])) {
                 remove(i);
                 i--;
+                b = true;
             }
         }
-        return true;
+        return b;
     }
 
     // Возвращает true, если удалил все элементы коллекции в списке

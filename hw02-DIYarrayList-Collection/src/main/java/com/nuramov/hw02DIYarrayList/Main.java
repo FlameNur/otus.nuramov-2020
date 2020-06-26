@@ -114,6 +114,13 @@ public class Main {
         System.out.print("После удаления элемента из list5: ");
         System.out.println(list5);
 
+        System.out.print("Проверка метода .set(index, null): ");
+        list5.set(2, null);
+        System.out.println(list5);
+        System.out.print(".indexOf(null) и .lastIndexOf(null): ");
+        System.out.print(list5.indexOf(null));
+        System.out.println(" и " + list5.lastIndexOf(null));
+
         list5.remove(null);
         System.out.print("После удаления null из list5: ");
         System.out.println(list5);
@@ -149,7 +156,7 @@ public class Main {
         List<Integer> list6 = new DIYarrayList<>();
         list6.add(4000);
         list6.add(10);
-        list6.add(70);
+        list6.add(20);
 
 
         System.out.println("list5 до .removeAll: ");
@@ -170,15 +177,8 @@ public class Main {
         list5.addAll(5, list7);
         System.out.println(list5);
 
-        System.out.print("Проверка метода .set(index, null): ");
-        list5.set(2, null);
-        System.out.println(list5);
-        System.out.print(".indexOf(null) и .lastIndexOf(null): ");
-        System.out.print(list5.indexOf(null));
-        System.out.println(" и " + list5.lastIndexOf(null));
-
         System.out.print("Проверка метода Collections.sort(list, Comparator): ");
-        list5.remove(2);   // Удаляем null из list5
+        //list5.remove(2);   // Удаляем null из list5
         Collections.sort(list5, new MyComparator());
         System.out.println(list5);
     }

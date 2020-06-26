@@ -178,7 +178,6 @@ public class Main {
         System.out.println(list5);
 
         System.out.print("Проверка метода Collections.sort(list, Comparator): ");
-        //list5.remove(2);   // Удаляем null из list5
         Collections.sort(list5, new MyComparator());
         System.out.println(list5);
     }

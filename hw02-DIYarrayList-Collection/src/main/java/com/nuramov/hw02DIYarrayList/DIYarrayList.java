@@ -247,8 +247,11 @@ public class DIYarrayList<T> implements List<T> {
     // Удаляет заданный первый объект в списке
     @Override
     public boolean remove(Object o) {
-        remove(indexOf(o));
-        return true;
+        int i = indexOf(o);
+        if (i >= 0) {
+            remove(i);
+            return true;
+        } else return false;
     }
 
     // Возвращает индекс требуемого элемента

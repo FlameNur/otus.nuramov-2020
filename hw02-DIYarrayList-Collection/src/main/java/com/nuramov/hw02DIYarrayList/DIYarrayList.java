@@ -35,19 +35,33 @@ public class DIYarrayList<T> implements List<T> {
         }
     }
 
+    // Увеличение размера списка для методов add
+    private void sizeGrowingForAdd() {
+        int sizeGrowing = elementData.length * 2 + 1;
+        if (size == elementData.length) {
+            elementData = Arrays.copyOf(elementData, elementData.length + sizeGrowing);
+        }
+    }
+
+    // Увеличение размера списка для методов addAll
+    private void sizeGrowingForAddAll(T[] a) {
+        int aLength = a.length;
+        int sizeGrowing = elementData.length * 2 + 1;
+        if (aLength > (elementData.length - size)) {
+            elementData = Arrays.copyOf(elementData, size + aLength + sizeGrowing);
+        }
+    }
+
     // Добавляет все элементы одного списока в конец другого списка (в список-назначения)
     @Override
     @SuppressWarnings("unchecked")
     public boolean addAll(Collection<? extends T> c) {
         T[] a = (T[]) c.toArray();
-        int aLength = a.length;
-        int sizeGrowing = elementData.length * 2 + 1;
-        if (aLength == 0) return false;
-        if (aLength > (elementData.length - size)) {
-            elementData = Arrays.copyOf(elementData, size + aLength + sizeGrowing);
-        }
-        System.arraycopy(a, 0, elementData, size, aLength);
-        size = size + aLength;
+        if (a.length == 0) return false;
+        sizeGrowingForAddAll(a);
+
+        System.arraycopy(a, 0, elementData, size, a.length);
+        size = size + a.length;
         return true;
     }
 
@@ -56,20 +70,16 @@ public class DIYarrayList<T> implements List<T> {
     @SuppressWarnings("unchecked")
     public boolean addAll(int index, Collection<? extends T> c) {
         checkIndex(index);
-
         T[] a = (T[]) c.toArray();
-        int aLength = a.length;
-        int sizeGrowing = elementData.length * 2 + 1;
-        if (aLength == 0) return false;
-        if (aLength > (elementData.length - size)) {
-            elementData = Arrays.copyOf(elementData, size + aLength + sizeGrowing);
-        }
+        if (a.length == 0) return false;
+        sizeGrowingForAddAll(a);
+
         int numMoved = size - index;
         if (numMoved > 0) {
-            System.arraycopy(elementData, index, elementData, index + aLength, numMoved);
+            System.arraycopy(elementData, index, elementData, index + a.length, numMoved);
         }
-        System.arraycopy(a, 0, elementData, index, aLength);
-        size = size + aLength;
+        System.arraycopy(a, 0, elementData, index, a.length);
+        size = size + a.length;
         return true;
     }
 
@@ -84,10 +94,7 @@ public class DIYarrayList<T> implements List<T> {
     // Добавляет единичный элемент в список
     @Override
     public boolean add(T e) {
-        int sizeGrowing = elementData.length * 2 + 1;
-        if (size == elementData.length) {
-            elementData = Arrays.copyOf(elementData, elementData.length + sizeGrowing);
-        }
+        sizeGrowingForAdd();
         elementData[size] = e;
         size++;
         return true;
@@ -97,11 +104,7 @@ public class DIYarrayList<T> implements List<T> {
     @Override
     public void add(int index, T element) {
         checkIndex(index);
-
-        int sizeGrowing = elementData.length * 2 + 1;
-        if (size == elementData.length) {
-            elementData = Arrays.copyOf(elementData, elementData.length + sizeGrowing);
-        }
+        sizeGrowingForAdd();
         System.arraycopy(elementData, index, elementData,index + 1, size - index);
         elementData[index] = element;
         size++;
@@ -218,9 +221,9 @@ public class DIYarrayList<T> implements List<T> {
         if(size > 0) {
             for (int i = 0; i < size; i++) {
                 elementData[i] = null;
-                size = 0;
             }
         }
+        size = 0;
     }
 
     // Переводит список в массив
@@ -243,14 +246,14 @@ public class DIYarrayList<T> implements List<T> {
         return a;
     }
 
-    // Удаляет заданный объект в массиве
+    // Удаляет заданный первый объект в списке
     @Override
     public boolean remove(Object o) {
         if(o == null) return false;
         for (int i = 0; i < size; i++) {
             if(o.equals(elementData[i])) {
                 remove(i);
-                i--;
+                return true;
             }
         }
         return true;
@@ -311,12 +314,24 @@ public class DIYarrayList<T> implements List<T> {
         return true;
     }
 
+    // Удаляет все объекты, соотвествующие заданному
+    private boolean removeAllSameObjects(Object o) {
+        if(o == null) return false;
+        for (int i = 0; i < size; i++) {
+            if(o.equals(elementData[i])) {
+                remove(i);
+                i--;
+            }
+        }
+        return true;
+    }
+
     // Возвращает true, если удалил все элементы коллекции в списке
     @Override
     public boolean removeAll(Collection<?> c) {
         boolean elementsAreRemoved = false;
         for (Object o : c) {
-            if(remove(o)) {
+            if(removeAllSameObjects(o)) {
                 elementsAreRemoved = true;
             }
         }

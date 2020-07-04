@@ -20,6 +20,7 @@
     <modules>
         <module>hw01-maven</module>
         <module>hw02-DIYarrayList-Collection</module>
+        <module>hw03-JUnit-MyTests</module>
     </modules>
 
     <properties>

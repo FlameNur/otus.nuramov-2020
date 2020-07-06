@@ -6,28 +6,23 @@ public class AnnotationsTestClass {
 
     // Пока мало понятно как с этим работать
 
-    @BeforeAll
-    static void beforeAll() {
-        System.out.println("BeforeAll");
-    }
-
-    @AfterAll
-    static void afterAll() {
-        System.out.println("AfterAll");
-    }
-
     AnnotationsTestClass() {
         System.out.println("Call of the constructor");
     }  // ????
 
-    @BeforeEach
-    void beforeEach3() {
-        System.out.println("BeforeEach3");
+    @BeforeAll
+    static void beforeAll1() {
+        System.out.println("BeforeAll1");
+    }
+
+    @BeforeAll
+    static void beforeAll2() throws IllegalAccessException {
+        throw new IllegalAccessException();
     }
 
     @BeforeEach
-    void beforeEach() {
-        System.out.println("BeforeEach");
+    void beforeEach1() throws IllegalAccessException {
+        throw new IllegalAccessException();
     }
 
     @BeforeEach
@@ -35,18 +30,43 @@ public class AnnotationsTestClass {
         System.out.println("BeforeEach2");
     }
 
-    @Test
-    void testOne() {
-        System.out.println("testOne");
+    @BeforeEach
+    void beforeEach3() {
+        System.out.println("BeforeEach3");
     }
 
     @Test
-    void testTwo() {
-        System.out.println("testTwo");
+    void test1() {
+        System.out.println("test1");
+    }
+
+    @Test
+    void test2() throws IllegalAccessException {
+        throw new IllegalAccessException();
     }
 
     @AfterEach
-    void afterEach() {
-        System.out.println("AfterEach");
+    void afterEach1() {
+        System.out.println("AfterEach1");
+    }
+
+    @AfterEach
+    void afterEach2() throws IllegalAccessException {
+        throw new IllegalAccessException();
+    }
+
+    @AfterEach
+    void afterEach3() {
+        System.out.println("AfterEach3");
+    }
+
+    @AfterAll
+    static void afterAll1() {
+        System.out.println("AfterAll1");
+    }
+
+    @AfterAll
+    static void afterAll2() {
+        System.out.println("AfterAll2");
     }
 }

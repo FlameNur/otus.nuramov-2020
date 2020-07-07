@@ -16,23 +16,18 @@ public class AnnotationsTestClass {
     }
 
     @BeforeAll
-    static void beforeAll2() throws IllegalAccessException {
-        throw new IllegalAccessException();
+    static void beforeAll2() {
+        System.out.println("BeforeAll2");
     }
 
     @BeforeEach
-    void beforeEach1() throws IllegalAccessException {
-        throw new IllegalAccessException();
+    void beforeEach1() {
+        System.out.println("BeforeEach1");
     }
 
     @BeforeEach
     void beforeEach2() {
         System.out.println("BeforeEach2");
-    }
-
-    @BeforeEach
-    void beforeEach3() {
-        System.out.println("BeforeEach3");
     }
 
     @Test
@@ -45,19 +40,19 @@ public class AnnotationsTestClass {
         throw new IllegalAccessException();
     }
 
+    @Test
+    void test3() {
+        System.out.println("test3");
+    }
+
     @AfterEach
     void afterEach1() {
         System.out.println("AfterEach1");
     }
 
     @AfterEach
-    void afterEach2() throws IllegalAccessException {
-        throw new IllegalAccessException();
-    }
-
-    @AfterEach
-    void afterEach3() {
-        System.out.println("AfterEach3");
+    void afterEach2() {
+        System.out.println("AfterEach2");
     }
 
     @AfterAll

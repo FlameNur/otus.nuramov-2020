@@ -1,7 +1,6 @@
 package com.nuramov.hw03JUnitMyTests;
 
 import com.nuramov.hw03JUnitMyTests.annotations.*;
-import com.nuramov.hw02DIYarrayList.DIYarrayList;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -21,9 +20,7 @@ public class MyTestFramework {
             AfterAllMethod(methods);
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException
                 | NoSuchMethodException | IllegalArgumentException e) {
-            System.out.println("Successfully passed test methods: 0");
             e.printStackTrace();
-            return;
         }
         System.out.printf("Successfully passed test methods: %d", successfullyPassedTests);
     }

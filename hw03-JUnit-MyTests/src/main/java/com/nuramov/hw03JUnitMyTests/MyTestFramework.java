@@ -1,6 +1,7 @@
 package com.nuramov.hw03JUnitMyTests;
 
 import com.nuramov.hw03JUnitMyTests.annotations.*;
+import com.nuramov.hw02DIYarrayList.DIYarrayList;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -10,29 +11,27 @@ public class MyTestFramework {
     public static <T> void run(Class<T> testClass) {
         int successfullyPassedTests = 0;
         Method[] methods = testClass.getDeclaredMethods();
-        BeforeAllMethod(methods);
 
         try {
             Constructor <T> constructor = testClass.getDeclaredConstructor();
             T object = constructor.newInstance();
-            successfullyPassedTests = TestMethod(methods, object);
-        } catch (IllegalAccessException | InvocationTargetException
-                | InstantiationException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
 
-        AfterAllMethod(methods);
+            BeforeAllMethod(methods);
+            successfullyPassedTests = TestMethod(methods, object);
+            AfterAllMethod(methods);
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException
+                | NoSuchMethodException | IllegalArgumentException e) {
+            System.out.println("Successfully passed test methods: 0");
+            e.printStackTrace();
+            return;
+        }
         System.out.printf("Successfully passed test methods: %d", successfullyPassedTests);
     }
 
-    private static void BeforeAllMethod (Method[] methods) {
+    private static void BeforeAllMethod (Method[] methods) throws InvocationTargetException, IllegalAccessException {
         for(Method m : methods) {
             if(m.isAnnotationPresent(BeforeAll.class)) {
-                try {
-                    m.invoke(null);
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+                m.invoke(null);
             }
         }
     }
@@ -42,52 +41,40 @@ public class MyTestFramework {
 
         for(Method m : methods) {
             if(m.isAnnotationPresent(Test.class)) {
-                BeforeEachMethod(methods, object);
                 try {
+                    BeforeEachMethod(methods, object);
                     m.invoke(object);
+                    AfterEachMethod(methods, object);
                     successfullyPassedTests++;
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                    System.out.println("Failed @Test test method: " + m);
                     e.printStackTrace();
                 }
-                AfterEachMethod(methods, object);
             }
         }
         return successfullyPassedTests;
     }
 
-    private static <T> void BeforeEachMethod (Method[] methods, T object) {
+    private static <T> void BeforeEachMethod (Method[] methods, T object) throws InvocationTargetException, IllegalAccessException {
         for(Method m : methods) {
             if(m.isAnnotationPresent(BeforeEach.class)) {
-                try {
-                    m.invoke(object);
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+                m.invoke(object);
             }
+
         }
     }
 
-    private static <T> void AfterEachMethod (Method[] methods, T object) {
+    private static <T> void AfterEachMethod (Method[] methods, T object) throws InvocationTargetException, IllegalAccessException {
         for(Method m : methods) {
             if(m.isAnnotationPresent(AfterEach.class)) {
-                try {
-                    m.invoke(object);
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+                m.invoke(object);
             }
         }
     }
 
-    private static void AfterAllMethod (Method[] methods) {
+    private static void AfterAllMethod (Method[] methods) throws InvocationTargetException, IllegalAccessException {
         for(Method m : methods) {
             if(m.isAnnotationPresent(AfterAll.class)) {
-                try {
-                    m.invoke(null);
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+                m.invoke(null);
             }
         }
     }

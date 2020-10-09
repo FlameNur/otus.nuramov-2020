@@ -11,19 +11,19 @@ import java.util.List;
 
 public class MyProxyClass {
 
-    static MyInterface classCreater(Object myClass) {
+    static Object classCreater(Object myClass) {
         InvocationHandler handler = new MyInvocationHandler(myClass);
-        ClassLoader myLoader = MyClass.class.getClassLoader();
-        Class<?>[] interfaces = MyClass.class.getInterfaces();
-        MyInterface myInterface = (MyInterface) Proxy.newProxyInstance(myLoader, interfaces, handler);
-        return myInterface;
+        ClassLoader myLoader = MyProxyClass.class.getClassLoader();
+        Class<?>[] interfaces = myClass.getClass().getInterfaces();
+        Object proxyObj = Proxy.newProxyInstance(myLoader, interfaces, handler);
+        return proxyObj;
     }
 
     private static class MyInvocationHandler implements InvocationHandler {
-        private Object myInterface;
+        private Object objInterface;
 
-        public MyInvocationHandler(Object myInterface) {
-            this.myInterface = myInterface;
+        public MyInvocationHandler(Object objInterface) {
+            this.objInterface = objInterface;
         }
 
         @Override
@@ -41,7 +41,7 @@ public class MyProxyClass {
                 String allParamsToString = String.join(", ", paramsToList);
                 System.out.println(allParamsToString);
             }
-            return method.invoke(myInterface, args);
+            return method.invoke(objInterface, args);
         }
     }
 }

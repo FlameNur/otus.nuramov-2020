@@ -8,6 +8,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MyProxyClass {
 
@@ -40,6 +41,9 @@ public class MyProxyClass {
                 // Добавляется разделитель между параметрами метода - ", "
                 String allParamsToString = String.join(", ", paramsToList);
                 System.out.println(allParamsToString);
+
+                // Можно записать в одну строку. Параметры метода
+                //String params = Arrays.stream(args).map(Object::toString).collect(Collectors.joining(", "));
             }
             return method.invoke(objInterface, args);
         }

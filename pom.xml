@@ -21,6 +21,7 @@
         <module>hw01-maven</module>
         <module>hw02-DIYarrayList-Collection</module>
         <module>hw03-JUnit-MyTests</module>
+        <module>hw04-AutoLogging</module>
     </modules>
 
     <properties>

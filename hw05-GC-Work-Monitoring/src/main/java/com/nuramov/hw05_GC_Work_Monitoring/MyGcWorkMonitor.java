@@ -1,18 +1,19 @@
 package com.nuramov.hw05_GC_Work_Monitoring;
 
 import com.sun.management.GarbageCollectionNotificationInfo;
+import com.sun.management.GcInfo;
 
-import javax.management.Notification;
+import javax.management.InstanceNotFoundException;
 import javax.management.NotificationEmitter;
 import javax.management.NotificationListener;
 import javax.management.openmbean.CompositeData;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
 import java.util.List;
 
 
 /*
+ Выбор GC:
 -XX:+UseSerialGC
 -XX:+UseParallelGC
 -XX:+UseConcMarkSweepGC
@@ -20,46 +21,46 @@ import java.util.List;
  */
 
 /*
--XX:+PrintGCApplicationStoppedTime // не работает
--XX:+PrintGCTimeStamps // не работает
+ Настройка: вывод информации о работе GC
 -verbose:gc -XX:+PrintGCDetails
  */
 
 public class MyGcWorkMonitor {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, InstanceNotFoundException {
+        long StartTime = System.nanoTime();
         MyTestClass myTestClass = new MyTestClass();
 
         Monitoring();
-        myTestClass.run();
-    }
-
-    private static void Monitoring() {
-
-        List<GarbageCollectorMXBean> gcbeans = ManagementFactory.getGarbageCollectorMXBeans();
-        for (GarbageCollectorMXBean gcbean : gcbeans) {
-            System.out.println("GC name:" + gcbean.getName());
-            NotificationEmitter emitter = (NotificationEmitter) gcbean;
-
-
-
-            NotificationListener listener = (notification, handback) -> {
-                if (notification.getType().equals(GarbageCollectionNotificationInfo.GARBAGE_COLLECTION_NOTIFICATION)) {
-                    GarbageCollectionNotificationInfo info = GarbageCollectionNotificationInfo.from((CompositeData) notification.getUserData());
-                    String gcName = info.getGcName();
-                    String gcAction = info.getGcAction();
-                    String gcCause  = info.getGcCause();
-
-                    long startTime = info.getGcInfo().getStartTime();
-                    long duration = info.getGcInfo().getDuration();
-
-                    System.out.println("start:" + startTime + " Name:" + gcName + ", action:" + gcAction + ", gcCause:" + gcCause + "(" + duration + " ms)");
-                }
-            };
-
-
-            emitter.addNotificationListener(listener, null, null);
+        try {
+            myTestClass.run();
+        } catch (OutOfMemoryError e) {
+            System.out.println("Ошибка: OutOfMemoryError");
+        } finally {
+            System.out.println("Общее время работы приложения: " + (System.nanoTime() - StartTime) / 1000_000_000 + " секунд");
         }
 
 
+    }
+
+
+    private static void Monitoring() throws InstanceNotFoundException {
+        NotificationListener listener = (notification, handback) -> {
+            if (notification.getType().equals(GarbageCollectionNotificationInfo.GARBAGE_COLLECTION_NOTIFICATION)) {
+                CompositeData cd = (CompositeData) notification.getUserData();
+                GarbageCollectionNotificationInfo gcNotificationInfo = GarbageCollectionNotificationInfo.from(cd);
+                GcInfo gcInfo = gcNotificationInfo.getGcInfo();
+
+                long startTime = gcNotificationInfo.getGcInfo().getStartTime(); //Время старта каждой сборки
+
+
+                System.out.println("GarbageCollection: " + gcNotificationInfo.getGcAction() + " " +
+                        gcNotificationInfo.getGcName() + ", duration: " + gcInfo.getDuration() + "ms");
+            }
+        };
+
+        for (GarbageCollectorMXBean gcMbean : ManagementFactory.getGarbageCollectorMXBeans()) {
+            ManagementFactory.getPlatformMBeanServer().
+                    addNotificationListener(gcMbean.getObjectName(), listener, null,null);
+        }
     }
 }

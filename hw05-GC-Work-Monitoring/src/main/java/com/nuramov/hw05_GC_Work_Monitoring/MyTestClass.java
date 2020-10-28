@@ -14,7 +14,7 @@ public class MyTestClass {
                 myList.add(new Object());
             }
 
-            for (int i = 0; i < limit/2; i++) {
+            for (int i = 0; i < limit/3; i++) {
                 myList.remove(myList.size() - 1);
             }
             Thread.sleep(10);

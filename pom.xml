@@ -22,6 +22,7 @@
         <module>hw02-DIYarrayList-Collection</module>
         <module>hw03-JUnit-MyTests</module>
         <module>hw04-AutoLogging</module>
+        <module>hw05-GC-Work-Monitoring</module>
     </modules>
 
     <properties>

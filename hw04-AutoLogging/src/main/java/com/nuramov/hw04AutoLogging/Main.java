@@ -14,3 +14,4 @@ public class Main {
         myInterface3.method3(5, 8);
     }
 }
+ 

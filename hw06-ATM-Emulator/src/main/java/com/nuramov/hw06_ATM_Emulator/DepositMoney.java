@@ -16,5 +16,6 @@ public class DepositMoney implements AtmAction{
 
     private void increaseOfBalance() {
         myBalance.balance += rub.amountOfMoney;
+
     }
 }

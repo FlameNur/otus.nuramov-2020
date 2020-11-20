@@ -1,37 +1,15 @@
 package com.nuramov.hw06_ATM_Emulator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class WithdrawMoney implements AtmAction {
-    Rub rub;
-
-    public WithdrawMoney(Rub rub) {
-        this.rub = rub;
-    }
-
-    @Override
-    public void action() {
-        boolean chek = checkBalance();
-        if(chek) return;
-
-        // Уменьшаем баланс Atm
-        AtmBalance.balance -= rub.amountOfMoney;
-        System.out.println("Вы сняли: " + rub.amountOfMoney + " рублей " + countOfRubBanknote());
-    }
-
-    // Проверяем баланс Atm. Если денег недостаточно, возвращаем true для завершения операции
-    private boolean checkBalance() {
-        boolean b = false;
-        if(AtmBalance.balance - rub.amountOfMoney < 0) {
-            System.out.println("Недостаточно средств на счете");
-            b = true;
-        }
-        return b;
-    }
+public class BanknoteCells {
+    //Map<Integer, Integer> banknoteCells = new HashMap<>();
 
     // Определяем количество банкнот для выдачи
-    private String countOfRubBanknote() {
+    public static String countOfRubBanknote(Rub rub) {
         List<Integer> rub_denomination = new ArrayList<>();
         rub_denomination.add(Rub.rub_denomination_5000);
         rub_denomination.add(Rub.rub_denomination_1000);

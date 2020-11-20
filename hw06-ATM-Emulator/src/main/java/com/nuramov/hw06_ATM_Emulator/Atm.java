@@ -1,8 +1,12 @@
 package com.nuramov.hw06_ATM_Emulator;
 
-public class Atm {
+public interface Atm {
 
-    public void run(AtmAction atmAction) {
-        atmAction.action();
-    }
+    void withdrawMoney(Rub rub);
+
+    void depositMoney(Rub rub);
+
+    void atmBalance();
+
+
 }

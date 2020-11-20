@@ -8,6 +8,7 @@ public class Main {
         Rub rub2 = new Rub(7650);
         atm1.depositMoney(rub1);
         atm1.withdrawMoney(rub2);
+        atm1.withdrawMoney(rub2);
         atm1.atmBalance();
 
         Rub rub3 = new Rub(23);

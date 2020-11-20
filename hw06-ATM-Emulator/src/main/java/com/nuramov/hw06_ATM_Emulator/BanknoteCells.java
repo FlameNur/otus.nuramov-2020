@@ -20,7 +20,7 @@ public class BanknoteCells {
         StringBuilder s = new StringBuilder();
         s.append("(Банкноты: ");
 
-        int money = rub.amountOfMoney;
+        int money = rub.getAmountOfMoney();
 
         for (int i = 0; i < rub_denomination.size(); i++) {
 

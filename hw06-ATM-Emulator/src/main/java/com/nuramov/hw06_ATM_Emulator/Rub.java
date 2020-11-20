@@ -10,7 +10,7 @@ public class Rub {
     public static final int rub_denomination_5000 = 5000;
 
     // Количество денег, выбранное для проведения операции в банкомате
-    public int amountOfMoney;
+    private int amountOfMoney;
 
     public Rub(int money) {
         if (money == 0) {
@@ -22,5 +22,9 @@ public class Rub {
         } else {
             System.out.println("Ошибка! Отсутсвует требуемый номинал денег");
         }
+    }
+
+    public int getAmountOfMoney() {
+        return amountOfMoney;
     }
 }

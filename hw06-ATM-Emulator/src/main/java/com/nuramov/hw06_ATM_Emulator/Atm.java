@@ -2,9 +2,9 @@ package com.nuramov.hw06_ATM_Emulator;
 
 public interface Atm {
 
-    void withdrawMoney(Rub rub);
+    void withdrawMoney(int money);
 
-    void depositMoney(Rub rub);
+    void depositMoney(int money);
 
     void atmBalance();
 

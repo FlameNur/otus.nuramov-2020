@@ -13,11 +13,11 @@ public class Main {
         atm1.depositMoney(50);
 
         atm1.atmBalance();
+        atm1.banknoteCells();
 
-        atm1.withdrawMoney(500);
+        atm1.withdrawMoney(750);
 
         atm1.atmBalance();
-
         atm1.banknoteCells();
 
     }

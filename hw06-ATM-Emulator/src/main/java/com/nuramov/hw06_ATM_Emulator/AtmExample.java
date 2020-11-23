@@ -10,15 +10,18 @@ public class AtmExample implements Atm {
     private Map<Integer, Integer> banknoteCells = new HashMap<>();
 
     {
-        banknoteCells.put(Rub.rub_50, 0);
-        banknoteCells.put(Rub.rub_100, 0);
-        banknoteCells.put(Rub.rub_500, 0);
-        banknoteCells.put(Rub.rub_1000, 0);
         banknoteCells.put(Rub.rub_5000, 0);
+        banknoteCells.put(Rub.rub_1000, 0);
+        banknoteCells.put(Rub.rub_500, 0);
+        banknoteCells.put(Rub.rub_100, 0);
+        banknoteCells.put(Rub.rub_50, 0);
     }
 
+    // Выводим денежные средства из Atm.
     @Override
     public void withdrawMoney(int money) {
+        Map<Integer, Integer> paymentCells = new HashMap<>();
+
         // Проверка на достаточное количество средств на счете Atm
         if(checkBalance(money)) {
             System.out.println("Недостаточно средств на счете");
@@ -27,8 +30,15 @@ public class AtmExample implements Atm {
 
         balance -= money;
         System.out.println("Вы сняли: " + money + " рублей ");
+
+        paymentCells = payment(money, paymentCells);
+        System.out.println("Количество выданных банкнот: ");
+        for (Map.Entry<Integer, Integer> m : paymentCells.entrySet()) {
+            System.out.println(m.getKey() + " - x" + m.getValue());
+        }
     }
 
+    // Вводим денежные средства в Atm. По одной банкноте за один раз
     @Override
     public void depositMoney(int money) {
         // Проверка правильности ввода
@@ -80,5 +90,30 @@ public class AtmExample implements Atm {
             }
         }
         return b;
+    }
+
+    private Map<Integer, Integer> payment(int money, Map<Integer, Integer> paymentCells) {
+
+        for (Map.Entry<Integer, Integer> m : banknoteCells.entrySet()) {
+            if(m.getValue() > 0) {
+                int n = money / m.getKey();
+                if(n != 0) {
+                    money = money - (n * m.getKey());
+                }
+
+            }
+
+
+            int key = m.getKey();
+            int value = m.getValue();
+        }
+
+
+
+
+        // Тут надо закончить!!!
+
+
+        return paymentCells;
     }
 }

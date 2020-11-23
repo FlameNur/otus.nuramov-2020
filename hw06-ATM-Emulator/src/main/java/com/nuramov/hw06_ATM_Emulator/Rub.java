@@ -15,10 +15,10 @@ public class Rub {
     public static final List<Integer> rub_denomination = new ArrayList<>();
 
     static {
-        rub_denomination.add(Rub.rub_50);
-        rub_denomination.add(Rub.rub_100);
-        rub_denomination.add(Rub.rub_500);
-        rub_denomination.add(Rub.rub_1000);
         rub_denomination.add(Rub.rub_5000);
+        rub_denomination.add(Rub.rub_1000);
+        rub_denomination.add(Rub.rub_500);
+        rub_denomination.add(Rub.rub_100);
+        rub_denomination.add(Rub.rub_50);
     }
 }

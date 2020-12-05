@@ -1,18 +1,24 @@
 package com.nuramov.hw06_ATM_Emulator;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AtmExample implements Atm {
     private int balance;
     private Map<Integer, Integer> banknoteCells = new TreeMap<>();
+    private List<Integer> rub_denomination = new ArrayList<>();
 
     {
-        banknoteCells.put(Rub.rub_5000, 0);
-        banknoteCells.put(Rub.rub_1000, 0);
-        banknoteCells.put(Rub.rub_500, 0);
-        banknoteCells.put(Rub.rub_100, 0);
-        banknoteCells.put(Rub.rub_50, 0);
+        banknoteCells.put(Rub.RUB_5000.getValue(), 0);
+        banknoteCells.put(Rub.RUB_1000.getValue(), 0);
+        banknoteCells.put(Rub.RUB_500.getValue(), 0);
+        banknoteCells.put(Rub.RUB_100.getValue(), 0);
+        banknoteCells.put(Rub.RUB_50.getValue(), 0);
+
+        rub_denomination.add(Rub.RUB_5000.getValue());
+        rub_denomination.add(Rub.RUB_1000.getValue());
+        rub_denomination.add(Rub.RUB_500.getValue());
+        rub_denomination.add(Rub.RUB_100.getValue());
+        rub_denomination.add(Rub.RUB_50.getValue());
     }
 
     // Выводим денежные средства из Atm.
@@ -80,7 +86,7 @@ public class AtmExample implements Atm {
     // Если значение money не соответсвует номиналу банкноты, возвращаем true и с ошибкой завершаем операцию
     private boolean inputValidation(int money) {
         boolean b = true;
-        for(Integer i : Rub.rub_denomination) {
+        for(Integer i : rub_denomination) {
             if(money == i) {
                 b = false;
                 break;

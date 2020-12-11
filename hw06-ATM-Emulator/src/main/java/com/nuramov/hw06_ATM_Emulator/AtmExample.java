@@ -5,7 +5,6 @@ import java.util.*;
 public class AtmExample implements Atm {
     private int balance;
     private Map<Integer, Integer> banknoteCells = new TreeMap<>();
-    private List<Integer> rub_denomination = new ArrayList<>();
 
     {
         banknoteCells.put(Rub.RUB_5000.getValue(), 0);
@@ -13,12 +12,6 @@ public class AtmExample implements Atm {
         banknoteCells.put(Rub.RUB_500.getValue(), 0);
         banknoteCells.put(Rub.RUB_100.getValue(), 0);
         banknoteCells.put(Rub.RUB_50.getValue(), 0);
-
-        rub_denomination.add(Rub.RUB_5000.getValue());
-        rub_denomination.add(Rub.RUB_1000.getValue());
-        rub_denomination.add(Rub.RUB_500.getValue());
-        rub_denomination.add(Rub.RUB_100.getValue());
-        rub_denomination.add(Rub.RUB_50.getValue());
     }
 
     // Выводим денежные средства из Atm.
@@ -42,20 +35,17 @@ public class AtmExample implements Atm {
         }
     }
 
-    // Вводим денежные средства в Atm. По одной банкноте за один раз
+    // Вводим денежные средства в Atm: банкнота и его количество
     @Override
-    public void depositMoney(int money) {
-        // Проверка правильности ввода
-        if(inputValidation(money)) {
-            System.out.println("Введите правильное значение");
-            return;
-        }
+    public void depositMoney(Rub rub, int rubCount) {
+        // Количество внесенных денежных средств
+        int money = rub.getValue() * rubCount;
         System.out.println("Вы внесли: " + money + " рублей ");
         balance += money;
 
         // Увеличиваем количество банкноты
-        int count = banknoteCells.get(money) + 1;
-        banknoteCells.put(money, count);
+        int count = banknoteCells.get(rub.getValue()) + rubCount;
+        banknoteCells.put(rub.getValue(), count);
     }
 
     // Проверяем баланс Atm
@@ -78,19 +68,6 @@ public class AtmExample implements Atm {
         boolean b = false;
         if(balance - money < 0) {
             b = true;
-        }
-        return b;
-    }
-
-    // Проверяем на соответствие используемых банкнот и введенного значения.
-    // Если значение money не соответсвует номиналу банкноты, возвращаем true и с ошибкой завершаем операцию
-    private boolean inputValidation(int money) {
-        boolean b = true;
-        for(Integer i : rub_denomination) {
-            if(money == i) {
-                b = false;
-                break;
-            }
         }
         return b;
     }

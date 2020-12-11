@@ -4,7 +4,7 @@ public interface Atm {
 
     void withdrawMoney(int money);
 
-    void depositMoney(int money);
+    void depositMoney(Rub rub, int moneyCount);
 
     void atmBalance();
 

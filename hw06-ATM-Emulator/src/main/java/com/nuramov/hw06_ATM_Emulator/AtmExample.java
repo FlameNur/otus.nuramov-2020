@@ -4,6 +4,8 @@ import java.util.*;
 
 public class AtmExample implements Atm {
     private int balance;
+
+    // Банкноты в Atm
     private Map<Integer, Integer> banknoteCells = new TreeMap<>();
 
     {

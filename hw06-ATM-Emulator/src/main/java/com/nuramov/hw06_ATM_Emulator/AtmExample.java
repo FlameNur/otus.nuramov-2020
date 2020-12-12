@@ -6,7 +6,7 @@ public class AtmExample implements Atm {
     private int balance;
 
     // Банкноты в Atm
-    private Map<Integer, Integer> banknoteCells = new TreeMap<>();
+    private final Map<Integer, Integer> banknoteCells = new TreeMap<>();
 
     {
         banknoteCells.put(Rub.RUB_5000.getValue(), 0);
@@ -16,11 +16,9 @@ public class AtmExample implements Atm {
         banknoteCells.put(Rub.RUB_50.getValue(), 0);
     }
 
-    // Выводим денежные средства из Atm.
+    // Выводим денежные средства из Atm. Количество денежных средств и стратегия выдачи банкнот
     @Override
     public void withdrawMoney(int money, WithdrawStrategy withdrawStrategy) {
-        Map<Integer, Integer> localBanknoteCells = banknoteCells;
-
         // Выдаваемые банкноты
         Map<Integer, Integer> paymentCells = new TreeMap<>();
 
@@ -30,19 +28,37 @@ public class AtmExample implements Atm {
             return;
         }
 
-        // Проверка на достаточное количество банкнота для выдачи на счете Atm
-        if(checkBanknoteCells(money)) {
-            System.out.println("Недостаточно средств на счете");
-            return;
+        // Определяем количество выдаваемых банкнот
+        // Количество банкнот может меняться в заисимости от выбранной стратегии в классе Main
+        paymentCells = withdrawStrategy.payment(money, paymentCells, banknoteCells);
+
+        int localMoney = 0;
+
+        // Определяем сумму (localMoney) всех банкнот для последующей проверки случая,
+        // когда запрошенная сумма для выдачи меньше баланса (balance),
+        // но для ее выдачи не хватает требуемых банкнот
+        for (Map.Entry<Integer, Integer> m : paymentCells.entrySet()) {
+            localMoney += m.getKey() * m.getValue();
         }
 
-        balance -= money;
-        System.out.println("Вы сняли: " + money + " рублей ");
-
-        paymentCells = withdrawStrategy.payment(money, paymentCells, localBanknoteCells);
-        System.out.println("Количество выданных банкнот: ");
-        for (Map.Entry<Integer, Integer> m : paymentCells.entrySet()) {
-            System.out.println(m.getKey() + " - x" + m.getValue());
+        // Если запрошенное количество денежных средств удовлетворяет требованиям,
+        // т.е. если money <= balance и количество банкнот в banknoteCells (localMoney == money) хватает для выдачи,
+        // то выдается запрошенная сумма денежных средств
+        if(localMoney == money) {
+            balance -= money;
+            System.out.println("Вы сняли: " + money + " рублей ");
+            System.out.println("Количество выданных банкнот: ");
+            for (Map.Entry<Integer, Integer> m : paymentCells.entrySet()) {
+                System.out.println(m.getKey() + " - x" + m.getValue());
+            }
+        } else {
+            for (Map.Entry<Integer, Integer> m : paymentCells.entrySet()) {
+                // Банкноты сначала снимаются из banknoteCells, а если их недостаточно для выдачи,
+                // обратно возвращаются в banknoteCells
+                banknoteCells.put(m.getKey(), m.getValue());
+                System.out.println("Вы хотите снять: " + money);
+                System.out.println("Недостаточное количество банкнот на счете для выдачи денежных средств");
+            }
         }
     }
 
@@ -76,16 +92,6 @@ public class AtmExample implements Atm {
     // Проверяем баланс Atm.
     // Если денег недостаточно, возвращаем true и завершаем операцию
     private boolean checkBalance(int money) {
-        boolean b = false;
-        if(balance - money < 0) {
-            b = true;
-        }
-        return b;
-    }
-
-    // Проверяем количество банкнот для выдачи
-    // Если банкнот недостаточно, возвращаем true и завершаем операцию
-    private boolean checkBanknoteCells(int money) {
         boolean b = false;
         if(balance - money < 0) {
             b = true;

@@ -56,9 +56,9 @@ public class AtmExample implements Atm {
                 // Банкноты сначала снимаются из banknoteCells, а если их недостаточно для выдачи,
                 // обратно возвращаются в banknoteCells
                 banknoteCells.put(m.getKey(), m.getValue());
-                System.out.println("Вы хотите снять: " + money);
-                System.out.println("Недостаточное количество банкнот на счете для выдачи денежных средств");
             }
+            System.out.println("Вы хотите снять: " + money);
+            System.out.println("Недостаточное количество банкнот на счете для выдачи денежных средств");
         }
     }
 

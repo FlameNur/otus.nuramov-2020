@@ -4,8 +4,15 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
+/*
+Класс позволяет выдать денежные средства наименьшим количеством банкнот
+от максимального значения к минимальному
+ */
+
 public class EffectiveWithdrawStrategy implements WithdrawStrategy {
 
+    // Определяем количество банкнот для выдачи.
+    // Возвращаем Map paymentCells с требуемым количеством банкнот
     @Override
     public Map<Integer, Integer> payment(int money, Map<Integer, Integer> paymentCells, Map<Integer, Integer> banknoteCells) {
         int localMoney = money;

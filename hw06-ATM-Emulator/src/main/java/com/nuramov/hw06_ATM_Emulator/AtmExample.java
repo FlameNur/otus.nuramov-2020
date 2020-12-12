@@ -18,7 +18,9 @@ public class AtmExample implements Atm {
 
     // Выводим денежные средства из Atm.
     @Override
-    public void withdrawMoney(int money) {
+    public void withdrawMoney(int money, WithdrawStrategy withdrawStrategy) {
+        Map<Integer, Integer> localBanknoteCells = banknoteCells;
+
         // Выдаваемые банкноты
         Map<Integer, Integer> paymentCells = new TreeMap<>();
 
@@ -27,10 +29,17 @@ public class AtmExample implements Atm {
             System.out.println("Недостаточно средств на счете");
             return;
         }
+
+        // Проверка на достаточное количество банкнота для выдачи на счете Atm
+        if(checkBanknoteCells(money)) {
+            System.out.println("Недостаточно средств на счете");
+            return;
+        }
+
         balance -= money;
         System.out.println("Вы сняли: " + money + " рублей ");
 
-        paymentCells = payment(money, paymentCells);
+        paymentCells = withdrawStrategy.payment(money, paymentCells, localBanknoteCells);
         System.out.println("Количество выданных банкнот: ");
         for (Map.Entry<Integer, Integer> m : paymentCells.entrySet()) {
             System.out.println(m.getKey() + " - x" + m.getValue());
@@ -65,7 +74,7 @@ public class AtmExample implements Atm {
     }
 
     // Проверяем баланс Atm.
-    // Если денег недостаточно, возвращаем true и с ошибкой завершаем операцию
+    // Если денег недостаточно, возвращаем true и завершаем операцию
     private boolean checkBalance(int money) {
         boolean b = false;
         if(balance - money < 0) {
@@ -74,37 +83,13 @@ public class AtmExample implements Atm {
         return b;
     }
 
-    // Определяем количество банкнот для выдачи.
-    // Возвращаем Map paymentCells с требуемым количеством банкнот
-    private Map<Integer, Integer> payment(int money, Map<Integer, Integer> paymentCells) {
-        int localMoney = money;
-
-        // Реверсивная сортировка Map banknoteCells (от 5000 до 50)
-        Map<Integer, Integer> treeMap = new TreeMap<>(Comparator.reverseOrder());
-        treeMap.putAll(banknoteCells);
-
-        // В цикле определяем:
-        // 1 - наличие банкноты (условие);
-        // 2 - количество конкретной банкноты для погашения части/всей суммы (переменная - n);
-        // 3 - проверяем корректность значения переменной - n исходя из имеющегося значения m.getValue() (условие)
-        // 4 - уменьшаем общую сумму исходя из значения переменной - n и номинала банкноты
-        // 5, 6 - добавляем соответствующую банкноту в Map paymentCells и удаляем ее количество из Map banknoteCells
-        // 7 - если для погашения суммы требуется большее количество банкнот, чем имеется,
-        // погашаем чем имеем. Повторяем пп. 5 и 6
-        for (Map.Entry<Integer, Integer> m : treeMap.entrySet()) {
-            if(m.getValue() > 0) {
-                int n = localMoney / m.getKey();
-                if(n != 0 & (n <= m.getValue())) {
-                    localMoney = localMoney - (n * m.getKey());
-                    paymentCells.put(m.getKey(), n);
-                    banknoteCells.put(m.getKey(), m.getValue() - n);
-                } else if(n > m.getValue()) {
-                    localMoney = localMoney - (m.getValue() * m.getKey());
-                    paymentCells.put(m.getKey(), m.getValue());
-                    banknoteCells.put(m.getKey(), 0);
-                }
-            }
+    // Проверяем количество банкнот для выдачи
+    // Если банкнот недостаточно, возвращаем true и завершаем операцию
+    private boolean checkBanknoteCells(int money) {
+        boolean b = false;
+        if(balance - money < 0) {
+            b = true;
         }
-        return paymentCells;
+        return b;
     }
 }

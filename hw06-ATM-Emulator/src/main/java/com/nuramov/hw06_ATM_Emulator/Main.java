@@ -18,6 +18,7 @@ public class Main {
         atm1.banknoteCells();
 
         atm1.withdrawMoney(450, withdraw);
+        atm1.withdrawMoney(950, withdraw);
 
         atm1.atmBalance();
         atm1.banknoteCells();

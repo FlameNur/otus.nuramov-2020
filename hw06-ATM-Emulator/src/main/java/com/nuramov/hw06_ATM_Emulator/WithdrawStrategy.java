@@ -9,6 +9,8 @@ import java.util.Map;
 public interface WithdrawStrategy {
 
     // Определяем количество банкнот для выдачи
-    // Возвращаем Map с требуемым количеством банкнот
-    Map<Integer, Integer> payment(int money, Map<Integer, Integer> paymentCells, Map<Integer, Integer> banknoteCells);
+    // Возвращаем true, если все условия для выдачи денежных средств выполняются
+    // Map paymentCells определяет требуемое количество банкнот
+    // Map banknoteCells опредеяет оставшиееся количество банкнот в Atm
+    boolean payment(int money, Map<Integer, Integer> paymentCells, Map<Integer, Integer> banknoteCells);
 }

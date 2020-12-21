@@ -58,14 +58,6 @@ public class AtmExample implements Atm {
         System.out.println("Баланс Atm: " + balance + " рублей");
     }
 
-    // Выводим количество имеющихся банкнот в Atm
-    public void banknoteCells() {
-        System.out.println("Количество банкнот в Atm: ");
-        for (Map.Entry<Integer, Integer> m : banknoteCells.entrySet()) {
-            System.out.println(m.getKey() + " - x" + m.getValue());
-        }
-    }
-
     // Проверяем баланс Atm.
     // Если денег недостаточно, возвращаем false
     private boolean checkBalance(int money) {

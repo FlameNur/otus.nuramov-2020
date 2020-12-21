@@ -9,18 +9,8 @@ public class Main {
         atm1.depositMoney(Rub.RUB_500, 2);
         atm1.depositMoney(Rub.RUB_100, 2);
 
-        atm1.atmBalance();
-        atm1.banknoteCells();
-
         atm1.withdrawMoney(750, withdraw);
 
         atm1.atmBalance();
-        atm1.banknoteCells();
-
-        atm1.withdrawMoney(450, withdraw);
-        atm1.withdrawMoney(950, withdraw);
-
-        atm1.atmBalance();
-        atm1.banknoteCells();
     }
 }

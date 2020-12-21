@@ -15,19 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
     */
 
 public class TestEffectiveWithdrawStrategy {
-    private static Atm atmExample;
     private static WithdrawStrategy withdrawStrategy;
     private static Map<Integer, Integer> banknoteCells;
-
-    @BeforeAll
-    static void initAtm() {
-        atmExample = new AtmExample();
-    }
-
-    @BeforeAll
-    static void initStrategy() {
-        withdrawStrategy = new EffectiveWithdrawStrategy();
-    }
 
     @BeforeAll
     static void initBanknoteCells() {
@@ -41,6 +30,11 @@ public class TestEffectiveWithdrawStrategy {
         banknoteCells.put(Rub.RUB_500.getValue(), 3);
         banknoteCells.put(Rub.RUB_100.getValue(), 1);
         banknoteCells.put(Rub.RUB_50.getValue(), 3);
+    }
+
+    @BeforeEach
+    void initStrategy() {
+        withdrawStrategy = new EffectiveWithdrawStrategy();
     }
 
     @BeforeEach
@@ -74,5 +68,4 @@ public class TestEffectiveWithdrawStrategy {
         }
         System.out.println("Тест успешно завершен");
     }
-
 }

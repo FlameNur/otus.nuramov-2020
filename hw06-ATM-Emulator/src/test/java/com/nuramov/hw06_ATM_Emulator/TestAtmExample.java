@@ -16,29 +16,29 @@ public class TestAtmExample {
     private static WithdrawStrategy withdrawStrategy;
 
     @BeforeAll
-    static void initAtm() {
-        atmExample = new AtmExample();
-    }
-
-    @BeforeAll
     static void initStrategy() {
         withdrawStrategy = new EffectiveWithdrawStrategy();
     }
 
     @BeforeEach
+    void initAtm() {
+        atmExample = new AtmExample();
+    }
+
+    @BeforeEach
     void TestStart() {
-        System.out.println("Баланс Atm: " + atmExample.getBalance());
         System.out.println("\n" + "Начало Теста:");
     }
 
     @Test
     void depositMoneyTest() {
-        atmExample.depositMoney(Rub.RUB_50, 7);
-        assertEquals(350, atmExample.getBalance());
+        atmExample.depositMoney(Rub.RUB_500, 3);
+        assertEquals(1500, atmExample.getBalance());
     }
 
     @Test
     void withdrawMoneyTest() {
+        atmExample.depositMoney(Rub.RUB_50, 7);
         atmExample.withdrawMoney(150, withdrawStrategy);
         assertEquals(200, atmExample.getBalance());
     }

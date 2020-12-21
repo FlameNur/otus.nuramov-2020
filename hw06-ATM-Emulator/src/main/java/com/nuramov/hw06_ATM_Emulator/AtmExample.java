@@ -67,4 +67,8 @@ public class AtmExample implements Atm {
         }
         return b;
     }
+
+    public int getBalance() {
+        return balance;
+    }
 }

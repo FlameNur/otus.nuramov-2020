@@ -24,6 +24,7 @@
         <module>hw04-AutoLogging</module>
         <module>hw05-GC-Work-Monitoring</module>
         <module>hw06-ATM-Emulator</module>
+        <module>hw07-ATM-Department</module>
     </modules>
 
     <properties>

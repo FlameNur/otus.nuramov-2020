@@ -5,13 +5,11 @@ public class AtmDepartment {
 
     double checkingTheBalance() {
         departmentRequest = new SumOfAtmBalances();
-
-
         return 1.0;
     }
 
     int numberOfAllAtm() {
-        return 1;
+        return 2;
     }
 
 }

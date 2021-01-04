@@ -1,7 +1,7 @@
 package com.nuramov.hw07_ATM_Department;
 
-public class AtmExample2 extends Atm {
-    private int balance = 2000;
+public class AtmExample3 extends Atm{
+    private int balance = 5000;
 
     @Override
     public void withdrawMoney() {

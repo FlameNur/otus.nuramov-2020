@@ -23,6 +23,7 @@ public class AtmExample1 extends Atm {
         System.out.println("Баланс: " + getBalance());
     }
 
+    @Override
     public int getBalance() {
         return balance;
     }

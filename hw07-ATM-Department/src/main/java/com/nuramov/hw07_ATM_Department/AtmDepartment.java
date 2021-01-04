@@ -3,13 +3,11 @@ package com.nuramov.hw07_ATM_Department;
 public class AtmDepartment {
     DepartmentRequest departmentRequest;
 
-    double checkingTheBalance() {
-        departmentRequest = new SumOfAtmBalances();
-        return 1.0;
+    public AtmDepartment(DepartmentRequest checkingTheBalance) {
+        this.departmentRequest = checkingTheBalance;
     }
 
-    int numberOfAllAtm() {
-        return 2;
+    public void CheckingTheBalanceRequest() {
+        departmentRequest.execute();
     }
-
 }

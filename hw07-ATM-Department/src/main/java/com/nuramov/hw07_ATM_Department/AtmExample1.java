@@ -4,12 +4,6 @@ public class AtmExample1 extends Atm {
     private int balance = 1000;
 
     @Override
-    public boolean check() {
-
-        return checkNext();
-    }
-
-    @Override
     public void withdrawMoney() {
 
     }
@@ -22,6 +16,11 @@ public class AtmExample1 extends Atm {
     @Override
     public void atmBalance() {
 
+    }
+
+    @Override
+    public void checkingTheBalance() {
+        System.out.println("Баланс: " + getBalance());
     }
 
     public int getBalance() {

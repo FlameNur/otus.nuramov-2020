@@ -3,7 +3,7 @@ package com.nuramov.hw07_ATM_Department;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandApplication {
+public class Main {
     public static void main(String[] args) {
         Atm atm1 = new AtmExample();
         Atm atm2 = new AtmExample();
@@ -14,7 +14,7 @@ public class CommandApplication {
 
         AtmDepartment atmDepartment = new AtmDepartment(
                 new SumOfAllBalances(listOfAtms),
-                new RollBackOfAtmState(atm1)
+                new RollBackOfAtmState(listOfAtms)
         );
 
         atmDepartment.sumOfAllBalancesRequest();

@@ -1,7 +1,8 @@
 package com.nuramov.hw07_ATM_Department;
 
 public class AtmExample extends Atm {
-    private int balance = 1000;
+    private int balance;
+    private boolean stateOFAtm = true;
 
     @Override
     public void withdrawMoney() {
@@ -21,5 +22,10 @@ public class AtmExample extends Atm {
     @Override
     public int getBalance() {
         return balance;
+    }
+
+    @Override
+    public void setStateOFAtm(boolean stateOFAtm) {
+        this.stateOFAtm = stateOFAtm;
     }
 }

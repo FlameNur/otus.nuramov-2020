@@ -13,4 +13,6 @@ public abstract class Atm {
 
     // Выводит баланс Atm
     public abstract int getBalance();
+
+    public abstract void setStateOFAtm(boolean stateOFAtm);
 }

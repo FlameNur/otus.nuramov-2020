@@ -1,29 +1,20 @@
 package com.nuramov.hw07_ATM_Department;
 
+import java.util.Deque;
+import java.util.LinkedList;
+
 public class VersionController {
-    private Save save;
+    private final Deque<Save> history = new LinkedList<>();
 
     public Save getSave() {
-        return save;
+        return  history.getLast();
     }
 
     public void setSave(Save save) {
-        this.save = save;
+        this.history.add(save);
     }
 
-    /*
-    private final Deque<Save> history = new LinkedList<>();
-
-    public void storeAndExecute(Save save) {
-        this.history.add(save); // optional
-        cmd.execute();
+    public Save getInitialSave() {
+        return history.getFirst();
     }
-
-    public void undo() {
-        if (history.size() > 1) {
-            history.removeLast();
-            history.getLast().execute();
-        }
-    }
-     */
 }

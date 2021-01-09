@@ -12,14 +12,11 @@ public interface Atm {
     void atmBalance();
 
     // Выводит баланс Atm
-    public abstract int getBalance();
+    int getBalance();
 
-    public abstract void setStateOFAtm(boolean stateOFAtm);
+    void setStateOFAtm(boolean stateOFAtm);
 
-    public VersionController getVersionController();
+    VersionController getVersionController();
 
-    public void load(Save save);
-
-    // Временно
-    public void getBanknoteCells();
+    void load(Save save);
 }

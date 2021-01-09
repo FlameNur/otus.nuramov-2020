@@ -2,10 +2,10 @@ package com.nuramov.hw07_ATM_Department;
 
 import java.util.List;
 
-public class RollBackOfAtmState implements DepartmentRequest {
+public class RollbackToPreviousAtmState implements DepartmentRequest {
     List<Atm> listOfAtms;
 
-    public RollBackOfAtmState(List<Atm> listOfAtms) {
+    public RollbackToPreviousAtmState(List<Atm> listOfAtms) {
         this.listOfAtms = listOfAtms;
     }
 

@@ -28,7 +28,7 @@ public class AtmExample implements Atm {
 
     @Override
     public void withdrawMoney(int money, WithdrawStrategy withdrawStrategy) {
-        // Сохраняем состояние Atm перед выполнением операции
+        // Сохраняем состояние Atm перед выполнением операции/метода withdrawMoney
         versionController.setSave(save());
 
         // Выдаваемые банкноты
@@ -72,20 +72,6 @@ public class AtmExample implements Atm {
         return balance;
     }
 
-    // Проверяем баланс Atm.
-    // Если денег недостаточно, возвращаем false
-    private boolean checkBalance(int money) {
-        boolean b = true;
-        if(balance - money < 0) {
-            b = false;
-        }
-        return b;
-    }
-
-
-
-    // Надо продумать как это использовать
-
     @Override
     public VersionController getVersionController() {
         return versionController;
@@ -96,21 +82,27 @@ public class AtmExample implements Atm {
         this.stateOFAtm = stateOFAtm;
     }
 
-    private Save save() {
-        // Копируем banknoteCells в новую Map copyOfBanknoteCells
-        Map<Integer, Integer> copyOfBanknoteCells = new TreeMap<>(banknoteCells);
-        return new Save(copyOfBanknoteCells);
-    }
-
     @Override
     public void load(Save save) {
         banknoteCells = save.getSavedBanknoteCells();
+        balance = save.getSavedBalance();
     }
 
-    // Временно
-    public void getBanknoteCells() {
-        for (Map.Entry<Integer, Integer> m : banknoteCells.entrySet()) {
-            System.out.println(m.getKey() + " - x" + m.getValue());
+    // Проверяем баланс Atm.
+    // Если денег недостаточно, возвращаем false
+    private boolean checkBalance(int money) {
+        boolean b = true;
+        if(balance - money < 0) {
+            b = false;
         }
+        return b;
+    }
+
+    private Save save() {
+        int copyOfBalance = balance;
+
+        // Копируем banknoteCells в новую Map copyOfBanknoteCells
+        Map<Integer, Integer> copyOfBanknoteCells = new TreeMap<>(banknoteCells);
+        return new Save(copyOfBanknoteCells, copyOfBalance);
     }
 }

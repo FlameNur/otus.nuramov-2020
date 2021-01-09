@@ -1,7 +1,5 @@
 package com.nuramov.hw07_ATM_Department;
 
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 
 public class RollBackOfAtmState implements DepartmentRequest {
@@ -15,6 +13,7 @@ public class RollBackOfAtmState implements DepartmentRequest {
     public void execute() {
         for(Atm atm : listOfAtms) {
             atm.setStateOFAtm(true);
+            atm.load(atm.getVersionController().getSave());
         }
     }
 }

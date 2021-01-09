@@ -1,6 +1,5 @@
 package com.nuramov.hw07_ATM_Department;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SumOfAllBalances implements DepartmentRequest {

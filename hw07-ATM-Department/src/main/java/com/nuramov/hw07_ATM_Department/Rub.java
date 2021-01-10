@@ -1,5 +1,10 @@
 package com.nuramov.hw07_ATM_Department;
 
+    /*
+    enum Rub представляет собой номиналы банкнот российского рубля.
+    Каждая банкнота имеет соответсвуюший вес.
+     */
+
 public enum Rub {
 
     RUB_50(50),

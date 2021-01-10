@@ -3,6 +3,10 @@ package com.nuramov.hw07_ATM_Department;
 import java.util.ArrayList;
 import java.util.List;
 
+    /*
+
+     */
+
 public class Main {
     public static void main(String[] args) {
         VersionController versionController = new VersionController();
@@ -12,7 +16,7 @@ public class Main {
         List<Atm> listOfAtms = new ArrayList<>();
         listOfAtms.add(atm1);
 
-        atm1.depositMoney(Rub.RUB_50, 5);
+        atm1.depositMoney(Rub.RUB_50, 3);
         atm1.depositMoney(Rub.RUB_500, 2);
         atm1.depositMoney(Rub.RUB_100, 2);
 

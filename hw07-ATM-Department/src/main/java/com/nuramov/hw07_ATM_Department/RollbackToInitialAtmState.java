@@ -12,8 +12,9 @@ public class RollbackToInitialAtmState implements DepartmentRequest {
     @Override
     public void execute() {
         for(Atm atm : listOfAtms) {
-            atm.setStateOFAtm(true);
+            atm.setAccessRightsToAtm(true);
             atm.load(atm.getVersionController().getInitialSave());
+            System.out.println("Atm возвращен к начальному состоянию");
         }
     }
 }

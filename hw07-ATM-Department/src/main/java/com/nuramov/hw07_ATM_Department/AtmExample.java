@@ -3,9 +3,21 @@ package com.nuramov.hw07_ATM_Department;
 import java.util.Map;
 import java.util.TreeMap;
 
+    /*
+    Класс AtmExample представляет собой пример реализации работы Atm, его функционала.
+
+    Поля класса AtmExample:
+    - balance           - баланс Atm;
+    - accessRightsToAtm - право доступа для дальнейшей работы Atm.
+                          Если в Atm недостаточное количество банкнот для выдачи,
+                          accessRightsToAtm = false пока не выполнится запрос
+                          на восстановление состояния от AtmDepartment;
+    - versionController - класс, который позволяет работать с сохраненными состояниями Atm через класс Save
+     */
+
 public class AtmExample implements Atm {
     private int balance;
-    private boolean stateOFAtm = true;
+    private boolean accessRightsToAtm = true;
     private VersionController versionController;
 
     // Банкноты в Atm
@@ -28,11 +40,11 @@ public class AtmExample implements Atm {
 
     @Override
     public void withdrawMoney(int money, WithdrawStrategy withdrawStrategy) {
+        // Проверяем права доступа для дальнейшей работы
+        if(!accessRightsToAtm) return;
+
         // Сохраняем состояние Atm перед выполнением операции/метода withdrawMoney
         versionController.setSave(save());
-
-        // Выдаваемые банкноты
-        Map<Integer, Integer> paymentCells = new TreeMap<>();
 
         // Проверка на достаточное количество средств на счете Atm
         if(!checkBalance(money)) {
@@ -40,13 +52,16 @@ public class AtmExample implements Atm {
             return;
         }
 
+        // Выдаваемые банкноты
+        Map<Integer, Integer> paymentCells = new TreeMap<>();
+
         // Возвращаем true, если все условия для выдачи денежных средств выполняются
         // Определяем количество выдаваемых банкнот
         boolean payment = withdrawStrategy.payment(money, paymentCells, banknoteCells);
 
         if(payment) {
             balance -= money;
-        }
+        } else accessRightsToAtm = false;
     }
 
     @Override
@@ -56,12 +71,11 @@ public class AtmExample implements Atm {
         System.out.println("Вы внесли: " + money + " рублей ");
         balance += money;
 
-        // Увеличиваем количество банкноты
+        // Увеличиваем количество банкнот
         int count = banknoteCells.get(rub.getValue()) + rubCount;
         banknoteCells.put(rub.getValue(), count);
     }
 
-    // Проверяем баланс Atm
     @Override
     public void atmBalance() {
         System.out.println("Баланс Atm: " + balance + " рублей");
@@ -78,14 +92,21 @@ public class AtmExample implements Atm {
     }
 
     @Override
-    public void setStateOFAtm(boolean stateOFAtm) {
-        this.stateOFAtm = stateOFAtm;
+    public void setAccessRightsToAtm(boolean accessRightsToAtm) {
+        this.accessRightsToAtm = accessRightsToAtm;
     }
 
     @Override
     public void load(Save save) {
         banknoteCells = save.getSavedBanknoteCells();
         balance = save.getSavedBalance();
+    }
+
+    // Передаем текущие значения balance и banknoteCells в класс Save, чтобы сохранить состояние Atm
+    private Save save() {
+        int copyOfBalance = balance;
+        Map<Integer, Integer> copyOfBanknoteCells = new TreeMap<>(banknoteCells);
+        return new Save(copyOfBanknoteCells, copyOfBalance);
     }
 
     // Проверяем баланс Atm.
@@ -96,13 +117,5 @@ public class AtmExample implements Atm {
             b = false;
         }
         return b;
-    }
-
-    private Save save() {
-        int copyOfBalance = balance;
-
-        // Копируем banknoteCells в новую Map copyOfBanknoteCells
-        Map<Integer, Integer> copyOfBanknoteCells = new TreeMap<>(banknoteCells);
-        return new Save(copyOfBanknoteCells, copyOfBalance);
     }
 }

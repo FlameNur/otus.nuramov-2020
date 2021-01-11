@@ -1,6 +1,6 @@
 package com.nuramov.hw07_ATM_Department;
 
-    /* Общий интерфейс для всех Atm */
+    /* Общий interface для всех Atm */
 
 public interface Atm {
 

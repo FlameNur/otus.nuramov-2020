@@ -20,7 +20,7 @@ public class Main {
         atm1.depositMoney(Rub.RUB_500, 2);
         atm1.depositMoney(Rub.RUB_100, 2);
 
-        atm1.withdrawMoney(100, withdraw);
+        atm1.withdrawMoney(350, withdraw);
 
         AtmDepartment atmDepartment = new AtmDepartment(
                 new SumOfAllBalances(listOfAtms),

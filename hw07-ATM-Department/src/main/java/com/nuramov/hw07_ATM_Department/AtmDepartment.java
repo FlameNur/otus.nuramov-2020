@@ -1,7 +1,7 @@
 package com.nuramov.hw07_ATM_Department;
 
     /*
-    Структура класса AtmDepartment подчиняется паттерну Команда (pattern Command).
+    Структура class AtmDepartment подчиняется паттерну Команда (pattern Command).
     AtmDepartment отправляет запросы, обрабатываемые интерфейсом DepartmentRequest (классы SumOfAllBalances,
     RollbackToPreviousAtmState, RollbackToInitialAtmState).
     Запросы выполняются над всеми Atm.

@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
     /*
-    Класс AtmExample представляет собой пример реализации работы Atm, его функционала.
+    class AtmExample представляет собой пример реализации работы Atm, его функционала.
 
     Поля класса AtmExample:
     - balance           - баланс Atm;
@@ -12,7 +12,8 @@ import java.util.TreeMap;
                           Если в Atm недостаточное количество банкнот для выдачи,
                           accessRightsToAtm = false пока не выполнится запрос
                           на восстановление состояния от AtmDepartment;
-    - versionController - класс, который позволяет работать с сохраненными состояниями Atm через класс Save
+    - versionController - класс, который позволяет работать с сохраненными состояниями Atm через класс Save.
+                          Выполняет роль class Caretaker паттерна Мементо (pattern Memento).
      */
 
 public class AtmExample implements Atm {

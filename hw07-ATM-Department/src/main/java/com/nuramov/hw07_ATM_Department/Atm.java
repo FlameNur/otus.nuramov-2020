@@ -2,6 +2,9 @@ package com.nuramov.hw07_ATM_Department;
 
     /* Общий interface для всех Atm */
 
+import com.nuramov.hw07_ATM_Department.memento.Save;
+import com.nuramov.hw07_ATM_Department.memento.VersionController;
+
 public interface Atm {
 
     // Выводим денежные средства из Atm.

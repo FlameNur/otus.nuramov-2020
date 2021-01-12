@@ -1,4 +1,4 @@
-package com.nuramov.hw07_ATM_Department;
+package com.nuramov.hw07_ATM_Department.command;
 
     /*
     Структура class AtmDepartment подчиняется паттерну Команда (pattern Command).

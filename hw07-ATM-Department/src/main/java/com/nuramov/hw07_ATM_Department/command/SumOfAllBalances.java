@@ -1,4 +1,7 @@
-package com.nuramov.hw07_ATM_Department;
+package com.nuramov.hw07_ATM_Department.command;
+
+import com.nuramov.hw07_ATM_Department.Atm;
+import com.nuramov.hw07_ATM_Department.command.DepartmentRequest;
 
 import java.util.List;
 

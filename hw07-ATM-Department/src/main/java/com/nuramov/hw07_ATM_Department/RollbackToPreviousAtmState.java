@@ -2,6 +2,10 @@ package com.nuramov.hw07_ATM_Department;
 
 import java.util.List;
 
+    /*
+    class RollbackToPreviousAtmState - выполняет запрос на возврат предыдущего состояния всех Atm
+     */
+
 public class RollbackToPreviousAtmState implements DepartmentRequest {
     List<Atm> listOfAtms;
 

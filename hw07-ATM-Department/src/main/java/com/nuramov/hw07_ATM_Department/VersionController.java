@@ -3,6 +3,11 @@ package com.nuramov.hw07_ATM_Department;
 import java.util.Deque;
 import java.util.LinkedList;
 
+    /*
+    Структура class VersionController подчиняется паттерну Мементо (pattern Memento).
+    class VersionController возвращает предыдущее и первичное состояние Atm
+     */
+
 public class VersionController {
     private final Deque<Save> history = new LinkedList<>();
 

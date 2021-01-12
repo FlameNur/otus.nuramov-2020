@@ -2,6 +2,10 @@ package com.nuramov.hw07_ATM_Department;
 
 import java.util.List;
 
+    /*
+    class SumOfAllBalances - выполняет запрос на возврат суммы остатков всех Atm
+     */
+
 public class SumOfAllBalances implements DepartmentRequest {
     int sumOfAllAtmBalances;
     List<Atm> listOfAtms;
@@ -16,5 +20,9 @@ public class SumOfAllBalances implements DepartmentRequest {
             sumOfAllAtmBalances += atm.getBalance();
         }
         System.out.println("Сумма всех остатков: " + sumOfAllAtmBalances);
+    }
+
+    public int getSumOfAllAtmBalances() {
+        return sumOfAllAtmBalances;
     }
 }

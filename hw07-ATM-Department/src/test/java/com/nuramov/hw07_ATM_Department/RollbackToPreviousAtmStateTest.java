@@ -5,16 +5,21 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
     /*
-    Тест проводит проверку методов withdrawMoney и depositMoney класса AtmExample
+    Тест проводит проверку метода execute класса RollbackToPreviousAtmState
      */
 
-class AtmExampleTest {
+class RollbackToPreviousAtmStateTest {
+    private static RollbackToPreviousAtmState rollbackToPreviousAtmState;
     private static AtmExample atmExample;
     private static WithdrawStrategy withdrawStrategy;
     private static VersionController versionController;
+    private static List<Atm> listOfAtms;
 
     @BeforeAll
     static void initVersionController() {
@@ -26,9 +31,20 @@ class AtmExampleTest {
         withdrawStrategy = new EffectiveWithdrawStrategy();
     }
 
-    @BeforeEach
-    void initAtm() {
+    @BeforeAll
+    static void initAtm() {
         atmExample = new AtmExample(versionController);
+    }
+
+    @BeforeAll
+    static void initListOfAtms() {
+        listOfAtms = new ArrayList<>();
+    }
+
+    @BeforeEach
+    void initRollbackToInitialAtmState() {
+        listOfAtms.add(atmExample);
+        rollbackToPreviousAtmState = new RollbackToPreviousAtmState(listOfAtms);
     }
 
     @BeforeEach
@@ -37,30 +53,15 @@ class AtmExampleTest {
     }
 
     @Test
-    void depositMoneyTest() {
-        atmExample.depositMoney(Rub.RUB_500, 3);
-        assertEquals(1500, atmExample.getBalance());
-    }
-
-    @Test
-    void withdrawMoneyTest() {
+    void executeTest() {
         atmExample.depositMoney(Rub.RUB_50, 7);
         atmExample.withdrawMoney(150, withdrawStrategy);
-        assertEquals(200, atmExample.getBalance());
-    }
-
-    @Test
-    void loadTest() {
-        atmExample.depositMoney(Rub.RUB_50, 7);
-        atmExample.withdrawMoney(150, withdrawStrategy);
-        System.out.println("Загружаем предыдущее состояние Atm...");
-        atmExample.load(atmExample.getVersionController().getSave());
+        rollbackToPreviousAtmState.execute();
         assertEquals(350, atmExample.getBalance());
     }
 
     @AfterEach
     void TestEnd() {
-        System.out.println("\n" + "Баланс Atm: " + atmExample.getBalance());
         System.out.println("Тест успешно завершен");
     }
 }

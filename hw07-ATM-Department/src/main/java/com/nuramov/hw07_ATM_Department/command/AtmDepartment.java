@@ -5,14 +5,15 @@ import com.nuramov.hw07_ATM_Department.Atm;
 import java.util.List;
 
 /** Структура class AtmDepartment подчиняется паттерну Команда (pattern Command).
-    AtmDepartment отправляет запросы, обрабатываемые интерфейсом DepartmentRequest (классы SumOfAllBalances,
-    RollbackToPreviousAtmState, RollbackToInitialAtmState).
+    AtmDepartment отправляет запросы, обрабатываемые интерфейсом DepartmentRequest
+    (классы RollbackToPreviousAtmState, RollbackToInitialAtmState).
     Запросы выполняются над всеми Atm.
 
     Департамент Atm отправляет следующие запросы:
-    - возврат суммы всех остатков со всех Atm (класс SumOfAllBalances);
     - возврат всех Atm к предыдущему состоянию (класс RollbackToPreviousAtmState);
-    - возврат всех Atm к начальному состоянию (класс RollbackToInitialAtmState). */
+    - возврат всех Atm к начальному состоянию (класс RollbackToInitialAtmState).
+
+    Метод sumOfAllBalances позволяет вернуть сумму остатков всех Atm */
 
 public class AtmDepartment {
     private DepartmentRequest rollbackToPreviousAtmState;
@@ -34,6 +35,10 @@ public class AtmDepartment {
         rollbackToInitialAtmState.execute();
     }
 
+    /** Возвращает сумму остатков всех Atm
+     * @param listOfAtms - список всех Atm
+     * @return Сумму остатков всех Atm
+     */
     public int sumOfAllBalances(List<Atm> listOfAtms) {
         int sumOfAllAtmBalances = 0;
         for(Atm atm : listOfAtms) {

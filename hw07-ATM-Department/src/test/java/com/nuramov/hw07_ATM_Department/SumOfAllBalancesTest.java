@@ -12,20 +12,21 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-    /*
-    Тест проводит проверку метода execute класса SumOfAllBalances
-     */
+    /** Тест проводит проверку метода execute класса SumOfAllBalances */
 
 class SumOfAllBalancesTest {
     private static SumOfAllBalances sumOfAllBalances;
-    private static AtmExample atmExample;
-    private static WithdrawStrategy withdrawStrategy;
-    private static VersionController versionController;
+        private static AtmExample atmExample1;
+        private static AtmExample atmExample2;
+        private static WithdrawStrategy withdrawStrategy;
+        private static VersionController versionController1;
+        private static VersionController versionController2;
     private static List<Atm> listOfAtms;
 
     @BeforeAll
     static void initVersionController() {
-        versionController = new VersionController();
+        versionController1 = new VersionController();
+        versionController2 = new VersionController();
     }
 
     @BeforeAll
@@ -35,7 +36,8 @@ class SumOfAllBalancesTest {
 
     @BeforeAll
     static void initAtm() {
-        atmExample = new AtmExample(versionController);
+        atmExample1 = new AtmExample(versionController1);
+        atmExample2 = new AtmExample(versionController2);
     }
 
     @BeforeAll
@@ -45,7 +47,8 @@ class SumOfAllBalancesTest {
 
     @BeforeEach
     void initRollbackToInitialAtmState() {
-        listOfAtms.add(atmExample);
+        listOfAtms.add(atmExample1);
+        listOfAtms.add(atmExample2);
         sumOfAllBalances = new SumOfAllBalances(listOfAtms);
     }
 
@@ -56,10 +59,14 @@ class SumOfAllBalancesTest {
 
     @Test
     void executeTest() {
-        atmExample.depositMoney(Rub.RUB_50, 7);
-        atmExample.withdrawMoney(150, withdrawStrategy);
+        atmExample1.depositMoney(Rub.RUB_50, 7);
+        atmExample1.withdrawMoney(150, withdrawStrategy);
+        atmExample2.depositMoney(Rub.RUB_500, 5);
+        atmExample2.withdrawMoney(2000, withdrawStrategy);
+
         sumOfAllBalances.execute();
-        assertEquals(200, sumOfAllBalances.getSumOfAllAtmBalances());
+
+        assertEquals(700, sumOfAllBalances.getSumOfAllAtmBalances());
     }
 
     @AfterEach

@@ -5,9 +5,7 @@ import com.nuramov.hw07_ATM_Department.command.DepartmentRequest;
 
 import java.util.List;
 
-    /*
-    class RollbackToPreviousAtmState - выполняет запрос на возврат предыдущего состояния всех Atm
-     */
+    /** class RollbackToPreviousAtmState - выполняет запрос на возврат предыдущего состояния всех Atm */
 
 public class RollbackToPreviousAtmState implements DepartmentRequest {
     List<Atm> listOfAtms;

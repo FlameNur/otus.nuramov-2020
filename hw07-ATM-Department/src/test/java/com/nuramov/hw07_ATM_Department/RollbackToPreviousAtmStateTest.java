@@ -12,20 +12,21 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-    /*
-    Тест проводит проверку метода execute класса RollbackToPreviousAtmState
-     */
+    /** Тест проводит проверку метода execute класса RollbackToPreviousAtmState */
 
 class RollbackToPreviousAtmStateTest {
     private static RollbackToPreviousAtmState rollbackToPreviousAtmState;
-    private static AtmExample atmExample;
+    private static AtmExample atmExample1;
+    private static AtmExample atmExample2;
     private static WithdrawStrategy withdrawStrategy;
-    private static VersionController versionController;
+    private static VersionController versionController1;
+    private static VersionController versionController2;
     private static List<Atm> listOfAtms;
 
     @BeforeAll
     static void initVersionController() {
-        versionController = new VersionController();
+        versionController1 = new VersionController();
+        versionController2 = new VersionController();
     }
 
     @BeforeAll
@@ -35,7 +36,8 @@ class RollbackToPreviousAtmStateTest {
 
     @BeforeAll
     static void initAtm() {
-        atmExample = new AtmExample(versionController);
+        atmExample1 = new AtmExample(versionController1);
+        atmExample2 = new AtmExample(versionController2);
     }
 
     @BeforeAll
@@ -45,7 +47,8 @@ class RollbackToPreviousAtmStateTest {
 
     @BeforeEach
     void initRollbackToInitialAtmState() {
-        listOfAtms.add(atmExample);
+        listOfAtms.add(atmExample1);
+        listOfAtms.add(atmExample2);
         rollbackToPreviousAtmState = new RollbackToPreviousAtmState(listOfAtms);
     }
 
@@ -56,10 +59,15 @@ class RollbackToPreviousAtmStateTest {
 
     @Test
     void executeTest() {
-        atmExample.depositMoney(Rub.RUB_50, 7);
-        atmExample.withdrawMoney(150, withdrawStrategy);
+        atmExample1.depositMoney(Rub.RUB_50, 7);
+        atmExample1.withdrawMoney(150, withdrawStrategy);
+        atmExample2.depositMoney(Rub.RUB_500, 5);
+        atmExample2.withdrawMoney(2000, withdrawStrategy);
+
         rollbackToPreviousAtmState.execute();
-        assertEquals(350, atmExample.getBalance());
+
+        assertEquals(350, atmExample1.getBalance());
+        assertEquals(2500, atmExample2.getBalance());
     }
 
     @AfterEach

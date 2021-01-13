@@ -8,9 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-    /*
-    Тест проводит проверку методов withdrawMoney и depositMoney класса AtmExample
-     */
+    /** Тест проводит проверку методов withdrawMoney и depositMoney класса AtmExample */
 
 class AtmExampleTest {
     private static AtmExample atmExample;

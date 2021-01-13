@@ -4,14 +4,11 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
-    /*
-    class EffectiveWithdrawStrategy позволяет выдать денежные средства наименьшим количеством банкнот,
-    от банкнот с максимальным весом к минимальным
-    */
+    /** class EffectiveWithdrawStrategy позволяет выдать денежные средства наименьшим количеством банкнот,
+    от банкнот с максимальным весом к минимальным */
 
 public class EffectiveWithdrawStrategy implements WithdrawStrategy {
 
-    // Возвращаем Map paymentCells с требуемым количеством банкнот
     @Override
     public boolean payment(int money, Map<Integer, Integer> paymentCells, Map<Integer, Integer> banknoteCells) {
         // Реверсивная сортировка Map banknoteCells (от 5000 до 50)
@@ -31,11 +28,12 @@ public class EffectiveWithdrawStrategy implements WithdrawStrategy {
         return withdrawalCondition(sum, money, paymentCells, banknoteCells);
     }
 
-    // Определяем количество выдываемых банкнот paymentCells
-    // localMoney               - запрошенные для выдачи денежные средства
-    // paymentCells             - количество выдываемых банкнот
-    // banknoteCells            - количество банкнот в Atm
-    // reversedBanknoteCells    - Реверсивная сортировка banknoteCells (от 5000 до 50)
+    /** Определяем количество выдываемых банкнот paymentCells
+     * @param localMoney                - запрошенные для выдачи денежные средства;
+     * @param paymentCells              - количество выдываемых банкнот;
+     * @param banknoteCells             - количество банкнот в Atm;
+     * @param reversedBanknoteCells     - Реверсивная сортировка banknoteCells (от 5000 до 50).
+     */
     private void banknoteCountToPay(int localMoney,
                                     Map<Integer, Integer> paymentCells,
                                     Map<Integer, Integer> banknoteCells,
@@ -65,11 +63,13 @@ public class EffectiveWithdrawStrategy implements WithdrawStrategy {
         }
     }
 
-    // Определяем условия выдачи денежных средств
-    // sum              - сумму всех выдываемых банкнот
-    // money            - запрошенные для выдачи денежные средства
-    // paymentCells     - количество выдываемых банкнот
-    // banknoteCells    - количество банкнот в Atm
+    /** Определяем условия выдачи денежных средств
+     * @param sum               - сумму всех выдываемых банкнот;
+     * @param money             - запрошенные для выдачи денежные средства;
+     * @param paymentCells      - количество выдываемых банкнот;
+     * @param banknoteCells     - количество банкнот в Atm
+     * @return true - если есть возможность выдать денежные средства, false - если нет возможности
+     */
     private boolean withdrawalCondition (int sum,
                                          int money,
                                          Map<Integer, Integer> paymentCells,

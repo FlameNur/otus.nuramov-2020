@@ -5,9 +5,7 @@ import com.nuramov.hw07_ATM_Department.command.DepartmentRequest;
 
 import java.util.List;
 
-    /*
-    class SumOfAllBalances - выполняет запрос на возврат суммы остатков всех Atm
-     */
+    /** class SumOfAllBalances - выполняет запрос на возврат суммы остатков всех Atm */
 
 public class SumOfAllBalances implements DepartmentRequest {
     int sumOfAllAtmBalances;

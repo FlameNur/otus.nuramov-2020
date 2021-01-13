@@ -6,9 +6,7 @@ import com.nuramov.hw07_ATM_Department.memento.VersionController;
 import java.util.Map;
 import java.util.TreeMap;
 
-    /*
-    class AtmExample представляет собой пример реализации работы Atm, его функционала.
-
+    /** class AtmExample представляет собой пример реализации работы Atm, его функционала.
     Поля класса AtmExample:
     - balance           - баланс Atm;
     - accessRightsToAtm - право доступа для дальнейшей работы Atm.
@@ -16,15 +14,14 @@ import java.util.TreeMap;
                           accessRightsToAtm = false пока не выполнится запрос
                           на восстановление состояния от AtmDepartment;
     - versionController - класс, который позволяет работать с сохраненными состояниями Atm через класс Save.
-                          Выполняет роль class Caretaker паттерна Мементо (pattern Memento).
-     */
+                          Выполняет роль class Caretaker паттерна Мементо (pattern Memento). */
 
 public class AtmExample implements Atm {
     private int balance;
     private boolean accessRightsToAtm = true;
     private VersionController versionController;
 
-    // Банкноты в Atm
+    /** Банкноты в Atm */
     private Map<Integer, Integer> banknoteCells = new TreeMap<>();
 
     {
@@ -65,7 +62,7 @@ public class AtmExample implements Atm {
 
         if(payment) {
             balance -= money;
-        } else accessRightsToAtm = false;
+        } else setAccessRightsToAtm(false);
     }
 
     @Override
@@ -106,15 +103,19 @@ public class AtmExample implements Atm {
         balance = save.getSavedBalance();
     }
 
-    // Передаем текущие значения balance и banknoteCells в класс Save, чтобы сохранить состояние Atm
+    /** Передаем текущие значения balance и banknoteCells в класс Save, чтобы сохранить состояние Atm
+     * @return Экземпляр класса Save - сохраннное состояние Atm (balance и banknoteCells)
+     */
     private Save save() {
         int copyOfBalance = balance;
         Map<Integer, Integer> copyOfBanknoteCells = new TreeMap<>(banknoteCells);
         return new Save(copyOfBanknoteCells, copyOfBalance);
     }
 
-    // Проверяем баланс Atm.
-    // Если денег недостаточно, возвращаем false
+    /** Проверяем баланс Atm.
+     * @param money - запрошенное количество денежных средств для выдачи
+     * @return Возвращаем false, если денег недостаточно
+     */
     private boolean checkBalance(int money) {
         boolean b = true;
         if(balance - money < 0) {

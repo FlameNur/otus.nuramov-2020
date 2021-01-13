@@ -1,6 +1,10 @@
 package com.nuramov.hw07_ATM_Department.command;
 
-    /** Структура class AtmDepartment подчиняется паттерну Команда (pattern Command).
+import com.nuramov.hw07_ATM_Department.Atm;
+
+import java.util.List;
+
+/** Структура class AtmDepartment подчиняется паттерну Команда (pattern Command).
     AtmDepartment отправляет запросы, обрабатываемые интерфейсом DepartmentRequest (классы SumOfAllBalances,
     RollbackToPreviousAtmState, RollbackToInitialAtmState).
     Запросы выполняются над всеми Atm.
@@ -11,21 +15,13 @@ package com.nuramov.hw07_ATM_Department.command;
     - возврат всех Atm к начальному состоянию (класс RollbackToInitialAtmState). */
 
 public class AtmDepartment {
-    DepartmentRequest sumOfAllBalances;
-    DepartmentRequest rollbackToPreviousAtmState;
-    DepartmentRequest rollbackToInitialAtmState;
+    private DepartmentRequest rollbackToPreviousAtmState;
+    private DepartmentRequest rollbackToInitialAtmState;
 
-    public AtmDepartment(DepartmentRequest sumOfAllBalances,
-                         DepartmentRequest rollbackToPreviousAtmState,
+    public AtmDepartment(DepartmentRequest rollbackToPreviousAtmState,
                          DepartmentRequest rollbackToInitialAtmState) {
-        this.sumOfAllBalances = sumOfAllBalances;
         this.rollbackToPreviousAtmState = rollbackToPreviousAtmState;
         this.rollbackToInitialAtmState = rollbackToInitialAtmState;
-    }
-
-    /** Запрос на возврат суммы всех остатков со всех Atm */
-    public void sumOfAllBalancesRequest() {
-        sumOfAllBalances.execute();
     }
 
     /** Запрос на возврат всех Atm к предыдущему состоянию */
@@ -36,5 +32,14 @@ public class AtmDepartment {
     /** Запрос на возврат всех Atm к начальному состоянию */
     public void rollbackToInitialAtmStateRequest() {
         rollbackToInitialAtmState.execute();
+    }
+
+    public int sumOfAllBalances(List<Atm> listOfAtms) {
+        int sumOfAllAtmBalances = 0;
+        for(Atm atm : listOfAtms) {
+            sumOfAllAtmBalances += atm.getBalance();
+        }
+        System.out.println("Сумма всех остатков: " + sumOfAllAtmBalances);
+        return sumOfAllAtmBalances;
     }
 }

@@ -10,7 +10,7 @@ import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-    /** Тест проводит проверку метода payment класса EffectiveWithdrawStrategy */
+/** Тест проводит проверку метода payment класса EffectiveWithdrawStrategy */
 
 class EffectiveWithdrawStrategyTest {
     private static WithdrawStrategy withdrawStrategy;

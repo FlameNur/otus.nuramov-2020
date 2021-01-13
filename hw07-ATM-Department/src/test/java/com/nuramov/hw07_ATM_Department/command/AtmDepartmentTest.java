@@ -1,6 +1,6 @@
-package com.nuramov.hw07_ATM_Department;
+package com.nuramov.hw07_ATM_Department.command;
 
-import com.nuramov.hw07_ATM_Department.command.SumOfAllBalances;
+import com.nuramov.hw07_ATM_Department.*;
 import com.nuramov.hw07_ATM_Department.memento.VersionController;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,15 +12,17 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-    /** Тест проводит проверку метода execute класса SumOfAllBalances */
+/** Тест проводит проверку метода sumOfAllBalances класса AtmDepartment */
 
-class SumOfAllBalancesTest {
-    private static SumOfAllBalances sumOfAllBalances;
-        private static AtmExample atmExample1;
-        private static AtmExample atmExample2;
-        private static WithdrawStrategy withdrawStrategy;
-        private static VersionController versionController1;
-        private static VersionController versionController2;
+class AtmDepartmentTest {
+    private static AtmDepartment atmDepartment;
+    private static DepartmentRequest rollbackToPreviousAtmState;
+    private static DepartmentRequest rollbackToInitialAtmState;
+    private static AtmExample atmExample1;
+    private static AtmExample atmExample2;
+    private static WithdrawStrategy withdrawStrategy;
+    private static VersionController versionController1;
+    private static VersionController versionController2;
     private static List<Atm> listOfAtms;
 
     @BeforeAll
@@ -45,11 +47,21 @@ class SumOfAllBalancesTest {
         listOfAtms = new ArrayList<>();
     }
 
+    @BeforeAll
+    static void initDepartmentRequest() {
+        rollbackToPreviousAtmState = new RollbackToPreviousAtmState(listOfAtms);
+        rollbackToInitialAtmState = new RollbackToInitialAtmState(listOfAtms);
+    }
+
     @BeforeEach
-    void initRollbackToInitialAtmState() {
+    void fillTheListOfAtms() {
         listOfAtms.add(atmExample1);
         listOfAtms.add(atmExample2);
-        sumOfAllBalances = new SumOfAllBalances(listOfAtms);
+    }
+
+    @BeforeEach
+    void initAtmDepartment() {
+        atmDepartment = new AtmDepartment(rollbackToPreviousAtmState, rollbackToInitialAtmState);
     }
 
     @BeforeEach
@@ -64,14 +76,15 @@ class SumOfAllBalancesTest {
         atmExample2.depositMoney(Rub.RUB_500, 5);
         atmExample2.withdrawMoney(2000, withdrawStrategy);
 
-        sumOfAllBalances.execute();
+        int sum = atmDepartment.sumOfAllBalances(listOfAtms);
 
-        assertEquals(700, sumOfAllBalances.getSumOfAllAtmBalances());
+        assertEquals(700, sum);
     }
 
     @AfterEach
     void TestEnd() {
         System.out.println("Тест успешно завершен");
     }
+
 
 }

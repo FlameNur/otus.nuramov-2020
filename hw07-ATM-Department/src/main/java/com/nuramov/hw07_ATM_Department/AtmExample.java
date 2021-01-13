@@ -6,7 +6,7 @@ import com.nuramov.hw07_ATM_Department.memento.VersionController;
 import java.util.Map;
 import java.util.TreeMap;
 
-    /** class AtmExample представляет собой пример реализации работы Atm, его функционала.
+/** class AtmExample представляет собой пример реализации работы Atm, его функционала.
     Поля класса AtmExample:
     - balance           - баланс Atm;
     - accessRightsToAtm - право доступа для дальнейшей работы Atm.
@@ -78,18 +78,8 @@ public class AtmExample implements Atm {
     }
 
     @Override
-    public void atmBalance() {
-        System.out.println("Баланс Atm: " + balance + " рублей");
-    }
-
-    @Override
     public int getBalance() {
         return balance;
-    }
-
-    @Override
-    public VersionController getVersionController() {
-        return versionController;
     }
 
     @Override
@@ -98,7 +88,15 @@ public class AtmExample implements Atm {
     }
 
     @Override
-    public void load(Save save) {
+    public void loadPreviousState() {
+        Save save = versionController.getSave();
+        banknoteCells = save.getSavedBanknoteCells();
+        balance = save.getSavedBalance();
+    }
+
+    @Override
+    public void loadInitialState() {
+        Save save = versionController.getInitialSave();
         banknoteCells = save.getSavedBanknoteCells();
         balance = save.getSavedBalance();
     }

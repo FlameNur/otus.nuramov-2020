@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-    /** Тест проводит проверку метода execute класса RollbackToInitialAtmState */
+/** Тест проводит проверку метода execute класса RollbackToInitialAtmState */
 
 class RollbackToInitialAtmStateTest {
     private static RollbackToInitialAtmState rollbackToInitialAtmState;

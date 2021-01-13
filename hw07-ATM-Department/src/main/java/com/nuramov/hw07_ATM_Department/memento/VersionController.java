@@ -5,7 +5,7 @@ import com.nuramov.hw07_ATM_Department.memento.Save;
 import java.util.Deque;
 import java.util.LinkedList;
 
-    /** Структура class VersionController подчиняется паттерну Мементо (pattern Memento).
+/** Структура class VersionController подчиняется паттерну Мементо (pattern Memento).
     class VersionController возвращает предыдущее и первичное состояние Atm */
 
 public class VersionController {

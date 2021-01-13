@@ -2,7 +2,7 @@ package com.nuramov.hw07_ATM_Department.memento;
 
 import java.util.Map;
 
-    /** Структура class Save подчиняется паттерну Мементо (pattern Memento).
+/** Структура class Save подчиняется паттерну Мементо (pattern Memento).
     class Save сохраняет состояние Atm (balance и banknoteCells) */
 
 public class Save {

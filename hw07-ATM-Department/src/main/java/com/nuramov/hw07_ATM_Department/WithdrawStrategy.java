@@ -2,7 +2,7 @@ package com.nuramov.hw07_ATM_Department;
 
 import java.util.Map;
 
-    /** interface WithdrawStrategy определяем количество банкнот для выдачи и
+/** interface WithdrawStrategy определяем количество банкнот для выдачи и
     позволяет использовать разные методы выдачи денежных средств */
 
 public interface WithdrawStrategy {

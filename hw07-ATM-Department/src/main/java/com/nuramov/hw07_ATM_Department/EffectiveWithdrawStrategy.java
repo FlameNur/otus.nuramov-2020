@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
-    /** class EffectiveWithdrawStrategy позволяет выдать денежные средства наименьшим количеством банкнот,
+/** class EffectiveWithdrawStrategy позволяет выдать денежные средства наименьшим количеством банкнот,
     от банкнот с максимальным весом к минимальным */
 
 public class EffectiveWithdrawStrategy implements WithdrawStrategy {

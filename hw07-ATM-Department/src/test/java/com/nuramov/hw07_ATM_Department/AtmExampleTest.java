@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-    /** Тест проводит проверку методов withdrawMoney и depositMoney класса AtmExample */
+/** Тест проводит проверку методов withdrawMoney и depositMoney класса AtmExample */
 
 class AtmExampleTest {
     private static AtmExample atmExample;
@@ -49,12 +49,21 @@ class AtmExampleTest {
     }
 
     @Test
-    void loadTest() {
+    void loadPreviousStateTest() {
         atmExample.depositMoney(Rub.RUB_50, 7);
         atmExample.withdrawMoney(150, withdrawStrategy);
         System.out.println("Загружаем предыдущее состояние Atm...");
-        atmExample.load(atmExample.getVersionController().getSave());
+        atmExample.loadPreviousState();
         assertEquals(350, atmExample.getBalance());
+    }
+
+    @Test
+    void loadInitialStateTest() {
+        atmExample.depositMoney(Rub.RUB_50, 7);
+        atmExample.withdrawMoney(150, withdrawStrategy);
+        System.out.println("Загружаем первичное состояние Atm...");
+        atmExample.loadInitialState();
+        assertEquals(0, atmExample.getBalance());
     }
 
     @AfterEach

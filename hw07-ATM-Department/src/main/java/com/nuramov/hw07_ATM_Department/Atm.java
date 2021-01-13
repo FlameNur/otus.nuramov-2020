@@ -1,9 +1,6 @@
 package com.nuramov.hw07_ATM_Department;
 
-    /** Общий interface для всех Atm */
-
-import com.nuramov.hw07_ATM_Department.memento.Save;
-import com.nuramov.hw07_ATM_Department.memento.VersionController;
+/** Общий interface для всех Atm */
 
 public interface Atm {
 
@@ -19,9 +16,6 @@ public interface Atm {
      */
     void depositMoney(Rub rub, int moneyCount);
 
-    /** Проверяем баланс Atm */
-    void atmBalance();
-
     /** Получаем значение баланса Atm */
     int getBalance();
 
@@ -32,11 +26,9 @@ public interface Atm {
      */
     void setAccessRightsToAtm(boolean accessRightsToAtm);
 
-    /** Получаем текущий VersionController, чтобы получить сохраненное состояние Atm */
-    VersionController getVersionController();
+    /** Загружаем предыдущее сохраненное состояние Atm */
+    void loadPreviousState();
 
-    /** Загружаем сохраненное состояние Atm
-     * @param save - сохраненное состояние Atm
-     */
-    void load(Save save);
+    /** Загружаем первичное сохраненное состояние Atm */
+    void loadInitialState();
 }

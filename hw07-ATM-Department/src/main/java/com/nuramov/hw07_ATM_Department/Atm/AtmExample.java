@@ -1,7 +1,9 @@
-package com.nuramov.hw07_ATM_Department;
+package com.nuramov.hw07_ATM_Department.Atm;
 
-import com.nuramov.hw07_ATM_Department.memento.Save;
-import com.nuramov.hw07_ATM_Department.memento.VersionController;
+import com.nuramov.hw07_ATM_Department.MonetaryCurrency.Rub;
+import com.nuramov.hw07_ATM_Department.WithdrawStrategies.WithdrawStrategy;
+import com.nuramov.hw07_ATM_Department.WorkingWithSavedAtmStates.Save;
+import com.nuramov.hw07_ATM_Department.WorkingWithSavedAtmStates.VersionController;
 
 import java.util.Map;
 import java.util.TreeMap;

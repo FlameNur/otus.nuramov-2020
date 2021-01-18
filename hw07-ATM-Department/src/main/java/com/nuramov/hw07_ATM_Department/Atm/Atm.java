@@ -1,4 +1,7 @@
-package com.nuramov.hw07_ATM_Department;
+package com.nuramov.hw07_ATM_Department.Atm;
+
+import com.nuramov.hw07_ATM_Department.MonetaryCurrency.Rub;
+import com.nuramov.hw07_ATM_Department.WithdrawStrategies.WithdrawStrategy;
 
 /** Общий interface для всех Atm */
 

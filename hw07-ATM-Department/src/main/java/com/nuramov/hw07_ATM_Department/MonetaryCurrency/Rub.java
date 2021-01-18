@@ -1,4 +1,4 @@
-package com.nuramov.hw07_ATM_Department;
+package com.nuramov.hw07_ATM_Department.MonetaryCurrency;
 
 /** enum Rub представляет собой номиналы банкнот российского рубля.
     Каждая банкнота имеет соответсвуюший вес. */

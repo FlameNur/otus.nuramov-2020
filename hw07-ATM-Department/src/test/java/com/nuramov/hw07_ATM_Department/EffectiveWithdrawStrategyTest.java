@@ -1,5 +1,8 @@
 package com.nuramov.hw07_ATM_Department;
 
+import com.nuramov.hw07_ATM_Department.MonetaryCurrency.Rub;
+import com.nuramov.hw07_ATM_Department.WithdrawStrategies.EffectiveWithdrawStrategy;
+import com.nuramov.hw07_ATM_Department.WithdrawStrategies.WithdrawStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

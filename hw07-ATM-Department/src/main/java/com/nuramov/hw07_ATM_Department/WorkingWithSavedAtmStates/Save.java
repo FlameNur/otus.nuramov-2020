@@ -1,4 +1,4 @@
-package com.nuramov.hw07_ATM_Department.memento;
+package com.nuramov.hw07_ATM_Department.WorkingWithSavedAtmStates;
 
 import java.util.Map;
 

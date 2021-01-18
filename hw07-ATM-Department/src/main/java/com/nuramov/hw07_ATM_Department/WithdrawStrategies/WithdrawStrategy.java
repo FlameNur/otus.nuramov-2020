@@ -1,4 +1,4 @@
-package com.nuramov.hw07_ATM_Department;
+package com.nuramov.hw07_ATM_Department.WithdrawStrategies;
 
 import java.util.Map;
 

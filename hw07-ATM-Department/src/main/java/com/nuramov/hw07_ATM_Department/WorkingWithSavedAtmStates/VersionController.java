@@ -1,6 +1,4 @@
-package com.nuramov.hw07_ATM_Department.memento;
-
-import com.nuramov.hw07_ATM_Department.memento.Save;
+package com.nuramov.hw07_ATM_Department.WorkingWithSavedAtmStates;
 
 import java.util.Deque;
 import java.util.LinkedList;

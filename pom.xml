@@ -25,6 +25,7 @@
         <module>hw05-GC-Work-Monitoring</module>
         <module>hw06-ATM-Emulator</module>
         <module>hw07-ATM-Department</module>
+        <module>hw08-JSON-Object-Writer</module>
     </modules>
 
     <properties>

@@ -1,16 +1,28 @@
 package com.nuramov.hw08_JSON_Object_Writer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ClassToSerializing {
-    private final int value1;
-    private final String value2;
-    private final int value3;
+    private final int id;
+    private final String name;
+    private final String message;
+    private final int type;
+    private final int[] array;
+    private final List<String> list;
 
-    public ClassToSerializing(int value1, String value2, int value3) {
-        this.value1 = value1;
-        this.value2 = value2;
-        this.value3 = value3;
+    public ClassToSerializing(int id, String name, String message, int type) {
+        this.id = id;
+        this.name = name;
+        this.message = message;
+        this.type = type;
+
+        this.array = new int[] {id, type};
+
+        this.list = new ArrayList<>();
+        list.add(this.name);
+        list.add(this.message);
     }
 
 
@@ -21,17 +33,18 @@ public class ClassToSerializing {
 
             ClassToSerializing that = (ClassToSerializing) o;
 
-            if (value1 != that.value1) return false;
-            if (value3 != that.value3) return false;
-            return Objects.equals(value2, that.value2);
+            if (id != that.id) return false;
+            if (type != that.type) return false;
+            return Objects.equals(name, that.name);
         }
 
         @Override
         public String toString() {
             return "ClassToSerializing{" +
-                    "value1=" + value1 +
-                    ", value2='" + value2 + '\'' +
-                    ", value3=" + value3 +
+                    "class id=" + id +
+                    ", class name='" + name + '\'' +
+                    ", class type=" + type +
+                    ", message=" + message +
                     '}';
         }
 }

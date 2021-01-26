@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class ClassToSerializing {
+    public static int publicInt = 1;
+    public String publicString = "publicString";
     private final int id;
     private final String name;
     private final String message;
     private final int type;
-    private final int[] array;
+    private int[] array;
     private final List<String> list;
 
     public ClassToSerializing(int id, String name, String message, int type) {
@@ -18,7 +20,7 @@ public class ClassToSerializing {
         this.message = message;
         this.type = type;
 
-        this.array = new int[] {id, type};
+        this.array = new int[] {this.id, this.type};
 
         this.list = new ArrayList<>();
         list.add(this.name);

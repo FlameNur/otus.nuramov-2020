@@ -13,6 +13,12 @@ import java.util.Map;
 
 public class JsonObjectWriter {
 
+    /**
+     *
+     * @param obj
+     * @return
+     * @throws IllegalAccessException
+     */
     public String toJson(Object obj) throws IllegalAccessException {
         // Начинаем собирать json объект
         StringBuilder stringBuilder = new StringBuilder("{");
@@ -22,39 +28,39 @@ public class JsonObjectWriter {
         Field[] fields = cls.getDeclaredFields();
 
         for (Field field : fields) {
-            // Исключаем static поля класса, т.к. их не должно быть в json объекте
+            // Исключаем static поля класса
             int modifier = field.getModifiers();
-            if(!Modifier.isStatic(modifier)) {
-                // Определяем название поля
-                String fieldName = field.getName();
-                stringBuilder.append("\"").append(fieldName).append("\":");
+            if(Modifier.isStatic(modifier)) continue;
 
-                // Определяем значение поля
-                field.setAccessible(true);
-                Object valueOfField = field.get(obj);
+            // Определяем название поля
+            String fieldName = field.getName();
+            stringBuilder.append("\"").append(fieldName).append("\":");
 
-                // Тип поля - Array
-                String arrayToJson = arrayToJson(field, valueOfField);
-                stringBuilder.append(arrayToJson);
+            // Определяем значение поля
+            field.setAccessible(true);
+            Object valueOfField = field.get(obj);
 
-                // Тип поля - String, Character
-                String stringCharacterTypesToJson = stringCharacterTypesToJson(valueOfField);
-                stringBuilder.append(stringCharacterTypesToJson);
+            // Тип поля - Array
+            String arrayToJson = arrayToJson(field, valueOfField);
+            stringBuilder.append(arrayToJson);
 
-                // Тип поля - Byte, Integer, Double, Float, Short, Long, Boolean
-                String simpleTypesToJson = simpleTypesToJson(valueOfField);
-                stringBuilder.append(simpleTypesToJson);
+            // Тип поля - String, Character
+            String stringCharacterTypesToJson = stringCharacterTypesToJson(valueOfField);
+            stringBuilder.append(stringCharacterTypesToJson);
 
-                // Тип поля - map
-                String mapTypeToJson = mapTypeToJson(valueOfField);
-                stringBuilder.append(mapTypeToJson);
+            // Тип поля - Byte, Integer, Double, Float, Short, Long, Boolean
+            String simpleTypesToJson = simpleTypesToJson(valueOfField);
+            stringBuilder.append(simpleTypesToJson);
 
-                // Тип поля - Collection
-                String collectionTypeToJson = collectionTypeToJson(valueOfField);
-                stringBuilder.append(collectionTypeToJson);
+            // Тип поля - Map
+            String mapTypeToJson = mapTypeToJson(valueOfField);
+            stringBuilder.append(mapTypeToJson);
 
-                stringBuilder.append(",");
-            }
+            // Тип поля - Collection
+            String collectionTypeToJson = collectionTypeToJson(valueOfField);
+            stringBuilder.append(collectionTypeToJson);
+
+            stringBuilder.append(",");
         }
         stringBuilder.append("}");
         // Удаляем последнюю запятую
@@ -63,9 +69,12 @@ public class JsonObjectWriter {
     }
 
     /**
-     *
-     * @param o
-     * @return
+     * Метод simpleTypesToJson используется для работы с полями следубщих типов:
+     * Byte, Integer, Double, Float, Short, Long, Boolean.
+     * @param o - значение поля объекта для сериализации. Если поле проходит условие проверки,
+     *            значение поля прописывается в строку, т.е. становится частью объекта json.
+     * @return  - возвращает строку со значением поля, т.е. часть объекта json,
+     *            или пустую строку, если условие проверки не выполняется.
      */
     private String simpleTypesToJson(Object o) {
         Object valueOfField = o;
@@ -80,9 +89,11 @@ public class JsonObjectWriter {
     }
 
     /**
-     *
-     * @param o
-     * @return
+     * Метод mapTypeToJson используется для работы с полями типа Map.
+     * @param o - значение поля объекта для сериализации. Если поле проходит условие проверки,
+     *            значение поля прописывается в строку, т.е. становится частью объекта json.
+     * @return  - возвращает строку со значением поля, т.е. часть объекта json,
+     *            или пустую строку, если условие проверки не выполняется.
      */
     private String mapTypeToJson(Object o) {
         Object valueOfField = o;
@@ -106,9 +117,11 @@ public class JsonObjectWriter {
     }
 
     /**
-     *
-     * @param o
-     * @return
+     * Метод collectionTypeToJson используется для работы с полями типа Collection.
+     * @param o - значение поля объекта для сериализации. Если поле проходит условие проверки,
+     *            значение поля прописывается в строку, т.е. становится частью объекта json.
+     * @return  - возвращает строку со значением поля, т.е. часть объекта json,
+     *            или пустую строку, если условие проверки не выполняется.
      */
     private String collectionTypeToJson(Object o) {
         Object valueOfField = o;
@@ -132,9 +145,11 @@ public class JsonObjectWriter {
     }
 
     /**
-     *
-     * @param o
-     * @return
+     * Метод stringCharacterTypesToJson используется для работы с полями типов String и Character.
+     * @param o - значение поля объекта для сериализации. Если поле проходит условие проверки,
+     *            значение поля прописывается в строку, т.е. становится частью объекта json.
+     * @return  - возвращает строку со значением поля, т.е. часть объекта json,
+     *            или пустую строку, если условие проверки не выполняется.
      */
     private String stringCharacterTypesToJson(Object o) {
         Object valueOfField = o;

@@ -38,7 +38,6 @@ public class ClassToSerializing {
         map.put(this.type, this.message);
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

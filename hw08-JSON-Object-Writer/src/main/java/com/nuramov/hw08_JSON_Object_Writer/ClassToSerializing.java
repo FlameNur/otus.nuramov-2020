@@ -49,6 +49,19 @@ public class ClassToSerializing {
         if (!Objects.equals(message, that.message)) return false;
         if (id != that.id) return false;
         if (type != that.type) return false;
+
+        // Сравнение map
+        if (map.size() != that.map.size()) return false;
+        for (Integer key : map.keySet()) {
+            if (!map.get(key).equals(that.map.get(key))) return false;
+        }
+
+        // Сравнение list
+        if (list.size() != that.list.size()) return false;
+        for (int i = 0; i < list.size(); i++) {
+            if (!list.get(i).equals(that.list.get(i))) return false;
+        }
+
         return Objects.equals(name, that.name);
     }
 

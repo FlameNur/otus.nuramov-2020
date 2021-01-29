@@ -14,12 +14,11 @@ import java.util.Map;
 public class JsonObjectWriter {
 
     /**
-     *
-     * @param obj
-     * @return
-     * @throws IllegalAccessException
+     * Метод toJson из заданного объекта/экземпляра класса формирует json объект для сериализации
+     * @param obj - экземпляр класса для сериализации
+     * @return    - возвращает json объект формата String
      */
-    public String toJson(Object obj) throws IllegalAccessException {
+    public String toJson(Object obj) {
         // Начинаем собирать json объект
         StringBuilder stringBuilder = new StringBuilder("{");
         // Определяем класс пришедшего obj
@@ -37,28 +36,22 @@ public class JsonObjectWriter {
             stringBuilder.append("\"").append(fieldName).append("\":");
 
             // Определяем значение поля
-            field.setAccessible(true);
-            Object valueOfField = field.get(obj);
+            Object valueOfField = initValueOfField(field, obj);
 
             // Тип поля - Array
-            String arrayToJson = arrayToJson(field, valueOfField);
-            stringBuilder.append(arrayToJson);
+            stringBuilder.append(arrayToJson(field, valueOfField));
 
             // Тип поля - String, Character
-            String stringCharacterTypesToJson = stringCharacterTypesToJson(valueOfField);
-            stringBuilder.append(stringCharacterTypesToJson);
+            stringBuilder.append(stringCharacterTypesToJson(valueOfField));
 
             // Тип поля - Byte, Integer, Double, Float, Short, Long, Boolean
-            String simpleTypesToJson = simpleTypesToJson(valueOfField);
-            stringBuilder.append(simpleTypesToJson);
+            stringBuilder.append(simpleTypesToJson(valueOfField));
 
             // Тип поля - Map
-            String mapTypeToJson = mapTypeToJson(valueOfField);
-            stringBuilder.append(mapTypeToJson);
+            stringBuilder.append(mapTypeToJson(valueOfField));
 
             // Тип поля - Collection
-            String collectionTypeToJson = collectionTypeToJson(valueOfField);
-            stringBuilder.append(collectionTypeToJson);
+            stringBuilder.append(collectionTypeToJson(valueOfField));
 
             stringBuilder.append(",");
         }
@@ -71,7 +64,7 @@ public class JsonObjectWriter {
     /**
      * Метод simpleTypesToJson используется для работы с полями следубщих типов:
      * Byte, Integer, Double, Float, Short, Long, Boolean.
-     * @param o - значение поля объекта для сериализации. Если поле проходит условие проверки,
+     * @param o - значение поля экземпляра класса для сериализации. Если поле проходит условия проверок,
      *            значение поля прописывается в строку, т.е. становится частью объекта json.
      * @return  - возвращает строку со значением поля, т.е. часть объекта json,
      *            или пустую строку, если условие проверки не выполняется.
@@ -146,7 +139,7 @@ public class JsonObjectWriter {
 
     /**
      * Метод stringCharacterTypesToJson используется для работы с полями типов String и Character.
-     * @param o - значение поля объекта для сериализации. Если поле проходит условие проверки,
+     * @param o - значение поля объекта для сериализации. Если поле проходит условия проверок,
      *            значение поля прописывается в строку, т.е. становится частью объекта json.
      * @return  - возвращает строку со значением поля, т.е. часть объекта json,
      *            или пустую строку, если условие проверки не выполняется.
@@ -164,10 +157,12 @@ public class JsonObjectWriter {
     }
 
     /**
-     *
-     * @param f
-     * @param o
-     * @return
+     * Метод arrayToJson используется для работы с полями типа Array.
+     * @param f - поле объекта
+     * @param o - значение поля объекта для сериализации. Если поле проходит условие проверки,
+     *            значение поля прописывается в строку, т.е. становится частью объекта json.
+     * @return  - возвращает строку со значением поля, т.е. часть объекта json,
+     *            или пустую строку, если условие проверки не выполняется.
      */
     private String arrayToJson(Field f, Object o) {
         Field field = f;
@@ -186,5 +181,23 @@ public class JsonObjectWriter {
 
         String result = stringBuilder.toString();
         return result;
+    }
+
+    /**
+     * Метод initValueOfField используется для определния значения заданного поля
+     * @param field - поле объекта
+     * @param obj   - объект для сериализации/экземпляр класса
+     * @return      - возвращает значение заданного поля
+     */
+    private Object initValueOfField (Field field, Object obj) {
+        Object valueOfField = null;
+        field.setAccessible(true);
+        try {
+            valueOfField = field.get(obj);
+        } catch (IllegalAccessException e) {
+            System.out.println("Ошибка: IllegalAccessException");
+        }
+        field.setAccessible(false);
+        return valueOfField;
     }
 }

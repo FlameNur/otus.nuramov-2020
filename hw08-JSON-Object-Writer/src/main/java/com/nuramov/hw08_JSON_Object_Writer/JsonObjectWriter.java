@@ -19,6 +19,10 @@ public class JsonObjectWriter {
      * @return    - возвращает json объект формата String
      */
     public String toJson(Object obj) {
+        if (obj == null) {
+            throw new NullPointerException("Cannot serialize null value");
+        }
+
         // Начинаем собирать json объект
         StringBuilder stringBuilder = new StringBuilder("{");
         // Определяем класс пришедшего obj
@@ -195,7 +199,7 @@ public class JsonObjectWriter {
         try {
             valueOfField = field.get(obj);
         } catch (IllegalAccessException e) {
-            System.out.println("Ошибка: IllegalAccessException");
+            System.out.println("IllegalAccessException");
         }
         field.setAccessible(false);
         return valueOfField;

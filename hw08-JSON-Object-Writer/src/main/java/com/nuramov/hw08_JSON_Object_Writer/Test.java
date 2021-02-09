@@ -1,9 +1,8 @@
 package com.nuramov.hw08_JSON_Object_Writer;
 
 import com.google.gson.Gson;
-import com.nuramov.hw08_JSON_Object_Writer.testObjects.Car;
-import com.nuramov.hw08_JSON_Object_Writer.testObjects.Ford;
 
+import javax.json.JsonObject;
 import java.util.*;
 
 public class Test {
@@ -62,9 +61,9 @@ public class Test {
         carList.add("1");
         carList.add(null);
 //        carList.add(new Car());
-        System.out.println(test.toJson(carList));
+        //System.out.println(test.toJson(carList));              исправить!!!
 
-
+        System.out.println("Gson: ");
         Gson gson = new Gson();
         System.out.println(gson.toJson(carList));
         System.out.println();

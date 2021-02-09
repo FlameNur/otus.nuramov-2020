@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JsonObjectWriterTest {
     ClassToSerializing classToSerializing;
-    JsonObjectWriter jsonObjectWriter;
+    JsonObjectWriterDNTWRK jsonObjectWriter;
     Gson gson;
 
     @BeforeEach
@@ -24,7 +24,7 @@ class JsonObjectWriterTest {
 
     @BeforeEach
     void initObjectWriter() {
-        jsonObjectWriter = new JsonObjectWriter();
+        jsonObjectWriter = new JsonObjectWriterDNTWRK();
     }
 
     @BeforeEach

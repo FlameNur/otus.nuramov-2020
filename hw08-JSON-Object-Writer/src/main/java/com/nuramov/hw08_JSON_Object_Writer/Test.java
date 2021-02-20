@@ -71,7 +71,7 @@ public class Test {
 
     /*private static JsonObjectWriter myObjectTest(JsonObjectWriter test) throws IllegalAccessException {
 
-        Ford ford = new Ford();
+        Car ford = new Car();
         System.out.println(test.toJson(ford));
 
 

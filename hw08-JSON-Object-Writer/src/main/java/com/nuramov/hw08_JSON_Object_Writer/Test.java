@@ -12,7 +12,7 @@ public class Test {
 
         //myObjectTest(test);
 
-        arrayListTest(test);
+        //arrayListTest(test);
 
         //linkedListTest(test);
 
@@ -20,18 +20,18 @@ public class Test {
 
         //hashSetTest(test);
 
-        //stringTest(test);
+        stringTest(test);
 
         //arrayPrimitiveTest(test);
 
         //arrayObjTest(test);
 
-        //intTest(test);
+        intTest(test);
 
         //charTest(test);
     }
 
-    /*private static void mapTest(JsonObjectWriter test) throws IllegalAccessException {
+    private static void mapTest(JsonObjectWriter test) throws IllegalAccessException {
         Map<String, int[]> cars = new HashMap<>();
         int[] ints = {1, 2, 3};
         cars.put("1", ints);
@@ -42,7 +42,7 @@ public class Test {
         Gson gson = new Gson();
         System.out.println(gson.toJson(cars));
         System.out.println();
-    }*/
+    }
 
     /*private static void linkedListTest(JsonObjectWriter test) throws IllegalAccessException {
         List<Car> carList = new LinkedList<>();
@@ -56,18 +56,18 @@ public class Test {
         System.out.println();
     }*/
 
-    private static void arrayListTest(JsonObjectWriter test) throws IllegalAccessException {
+    /*private static void arrayListTest(JsonObjectWriter test) throws IllegalAccessException {
         List<String> carList = new ArrayList<>();
         carList.add("1");
         carList.add(null);
 //        carList.add(new Car());
-        //System.out.println(test.toJson(carList));              исправить!!!
+        System.out.println(test.toJson(carList, carList.getClass()));              //исправить!!!
 
         System.out.println("Gson: ");
         Gson gson = new Gson();
         System.out.println(gson.toJson(carList));
         System.out.println();
-    }
+    }*/
 
     /*private static JsonObjectWriter myObjectTest(JsonObjectWriter test) throws IllegalAccessException {
 
@@ -93,7 +93,7 @@ public class Test {
         System.out.println();
     }*/
 
-    /*private static void stringTest(JsonObjectWriter test) throws IllegalAccessException {
+    private static void stringTest(JsonObjectWriter test) throws IllegalAccessException {
 
         System.out.println(test.toJson("Привет"));
 
@@ -101,7 +101,7 @@ public class Test {
         Gson gson = new Gson();
         System.out.println(gson.toJson("Привет"));
         System.out.println();
-    }*/
+    }
 
     /*private static void arrayPrimitiveTest(JsonObjectWriter test) throws IllegalAccessException {
         int[][] ints = {{1, 2, 3}, {4, 5, 6}};
@@ -123,7 +123,7 @@ public class Test {
         System.out.println();
     }*/
 
-    /*private static void intTest(JsonObjectWriter test) throws IllegalAccessException {
+    private static void intTest(JsonObjectWriter test) throws IllegalAccessException {
 
         System.out.println(test.toJson(1));
 
@@ -131,7 +131,7 @@ public class Test {
         Gson gson = new Gson();
         System.out.println(gson.toJson(1));
         System.out.println();
-    }*/
+    }
 
     /*private static void charTest(JsonObjectWriter test) throws IllegalAccessException {
 

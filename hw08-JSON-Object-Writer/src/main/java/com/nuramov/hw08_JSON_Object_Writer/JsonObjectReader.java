@@ -12,10 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Пример десериализатора
+ * Пример десериализатора из просторов инета
  */
 
-public class TestObjectWriter {
+public class JsonObjectReader {
 
     public static <T> T fromJson(String json, Class<T> beanClass) {
         JsonValue value = Json.createReader(new StringReader(json)).read();

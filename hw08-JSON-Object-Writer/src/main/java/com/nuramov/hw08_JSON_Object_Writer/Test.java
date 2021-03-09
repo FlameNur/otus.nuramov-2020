@@ -17,7 +17,7 @@ public class Test {
 
         //linkedListTest(test);
 
-        //mapTest(test);
+        mapTest(test);
 
         //hashSetTest(test);
 

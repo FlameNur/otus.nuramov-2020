@@ -17,19 +17,19 @@ public class Test {
 
         //linkedListTest(test);
 
-        mapTest(test);
+        //mapTest(test);
 
         //hashSetTest(test);
 
-        stringTest(test);
+        //stringTest(test);
 
         arrayPrimitiveTest(test);
 
         //arrayObjTest(test);
 
-        intTest(test);
+        //intTest(test);
 
-        charTest(test);
+        //charTest(test);
     }
 
     private static void mapTest(JsonObjectWriter test) throws IllegalAccessException {
@@ -64,7 +64,7 @@ public class Test {
 //        carList.add(new Car());
         System.out.println(test.toJson(carList));              //исправить!!!
 
-        System.out.println("Gson: ");
+        //System.out.println("Gson: ");
         Gson gson = new Gson();
         System.out.println(gson.toJson(carList));
         System.out.println();

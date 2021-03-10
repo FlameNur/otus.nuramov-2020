@@ -2,14 +2,12 @@ package com.nuramov.hw08_JSON_Object_Writer;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * class JsonObjectWriter представляет собой json object writer (object to JSON string) аналогичный gson
@@ -23,34 +21,50 @@ public class JsonObjectWriter {
      * @return
      */
     public String toJson(Object obj) {
-        if (obj == null) {
-            return null;
+        StringWriter writer = new StringWriter();
+
+        if(obj == null){
+            writer.write("null");
+            return writer.toString();
         }
-        if (obj instanceof String || obj instanceof Character) {
-            return "\"" + obj.toString() + "\"";
+
+        if(obj instanceof String){
+            writer.write('\"');
+            writer.write((String) obj);
+            writer.write('\"');
+            return writer.toString();
         }
-        /*if (obj instanceof Byte || obj instanceof Integer || obj instanceof Double ||
-                obj instanceof Float || obj instanceof Short ||
-                obj instanceof Long || obj instanceof Boolean) {
-            return obj.toString();
-        }*/
-        return toJsonObject(obj);
-    }
 
-    /**
-     *
-     * @param obj
-     * @return
-     */
-    private String toJsonObject(Object obj) {
-        String result;
+        if(obj instanceof Character){
+            writer.write('\"');
+            writer.write((Character) obj);
+            writer.write('\"');
+            return writer.toString();
+        }
 
-        if (obj instanceof Map) result = mapTypeToJson((Map) obj);
-        if (obj instanceof Collection) result = collectionTypeToJson((Collection) obj);
-        if (obj.getClass().isArray()) result = arrayToJson(obj);
-        else result = otherClassToJson(obj);
+        if(obj instanceof Number){
+            writer.write(obj.toString());
+            return writer.toString();
+        }
 
-        return result;
+        if(obj instanceof Boolean){
+            writer.write(obj.toString());
+            return writer.toString();
+        }
+
+        if(obj instanceof Map) {
+            return mapTypeToJson((Map) obj);
+        }
+
+        if (obj instanceof Collection) {
+            return collectionTypeToJson((Collection) obj);
+        }
+
+        if (obj.getClass().isArray()) {
+            return arrayToJson(obj);
+        }
+
+        return "otherClassToJson(obj)";
     }
 
     /**
@@ -59,23 +73,13 @@ public class JsonObjectWriter {
      * @return
      */
     private String mapTypeToJson(Map obj) {
-        String result = "";
-        JSONObject jsonObject = new JSONObject();
         StringWriter writer = new StringWriter();
-
         try {
             JSONObject.writeJSONString(obj, writer);
-            writer.close();                                   // Надо проверить
             return writer.toString();
-        } catch(IOException e){
-            // This should never happen for a StringWriter
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
-
-
-        //return result;
     }
 
     /**
@@ -83,8 +87,15 @@ public class JsonObjectWriter {
      * @param obj
      * @return
      */
-    private String collectionTypeToJson(Object obj) {
+    private String collectionTypeToJson(Collection obj) {
         String result = "";
+        JSONArray jsonArray = new JSONArray();
+
+        for (Object o : obj) {
+            jsonArray.add(toJson(o));
+        }
+        result = jsonArray.toString();
+
         return result;
     }
 
@@ -94,27 +105,15 @@ public class JsonObjectWriter {
      * @return
      */
     private String arrayToJson(Object obj) {
-        String result = "";
         JSONArray jsonArray = new JSONArray();
-        JSONObject jsonObject = new JSONObject();
-        StringWriter writer = new StringWriter();
-
-
-
-
-
-
-
         int length = Array.getLength(obj);
+
         for (int i = 0; i < length; i++) {
-            //jsonArray.add(Array.get(obj, i));
-            //jsonArray.add(obj[i]);
-
-
+            Object o = Array.get(obj, i);
+            jsonArray.add(toJson(o));
         }
-        result = jsonArray.toString();
 
-        return result;
+        return jsonArray.toString();
     }
 
     /**

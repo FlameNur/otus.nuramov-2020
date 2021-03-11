@@ -3,7 +3,10 @@ package com.nuramov.hw08_JSON_Object_Writer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import javax.json.JsonArray;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
@@ -21,36 +24,17 @@ public class JsonObjectWriter {
      * @return
      */
     public String toJson(Object obj) {
-        StringWriter writer = new StringWriter();
-
         if(obj == null){
-            writer.write("null");
-            return writer.toString();
+            return null;
         }
 
-        if(obj instanceof String){
-            writer.write('\"');
-            writer.write((String) obj);
-            writer.write('\"');
-            return writer.toString();
+        if(obj instanceof String || obj instanceof Character){
+            return '\"' + obj.toString() + '\"';
         }
 
-        if(obj instanceof Character){
-            writer.write('\"');
-            writer.write((Character) obj);
-            writer.write('\"');
-            return writer.toString();
-        }
-
-        if(obj instanceof Number){
-            writer.write(obj.toString());
-            return writer.toString();
-        }
-
-        if(obj instanceof Boolean){
-            writer.write(obj.toString());
-            return writer.toString();
-        }
+        /*if(obj instanceof Number || obj instanceof Boolean){
+            return obj.toString();
+        }*/
 
         if(obj instanceof Map) {
             return mapTypeToJson((Map) obj);
@@ -60,12 +44,27 @@ public class JsonObjectWriter {
             return collectionTypeToJson((Collection) obj);
         }
 
-        if (obj.getClass().isArray()) {
-            return arrayToJson(obj);
+        /*if (obj.getClass().isArray()) {
+            String s = arrayToJson(obj).toString();
+            System.out.println(s);
+            return s;
+        }*/
+
+        return toJsonObject(obj).toString();
+    }
+
+    private Object toJsonObject (Object obj) {
+        if(obj instanceof Number || obj instanceof Boolean){
+            return obj;
         }
 
-        return "otherClassToJson(obj)";
+        if (obj.getClass().isArray()) {
+
+            return arrayToJson(obj);
+        }
+        return null;
     }
+
 
     /**
      *
@@ -88,15 +87,12 @@ public class JsonObjectWriter {
      * @return
      */
     private String collectionTypeToJson(Collection obj) {
-        String result = "";
         JSONArray jsonArray = new JSONArray();
 
         for (Object o : obj) {
             jsonArray.add(toJson(o));
         }
-        result = jsonArray.toString();
-
-        return result;
+        return jsonArray.toString();
     }
 
     /**
@@ -104,7 +100,7 @@ public class JsonObjectWriter {
      * @param obj
      * @return
      */
-    private String arrayToJson(Object obj) {
+    private Object arrayToJson(Object obj) {
         JSONArray jsonArray = new JSONArray();
         int length = Array.getLength(obj);
 
@@ -112,8 +108,7 @@ public class JsonObjectWriter {
             Object o = Array.get(obj, i);
             jsonArray.add(toJson(o));
         }
-
-        return jsonArray.toString();
+        return jsonArray;
     }
 
     /**

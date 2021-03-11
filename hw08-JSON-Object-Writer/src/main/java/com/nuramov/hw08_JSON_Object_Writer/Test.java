@@ -13,7 +13,9 @@ public class Test {
 
         //myObjectTest(test);
 
-        //arrayListTest(test);
+        arrayListTest(test);
+
+        arrayStringTest(test);
 
         //linkedListTest(test);
 
@@ -21,15 +23,17 @@ public class Test {
 
         //hashSetTest(test);
 
-        //stringTest(test);
+        stringTest(test);
 
         arrayPrimitiveTest(test);
 
         //arrayObjTest(test);
 
-        //intTest(test);
+        intTest(test);
 
-        //charTest(test);
+        nullTest(test);
+
+        charTest(test);
     }
 
     private static void mapTest(JsonObjectWriter test) throws IllegalAccessException {
@@ -37,6 +41,7 @@ public class Test {
         int[] ints = {1, 2, 3};
         cars.put("1", ints);
 //        cars.put("2", new Car());
+        //cars.put(null, ints);
         System.out.println(test.toJson(cars));
 
 
@@ -114,6 +119,17 @@ public class Test {
         System.out.println();
     }
 
+    private static void arrayStringTest(JsonObjectWriter test) throws IllegalAccessException {
+        //String[][] strings= {{"s1", "s2", "s3"}, {"s4", "s5", "s6"}};
+        String[] strings= {"s1", "s2", "s3"};
+        System.out.println(test.toJson(strings));
+
+
+        Gson gson = new Gson();
+        System.out.println(gson.toJson(strings));
+        System.out.println();
+    }
+
     private static void arrayObjTest(JsonObjectWriter test) throws IllegalAccessException {
         Car[][] cars = {{null}, {new Car()}};
         System.out.println(test.toJson(cars));
@@ -131,6 +147,16 @@ public class Test {
 
         Gson gson = new Gson();
         System.out.println(gson.toJson(1));
+        System.out.println();
+    }
+
+    private static void nullTest(JsonObjectWriter test) throws IllegalAccessException {
+
+        System.out.println(test.toJson(null));
+
+
+        Gson gson = new Gson();
+        System.out.println(gson.toJson(null));
         System.out.println();
     }
 

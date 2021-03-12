@@ -11,23 +11,23 @@ public class Test {
 
         JsonObjectWriter test = new JsonObjectWriter();
 
-        //myObjectTest(test);
+        myObjectTest(test);
 
         arrayListTest(test);
 
         arrayStringTest(test);
 
-        //linkedListTest(test);
+        linkedListTest(test);
 
-        //mapTest(test);
+        mapTest(test);
 
-        //hashSetTest(test);
+        hashSetTest(test);
 
         stringTest(test);
 
         arrayPrimitiveTest(test);
 
-        //arrayObjTest(test);
+        arrayObjTest(test);
 
         intTest(test);
 
@@ -120,8 +120,8 @@ public class Test {
     }
 
     private static void arrayStringTest(JsonObjectWriter test) throws IllegalAccessException {
-        //String[][] strings= {{"s1", "s2", "s3"}, {"s4", "s5", "s6"}};
-        String[] strings= {"s1", "s2", "s3"};
+        String[][] strings= {{"s1", "s2", "s3"}, {"s4", "s5", "s6"}};
+        //String[] strings= {"s1", "s2", "s3"};
         System.out.println(test.toJson(strings));
 
 

@@ -2,14 +2,10 @@ package com.nuramov.hw08_JSON_Object_Writer;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import javax.json.JsonArray;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -31,38 +27,36 @@ public class JsonObjectWriter {
         if(obj instanceof String || obj instanceof Character){
             return '\"' + obj.toString() + '\"';
         }
+        return toJsonObject(obj).toString();
+    }
 
-        /*if(obj instanceof Number || obj instanceof Boolean){
-            return obj.toString();
-        }*/
+    /**
+     *
+     * @param obj
+     * @return
+     */
+    private Object toJsonObject (Object obj) {
+        if(obj == null){
+            return null;
+        }
 
-        if(obj instanceof Map) {
-            return mapTypeToJson((Map) obj);
+        if(obj instanceof String || obj instanceof Character ||
+                obj instanceof Number || obj instanceof Boolean){
+            return obj;
+        }
+
+        if (obj.getClass().isArray()) {
+            return arrayToJson(obj);
         }
 
         if (obj instanceof Collection) {
             return collectionTypeToJson((Collection) obj);
         }
 
-        /*if (obj.getClass().isArray()) {
-            String s = arrayToJson(obj).toString();
-            System.out.println(s);
-            return s;
-        }*/
-
-        return toJsonObject(obj).toString();
-    }
-
-    private Object toJsonObject (Object obj) {
-        if(obj instanceof Number || obj instanceof Boolean){
-            return obj;
+        if(obj instanceof Map) {
+            return mapTypeToJson((Map) obj);
         }
-
-        if (obj.getClass().isArray()) {
-
-            return arrayToJson(obj);
-        }
-        return null;
+        return otherClassToJson(obj);
     }
 
 
@@ -72,13 +66,13 @@ public class JsonObjectWriter {
      * @return
      */
     private String mapTypeToJson(Map obj) {
-        StringWriter writer = new StringWriter();
-        try {
-            JSONObject.writeJSONString(obj, writer);
-            return writer.toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        JSONObject jsonObject = new JSONObject();
+
+        for (Object key : obj.keySet()) {
+            Object value = obj.get(key);
+            jsonObject.put(toJsonObject(key), toJsonObject(value));
         }
+        return jsonObject.toString();
     }
 
     /**
@@ -90,7 +84,7 @@ public class JsonObjectWriter {
         JSONArray jsonArray = new JSONArray();
 
         for (Object o : obj) {
-            jsonArray.add(toJson(o));
+            jsonArray.add(toJsonObject(o));
         }
         return jsonArray.toString();
     }
@@ -106,7 +100,7 @@ public class JsonObjectWriter {
 
         for (int i = 0; i < length; i++) {
             Object o = Array.get(obj, i);
-            jsonArray.add(toJson(o));
+            jsonArray.add(toJsonObject(o));
         }
         return jsonArray;
     }
@@ -116,11 +110,43 @@ public class JsonObjectWriter {
      * @param obj
      * @return
      */
-    private String otherClassToJson(Object obj) {
-        String result = "";
-        JSONArray jsonArray = new JSONArray();
+    private Object otherClassToJson(Object obj) {
+        JSONObject jsonObject = new JSONObject();
 
+        // Определяем класс пришедшего obj
+        Class<?> cls = obj.getClass();
+        // Определяем поля класса
+        //Field[] fields = cls.getDeclaredFields();
+        Set<Field> fields = new LinkedHashSet<>(Arrays.asList(cls.getDeclaredFields()));
 
-        return result;
+        for (Field field : fields) {
+            // Исключаем static поля класса
+            int modifier = field.getModifiers();
+            if(Modifier.isStatic(modifier)) continue;
+
+            // Определяем название поля
+            String fieldName = field.getName();
+
+            // Определяем значение поля
+            Object valueOfField = initValueOfField(field, obj);
+
+            if (valueOfField != null) {
+                jsonObject.put(toJsonObject(fieldName), toJsonObject(valueOfField));
+            } else continue;
+        }
+
+        return jsonObject;
+    }
+
+    private Object initValueOfField (Field field, Object obj) {
+        Object valueOfField = null;
+        field.setAccessible(true);
+        try {
+            valueOfField = field.get(obj);
+        } catch (IllegalAccessException e) {
+            System.out.println("IllegalAccessException");
+        }
+        field.setAccessible(false);
+        return valueOfField;
     }
 }

@@ -21,6 +21,34 @@ public class Car {
         rules3.add(maps);
     }
 
+    /*
+    // Если потребуется сравнивать объекты через equals()
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Car that = (Car) o;
+
+        if (!Objects.equals(anyString, that.anyString)) return false;
+        if (anyInt != that.anyInt) return false;
+
+        // Сравнение map
+        if (map.size() != that.map.size()) return false;
+        for (Integer key : map.keySet()) {
+            if (!map.get(key).equals(that.map.get(key))) return false;
+        }
+
+        // Сравнение list
+        if (list.size() != that.list.size()) return false;
+        for (int i = 0; i < list.size(); i++) {
+            if (!list.get(i).equals(that.list.get(i))) return false;
+        }
+
+        return Objects.equals(anyName, that.anyName);
+    }
+     */
+
     @Override
     public String toString() {
         return "Car{" +

@@ -9,15 +9,15 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
- * class JsonObjectWriter представляет собой json object writer (object to JSON string) аналогичный gson
+ * class JsonObjectWriter представляет собой json object writer (object to JSON string) аналогичный Gson
  */
 
 public class JsonObjectWriter {
 
     /**
-     *
-     * @param obj
-     * @return
+     * Метод toJson из заданного объекта/экземпляра класса формирует json объект (сериализует)
+     * @param obj - объект для сериализации
+     * @return    - возвращает json объект формата String
      */
     public String toJson(Object obj) {
         if(obj == null){
@@ -31,9 +31,9 @@ public class JsonObjectWriter {
     }
 
     /**
-     *
-     * @param obj
-     * @return
+     * Метод toJsonObject определяет тип объекта
+     * @param obj - объект для сериализации
+     * @return    - возвращает готовый для сериализации объект
      */
     private Object toJsonObject (Object obj) {
         if(obj == null){
@@ -61,38 +61,43 @@ public class JsonObjectWriter {
 
 
     /**
-     *
-     * @param obj
-     * @return
+     * Метод mapTypeToJson используется для работы объектами типа Map.
+     * @param obj - объект для сериализации
+     * @return    - возвращает готовый для сериализации объект
      */
-    private String mapTypeToJson(Map obj) {
+    private Object mapTypeToJson(Map obj) {
         JSONObject jsonObject = new JSONObject();
 
         for (Object key : obj.keySet()) {
             Object value = obj.get(key);
+            if (value == null) {
+                continue;
+            } else {
+                jsonObject.put(toJsonObject(key), toJsonObject(value));
+            }
             jsonObject.put(toJsonObject(key), toJsonObject(value));
         }
-        return jsonObject.toString();
+        return jsonObject;
     }
 
     /**
-     *
-     * @param obj
-     * @return
+     * Метод collectionTypeToJson используется для работы с объектами типа Collection.
+     * @param obj - объект для сериализации
+     * @return    - возвращает готовый для сериализации объект
      */
-    private String collectionTypeToJson(Collection obj) {
+    private Object collectionTypeToJson(Collection obj) {
         JSONArray jsonArray = new JSONArray();
 
         for (Object o : obj) {
             jsonArray.add(toJsonObject(o));
         }
-        return jsonArray.toString();
+        return jsonArray;
     }
 
     /**
-     *
-     * @param obj
-     * @return
+     * Метод arrayToJson используется для работы с объектами типа Array
+     * @param obj - объект для сериализации
+     * @return    - возвращает готовый для сериализации объект
      */
     private Object arrayToJson(Object obj) {
         JSONArray jsonArray = new JSONArray();
@@ -106,9 +111,9 @@ public class JsonObjectWriter {
     }
 
     /**
-     *
-     * @param obj
-     * @return
+     * Метод otherClassToJson используется для работы с объектами класса, имеющих в качестве поля другие объекты
+     * @param obj - объект для сериализации
+     * @return    - возвращает готовый для сериализации объект
      */
     private Object otherClassToJson(Object obj) {
         JSONObject jsonObject = new JSONObject();
@@ -138,6 +143,12 @@ public class JsonObjectWriter {
         return jsonObject;
     }
 
+    /**
+     * Метод initValueOfField используется для определния значения заданного поля
+     * @param field - поле объекта;
+     * @param obj   - объект для сериализации.
+     * @return      - возвращает значение поля объекта
+     */
     private Object initValueOfField (Field field, Object obj) {
         Object valueOfField = null;
         field.setAccessible(true);

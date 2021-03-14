@@ -3,7 +3,6 @@ package com.nuramov.hw08_JSON_Object_Writer;
 import com.google.gson.Gson;
 import com.nuramov.hw08_JSON_Object_Writer.testObjects.Car;
 
-import javax.json.JsonObject;
 import java.util.*;
 
 public class Test {
@@ -34,6 +33,24 @@ public class Test {
         nullTest(test);
 
         charTest(test);
+
+        Gson gson = new Gson();
+        Car obj = new Car();
+        System.out.println(obj);
+        System.out.println();
+
+        String json = gson.toJson(obj);
+        String myJson = test.toJson(obj);
+        System.out.println(json);
+        System.out.println(myJson);
+        System.out.println();
+
+        Car objFromGson = gson.fromJson(json, Car.class);
+        System.out.println(objFromGson);
+        System.out.println();
+
+        Car objFromObjectWriter = gson.fromJson(myJson, Car.class);
+        System.out.println(objFromObjectWriter);
     }
 
     private static void mapTest(JsonObjectWriter test) throws IllegalAccessException {
@@ -41,7 +58,6 @@ public class Test {
         int[] ints = {1, 2, 3};
         cars.put("1", ints);
 //        cars.put("2", new Car());
-        //cars.put(null, ints);
         System.out.println(test.toJson(cars));
 
 
@@ -67,9 +83,8 @@ public class Test {
         carList.add("1");
         carList.add(null);
 //        carList.add(new Car());
-        System.out.println(test.toJson(carList));              //исправить!!!
+        System.out.println(test.toJson(carList));
 
-        //System.out.println("Gson: ");
         Gson gson = new Gson();
         System.out.println(gson.toJson(carList));
         System.out.println();

@@ -70,11 +70,7 @@ public class JsonObjectWriter {
 
         for (Object key : obj.keySet()) {
             Object value = obj.get(key);
-            if (value == null) {
-                continue;
-            } else {
-                jsonObject.put(toJsonObject(key), toJsonObject(value));
-            }
+            if (value == null) continue;
             jsonObject.put(toJsonObject(key), toJsonObject(value));
         }
         return jsonObject;
@@ -133,7 +129,7 @@ public class JsonObjectWriter {
             String fieldName = field.getName();
 
             // Определяем значение поля
-            Object valueOfField = initValueOfField(field, obj);
+            Object valueOfField = getValueOfField(field, obj);
 
             if (valueOfField != null) {
                 jsonObject.put(toJsonObject(fieldName), toJsonObject(valueOfField));
@@ -144,12 +140,12 @@ public class JsonObjectWriter {
     }
 
     /**
-     * Метод initValueOfField используется для определния значения заданного поля
+     * Метод initValueOfField используется для получения значения заданного поля
      * @param field - поле объекта;
      * @param obj   - объект для сериализации.
      * @return      - возвращает значение поля объекта
      */
-    private Object initValueOfField (Field field, Object obj) {
+    private Object getValueOfField(Field field, Object obj) {
         Object valueOfField = null;
         field.setAccessible(true);
         try {

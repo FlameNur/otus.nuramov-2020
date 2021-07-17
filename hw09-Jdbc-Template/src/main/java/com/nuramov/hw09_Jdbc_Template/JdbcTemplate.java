@@ -22,4 +22,10 @@ public class JdbcTemplate <T> {
     void update(T objectData) {
         // Что-то
     }
+
+    // Этот метод должен быть
+    <T> T load(long id, Class<T> clazz) {
+        // Что-то
+        return null;
+    }
 }

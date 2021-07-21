@@ -11,6 +11,11 @@ public class H2demo {
     private static final String URL = "jdbc:h2:mem:";
     private final Connection connection;
 
+    public H2demo() throws SQLException {
+        this.connection = DriverManager.getConnection(URL);
+        this.connection.setAutoCommit(false);
+    }
+
     public static void main(String[] args) throws SQLException {
         H2demo demo = new H2demo();
         demo.createTable();
@@ -18,11 +23,6 @@ public class H2demo {
         demo.insertRecord(id);
         demo.selectRecord(id);
         demo.close();
-    }
-
-    public H2demo() throws SQLException {
-        this.connection = DriverManager.getConnection(URL);
-        this.connection.setAutoCommit(false);
     }
 
     private void createTable() throws SQLException {

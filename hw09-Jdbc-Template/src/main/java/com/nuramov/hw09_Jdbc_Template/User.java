@@ -12,8 +12,10 @@ public class User {
     private String name;
     private int age;
 
-    public User() {
+    public User(String name, int age) {
         id = ++count;
+        this.name = name;
+        this.age = age;
     }
 
     public long getID() {
@@ -26,5 +28,14 @@ public class User {
 
     public int getAge() {
         return age;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                '}';
     }
 }

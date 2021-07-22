@@ -7,6 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
+/**
+ * Этот класс в качестве примера работы
+ */
+
 public class H2demo {
     private static final String URL = "jdbc:h2:mem:";
     private final Connection connection;
@@ -31,9 +35,14 @@ public class H2demo {
         }
     }
 
+    // Вставляем строки в таблицу
     private void insertRecord(int id) throws SQLException {
         try (PreparedStatement pst = connection.prepareStatement("insert into test(id, name) values (?, ?)")) {
+
+            // Точка сохранения
             Savepoint savePoint = this.connection.setSavepoint("savePointName");
+
+            // Параметры
             pst.setInt(1, id);
             pst.setString(2, "NameValue");
             try {
@@ -47,6 +56,7 @@ public class H2demo {
         }
     }
 
+    // Получаем значения из таблицы
     private void selectRecord(int id) throws SQLException {
         try (PreparedStatement pst = this.connection.prepareStatement("select name from test where id  = ?")) {
             pst.setInt(1, id);

@@ -5,12 +5,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class JdbcTemplate <T> {
-    // Просто пример проверки соединнения с БД
-    private Connection getNewConnection() throws SQLException {
-        String url = "jdbc:h2:mem:test";
-        String user = "sa";
-        String passwd = "sa";
-        return DriverManager.getConnection(url, user, passwd);
+    private static final String URL = "jdbc:h2:mem:";
+    private final Connection connection;
+
+    public JdbcTemplate() throws SQLException {
+        this.connection = DriverManager.getConnection(URL);
+        this.connection.setAutoCommit(false);
     }
 
     // Этот метод должен быть
@@ -28,4 +28,21 @@ public class JdbcTemplate <T> {
         // Что-то
         return null;
     }
+
+    /**
+     * Метод close() закрывает соединение
+     * @throws SQLException
+     */
+    public void close() throws SQLException {
+        this.connection.close();
+    }
+
+
+
+
+    /*// Пример проверки соединнения с БД
+    private Connection getNewConnection() throws SQLException {
+        String url = "jdbc:h2:mem:";
+        return DriverManager.getConnection(url);
+    }*/
 }

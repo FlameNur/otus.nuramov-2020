@@ -1,10 +1,14 @@
 package com.nuramov.hw09_Jdbc_Template;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class main {
     public static void main(String[] args) throws SQLException {
         JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        jdbcTemplate.getConnection();
+        jdbcTemplate.createTable();
+
         User user1 = new User("Tom", 32);
         User user2 = new User("Bill", 64);
         User user3 = new User("Rex", 18);

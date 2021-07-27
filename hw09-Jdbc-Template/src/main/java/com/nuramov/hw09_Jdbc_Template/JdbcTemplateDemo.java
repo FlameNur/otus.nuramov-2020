@@ -34,7 +34,7 @@ public class JdbcTemplateDemo {
 
 
         // Работаем с классом Account для дополнительной проверки
-        //jdbcTemplate.create();
+        jdbcTemplate.create(user1);
         //jdbcTemplate.update();
         jdbcTemplate.load(2, Account.class);
 

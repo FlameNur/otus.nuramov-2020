@@ -20,12 +20,14 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
 
         // Определяем поля класса
         Class<?> cls = objectData.getClass();
+        String className = cls.getName();
+
         Field[] fields = cls.getDeclaredFields();
         for (Field field : fields) {
             if(field.isAnnotationPresent(id.class)) {
                 System.out.println("Круто!");
-            } else System.out.println("Ошибка");
-
+                makeTable(fields, className);
+            }
 
             Class<?> fld = field.getType();
             System.out.println("Class name : " + field.getName());
@@ -44,5 +46,19 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
     public <T> T load(long id, Class<T> clazz) {
         // Что-то
         return null;
+    }
+
+    private void makeTable(Field[] fields, String className) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + className + " VALUES(?, ?, ?, ?)");
+            for (Field field : fields) {
+                //preparedStatement.setLong(1, );
+            }
+
+
+        } catch (SQLException e) {
+           e.printStackTrace();
+        }
+
     }
 }

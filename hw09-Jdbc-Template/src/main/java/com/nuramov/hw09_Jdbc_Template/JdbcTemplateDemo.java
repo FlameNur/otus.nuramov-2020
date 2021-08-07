@@ -1,9 +1,6 @@
 package com.nuramov.hw09_Jdbc_Template;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class JdbcTemplateDemo {
     private static final String URL = "jdbc:h2:mem:";
@@ -34,9 +31,22 @@ public class JdbcTemplateDemo {
 
 
         // Работаем с классом Account для дополнительной проверки
-        jdbcTemplate.create(user1);
+        //jdbcTemplate.create(user1);
         //jdbcTemplate.update();
         jdbcTemplate.load(2, Account.class);
+
+
+
+        // Просто попробова___________________Получение таблицы
+        DatabaseMetaData metadata = connection.getMetaData();
+        ResultSet resultSet;
+        resultSet = metadata.getTables(null, null, "tablename", null);
+        if(resultSet!=null){
+            // next() checks if the next table exists ...
+            System.out.println("Table exists");
+        }
+        //_______________________________
+
 
 
         demo.close(connection);
@@ -61,6 +71,7 @@ public class JdbcTemplateDemo {
      *
      * @throws SQLException
      */
+    // Создал таблицу User, надо подумать как создать таблицу с именем нужного класса
     public void createTable(Connection connection) throws SQLException {
         try (PreparedStatement pst = connection.prepareStatement("create table User" +
                 "(id bigint(20) NOT NULL auto_increment, name varchar(255), age int(3))")) {

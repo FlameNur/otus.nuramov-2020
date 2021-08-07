@@ -25,7 +25,6 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
         Field[] fields = cls.getDeclaredFields();
         for (Field field : fields) {
             if(field.isAnnotationPresent(id.class)) {
-                System.out.println("Круто!");
                 makeTable(fields, className);
             }
 

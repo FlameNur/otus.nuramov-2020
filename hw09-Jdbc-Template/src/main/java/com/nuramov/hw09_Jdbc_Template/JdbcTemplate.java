@@ -3,11 +3,11 @@ package com.nuramov.hw09_Jdbc_Template;
 public interface JdbcTemplate {
 
     // Этот метод должен быть
-    <T> void create(T objectData);
+    <T> void create(User objectData); // (T objectData)
 
     // Этот метод должен быть
     <T> void update(T objectData);
 
     // Этот метод должен быть
-    <T> T load(long id, Class<T> clazz);
+    User load(long id); // <T> T load(long id, Class<T> clazz);
 }

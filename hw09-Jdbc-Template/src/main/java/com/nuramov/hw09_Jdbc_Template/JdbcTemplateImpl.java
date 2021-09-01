@@ -13,8 +13,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
     }
 
     @Override
-    public <T> void create(User objectData) { // Должно быть - public <T> void create(T objectData) и переделать JdbcTemplate
-
+    public <T> void create(User objectData) { // public <T> void create(T objectData)
         // Определяем поля класса
         Class<?> cls = objectData.getClass();
 
@@ -23,23 +22,31 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             if(field.isAnnotationPresent(id.class)) {
                 makeTable(connection, objectData);
             }
-
             /*// Это в целом не нужно
             Class<?> fld = field.getType();
             System.out.println("Class name : " + field.getName());
             System.out.println("Class type : " + fld.getName());*/
         }
-
-
     }
 
     @Override
-    public <T> void update(T objectData) {
-        // Что-то
+    public <T> void update(User user) {  // public <T> void update(T objectData)
+        try {
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("UPDATE User SET name=?, age=? WHERE id=?");
+
+            preparedStatement.setLong(1, user.getID());
+            preparedStatement.setString(2, user.getName());
+            preparedStatement.setInt(3, user.getAge());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     @Override
-    public User load(long id) { // Должно быть - public <T> T load(long id, Class<T> clazz)
+    public User load(long id) { // public <T> T load(long id, Class<T> clazz)
         User user = null;
 
         try {
@@ -47,21 +54,17 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
                     connection.prepareStatement("SELECT * FROM User WHERE id=?");
 
             preparedStatement.setLong(1, id);
-
             ResultSet resultSet = preparedStatement.executeQuery();
-
             resultSet.next();
 
-            user = new User("user", 1);
+            user = new User(); // ТАк не работает
 
-            user.setId(resultSet.getLong("id"));
-            user.setName(resultSet.getString("name"));
-            user.setAge(resultSet.getInt("age"));
+            user.setId(resultSet.getLong(1));
+            user.setName(resultSet.getString(2));
+            user.setAge(resultSet.getInt(3));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
-
 
         return user;
     }
@@ -77,7 +80,6 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
         }
 
         try {
-            //Хотел так "INSERT INTO User" + user.getClass() + " VALUES(?, ?, ?)" но так не работает
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO User VALUES(?, ?, ?)");
 
             preparedStatement.setLong(1, user.getID());
@@ -88,6 +90,5 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
         } catch (SQLException e) {
            e.printStackTrace();
         }
-
     }
 }

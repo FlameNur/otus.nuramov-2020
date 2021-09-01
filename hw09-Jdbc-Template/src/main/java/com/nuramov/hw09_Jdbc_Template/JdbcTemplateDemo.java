@@ -12,43 +12,30 @@ public class JdbcTemplateDemo {
 
         JdbcTemplate jdbcTemplate = new JdbcTemplateImpl<>(connection);
 
-        User user1 = new User("Tom", 32);
-        User user2 = new User("Bill", 64);
-        User user3 = new User("Rex", 18);
+        User user1 = new User();
+        user1.setAge(10);
+        user1.setName("Bill");
 
-        Account account1 = new Account("AAA", 4);
-        Account account2 = new Account("BBB", 102);
-        Account account3 = new Account("CCC", 73);
+        User user2 = new User();
+        user2.setAge(20);
+        user2.setName("Tom");
 
-        System.out.println("Проверка определния id/no:");
-        System.out.println(user2.toString());
-        System.out.println(account3.toString());
 
         // Работаем с классом User
         jdbcTemplate.create(user1);
-        //jdbcTemplate.update();
+        jdbcTemplate.update(user1);
         User loadedUser = jdbcTemplate.load(2); // User loadedUser = jdbcTemplate.load(2, User.class);
-        System.out.println(loadedUser.toString());
-
-
-        // Работаем с классом Account для дополнительной проверки
-        //jdbcTemplate.create(user1);
-        //jdbcTemplate.update();
-        //jdbcTemplate.load(2, Account.class);
-
-
+        System.out.println(loadedUser);
 
         // Просто попробова___________________Получение таблицы
         DatabaseMetaData metadata = connection.getMetaData();
         ResultSet resultSet;
-        resultSet = metadata.getTables(null, null, "tablename", null);
+        resultSet = metadata.getTables(null, null, "User", null);
         if(resultSet!=null){
             // next() checks if the next table exists ...
             System.out.println("Table exists");
         }
         //_______________________________
-
-
 
         demo.close(connection);
     }

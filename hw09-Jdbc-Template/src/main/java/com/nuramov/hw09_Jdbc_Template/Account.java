@@ -10,10 +10,8 @@ public class Account {
     private String type;
     private int rest;
 
-    public Account(String name, int age) {
+    public Account() {
         no = ++count;
-        this.type = name;
-        this.rest = age;
     }
 
     public long getID() {
@@ -26,6 +24,18 @@ public class Account {
 
     public int getRest() {
         return rest;
+    }
+
+    public void setNo(long no) {
+        this.no = no;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setRest(int rest) {
+        this.rest = rest;
     }
 
     @Override

@@ -12,10 +12,8 @@ public class User {
     private String name;
     private int age;
 
-    public User(String name, int age) {
+    public User() {
         id = ++count;
-        this.name = name;
-        this.age = age;
     }
 
     public long getID() {

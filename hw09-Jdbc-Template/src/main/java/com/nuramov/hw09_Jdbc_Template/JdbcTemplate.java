@@ -6,7 +6,7 @@ public interface JdbcTemplate {
     <T> void create(User objectData); // (T objectData)
 
     // Этот метод должен быть
-    <T> void update(T objectData);
+    <T> void update(User objectData); // (T objectData)
 
     // Этот метод должен быть
     User load(long id); // <T> T load(long id, Class<T> clazz);

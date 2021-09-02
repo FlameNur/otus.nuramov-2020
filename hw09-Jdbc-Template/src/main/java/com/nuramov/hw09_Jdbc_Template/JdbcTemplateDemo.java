@@ -23,19 +23,14 @@ public class JdbcTemplateDemo {
 
         // Работаем с классом User
         jdbcTemplate.create(user1);
+
+        user1.setName("Yo");
+
         jdbcTemplate.update(user1);
-        User loadedUser = jdbcTemplate.load(2); // User loadedUser = jdbcTemplate.load(2, User.class);
+
+        User loadedUser = jdbcTemplate.load(1); // User loadedUser = jdbcTemplate.load(1, User.class);
         System.out.println(loadedUser);
 
-        // Просто попробова___________________Получение таблицы
-        DatabaseMetaData metadata = connection.getMetaData();
-        ResultSet resultSet;
-        resultSet = metadata.getTables(null, null, "User", null);
-        if(resultSet!=null){
-            // next() checks if the next table exists ...
-            System.out.println("Table exists");
-        }
-        //_______________________________
 
         demo.close(connection);
     }
@@ -49,22 +44,6 @@ public class JdbcTemplateDemo {
         Connection connection = DriverManager.getConnection(URL);
         connection.setAutoCommit(false);
         return connection;
-    }
-
-    /**
-     * Метод createTable() создает таблицу "User" в базе данных H2 c полями:
-     * id bigint(20) NOT NULL auto_increment
-     * name varchar(255)
-     * age int(3)
-     *
-     * @throws SQLException
-     */
-    // Создал таблицу User, надо подумать как создать таблицу с именем нужного класса
-    public void createTable(Connection connection) throws SQLException {
-        try (PreparedStatement pst = connection.prepareStatement("create table User" +
-                "(id bigint(20) NOT NULL auto_increment, name varchar(255), age int(3))")) {
-            pst.executeUpdate();
-        }
     }
 
     /**

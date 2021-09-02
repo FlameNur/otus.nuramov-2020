@@ -20,12 +20,25 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
         Field[] fields = cls.getDeclaredFields();
         for (Field field : fields) {
             if(field.isAnnotationPresent(id.class)) {
-                makeTable(connection, objectData);
+                /*try {
+                    // Проверяем наличие таблицы
+                    DatabaseMetaData metadata = connection.getMetaData();
+                    ResultSet resultSet = metadata.getTables(null, null, "User", null);
+                    if(resultSet!=null){
+                        System.out.println("Table exists");
+                        intoTable(connection, objectData);
+                    } else {
+                        makeTable(connection, objectData);
+                        intoTable(connection, objectData);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }*/
+
+
+                createTable(connection);
+                intoTable(connection, objectData);
             }
-            /*// Это в целом не нужно
-            Class<?> fld = field.getType();
-            System.out.println("Class name : " + field.getName());
-            System.out.println("Class type : " + fld.getName());*/
         }
     }
 
@@ -37,11 +50,13 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
 
             preparedStatement.setLong(1, user.getID());
             preparedStatement.setString(2, user.getName());
+            System.out.println(user.getName());                                // Проверка имени
+
             preparedStatement.setInt(3, user.getAge());
 
             preparedStatement.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -52,33 +67,47 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
         try {
             PreparedStatement preparedStatement =
                     connection.prepareStatement("SELECT * FROM User WHERE id=?");
-
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
 
-            user = new User(); // ТАк не работает
+            System.out.println(resultSet.getString(2));               // Проверка имени
+
+            user = new User();
 
             user.setId(resultSet.getLong(1));
             user.setName(resultSet.getString(2));
             user.setAge(resultSet.getInt(3));
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
         return user;
     }
 
-    private void makeTable(Connection connection, User user) {
+    /**
+     * Метод createTable() создает таблицу "User" в базе данных H2 c полями:
+     * id bigint(20) NOT NULL auto_increment
+     * name varchar(255)
+     * age int(3)
+     *
+     * @param connection
+     */
+    private void createTable(Connection connection) {
         // Перекинул из JdbcTemplateDemo
         try (PreparedStatement preparedStatement = connection.prepareStatement("create table User" +
                 "(id bigint(20) NOT NULL auto_increment, name varchar(255), age int(3))")) {
-
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
+    /**
+     *
+     * @param connection
+     * @param user
+     */
+    private void intoTable(Connection connection, User user) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO User VALUES(?, ?, ?)");
 
@@ -88,7 +117,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
     }
 }

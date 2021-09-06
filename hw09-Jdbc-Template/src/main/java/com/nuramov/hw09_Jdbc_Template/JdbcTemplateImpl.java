@@ -54,7 +54,8 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
 
             preparedStatement.setInt(3, user.getAge());
 
-            preparedStatement.executeUpdate();
+            int i = preparedStatement.executeUpdate();
+            System.out.println("Количество изменненых строк: " + i);          // Проверка количества изменненых строк
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -94,7 +95,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
      */
     private void createTable(Connection connection) {
         // Перекинул из JdbcTemplateDemo
-        try (PreparedStatement preparedStatement = connection.prepareStatement("create table User" +
+        try (PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE User" +
                 "(id bigint(20) NOT NULL auto_increment, name varchar(255), age int(3))")) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

@@ -8,13 +8,8 @@ public class User {
     @id
     private long id = 0;
 
-    private static long count = 0;
     private String name;
     private int age;
-
-    public User() {
-        id = ++count;
-    }
 
     public long getID() {
         return id;

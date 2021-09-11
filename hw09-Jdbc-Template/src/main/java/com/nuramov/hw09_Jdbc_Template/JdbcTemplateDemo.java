@@ -8,7 +8,6 @@ public class JdbcTemplateDemo {
     public static void main(String[] args) throws SQLException {
         JdbcTemplateDemo demo = new JdbcTemplateDemo();
         Connection connection = demo.getConnection();
-        //demo.createTable(connection); Перенес в JdbcTemplateImpl
 
         JdbcTemplate jdbcTemplate = new JdbcTemplateImpl<>(connection);
 
@@ -20,17 +19,33 @@ public class JdbcTemplateDemo {
         user2.setAge(20);
         user2.setName("Tom");
 
+        User user3 = new User();
+
 
         // Работаем с классом User
         jdbcTemplate.create(user1);
 
         user1.setName("Yo");
 
-        jdbcTemplate.update(user1);
+        jdbcTemplate.update(1, user1);
 
-        User loadedUser = jdbcTemplate.load(1); // User loadedUser = jdbcTemplate.load(1, User.class);
-        System.out.println(loadedUser);
+        User loadedUser1 = jdbcTemplate.load(1);
+        System.out.println(loadedUser1);
 
+        System.out.println(user2);
+
+        System.out.println("\nВставляем строку:__________________________________");
+        jdbcTemplate.insertRecord(user2);
+        User loadedUser2 = jdbcTemplate.load(2);
+        System.out.println(loadedUser2);
+
+        jdbcTemplate.insertRecord(user1);
+        jdbcTemplate.insertRecord(user3);
+        User loadedUser3 = jdbcTemplate.load(3);
+        System.out.println(loadedUser3);
+
+        System.out.println("\n--------------------------------------------");
+        jdbcTemplate.getDatabaseMetaData();
 
         demo.close(connection);
     }

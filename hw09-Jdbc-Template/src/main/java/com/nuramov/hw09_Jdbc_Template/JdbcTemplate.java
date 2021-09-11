@@ -16,7 +16,7 @@ public interface JdbcTemplate {
      * @param objectData
      * @param <T>
      */
-    <T> void update(User objectData) throws SQLException; // (T objectData)
+    <T> void update(long id, User objectData); // (T objectData)
 
     /**
      *
@@ -24,4 +24,16 @@ public interface JdbcTemplate {
      * @return
      */
     User load(long id); // <T> T load(long id, Class<T> clazz);
+
+    /**
+     *
+     * @param objectData
+     * @param <T>
+     */
+    <T> void insertRecord(User objectData);
+
+    /**
+     * Получаем названия всех таблиц в базе даных
+     */
+    void getDatabaseMetaData();
 }

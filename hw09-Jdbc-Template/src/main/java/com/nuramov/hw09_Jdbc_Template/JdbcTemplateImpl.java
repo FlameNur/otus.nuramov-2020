@@ -3,6 +3,8 @@ package com.nuramov.hw09_Jdbc_Template;
 import com.nuramov.hw09_Jdbc_Template.Annotations.id;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.*;
 
 public class JdbcTemplateImpl<T> implements JdbcTemplate {
@@ -14,11 +16,11 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
     }
 
     @Override
-    public <T> void create(User objectData) { // public <T> void create(T objectData)
+    public <T> void create(T objectData) {
         // Определяем поля класса
-        Class<?> cls = objectData.getClass();
+        Class<?> clazz = objectData.getClass();
 
-        Field[] fields = cls.getDeclaredFields();
+        Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             if(field.isAnnotationPresent(id.class)) {
                 /*try {
@@ -33,8 +35,8 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
                     e.printStackTrace();
                 }*/
 
-                createTable(connection);
-                intoTable(connection, objectData);
+                createTable(connection, objectData);
+                checkingRowsInTable(connection, objectData);
             }
         }
     }
@@ -78,13 +80,14 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
     }
 
     @Override
-    public void insertRecord(User objectData) {
+    public <T> void insertRecord(T objectData) {
         Class<?> cls = objectData.getClass();
 
         Field[] fields = cls.getDeclaredFields();
         for (Field field : fields) {
+            // Проверяем наличие аннотации, прежде чем добавить в таблицу
             if(field.isAnnotationPresent(id.class)) {
-                intoTable(connection, objectData);
+                checkingRowsInTable(connection, objectData);
             }
         }
     }
@@ -106,17 +109,20 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
     }
 
     /**
-     * Метод createTable() создает таблицу "User" в базе данных H2 c полями:
+     * Метод createTable создает таблицу с названием полученного класса в базе данных H2 c полями:
      * id bigint(20) NOT NULL auto_increment
      * name varchar(255)
      * age int(3)
      *
-     * @param connection
+     * @param connection - текущее соединение connection
+     * @param objectData - экземпляр класса, для которого создаем таблицу в БД
      */
-    private void createTable(Connection connection) {
-        // Перекинул из JdbcTemplateDemo
-        try (PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE User" +
-                "(id bigint(20) NOT NULL auto_increment, name varchar(255), age int(3))")) {
+    private <T> void createTable(Connection connection, T objectData) {
+        Class<?> clazz = objectData.getClass();
+
+        // Создаем таблицу с названием класса clazz.getSimpleName()
+        try (PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE " +
+                clazz.getSimpleName() + "(id bigint(20) NOT NULL auto_increment, name varchar(255), age int(3))")) {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -125,28 +131,98 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
     }
 
     /**
-     * Метод intoTable добаавляет объекты в таблицу
-     * @param connection
-     * @param user
+     * В методе checkingRowsInTable проводится проверка возможности добавления нового объекта в таблицу
+     * @param connection - текущее соединение connection
+     * @param objectData - экземпляр класса, которого добавляем в таблицу БД
      */
-    private void intoTable(Connection connection, User user) {
-        if(user.getID() > 0) {
-            System.out.println("Такая строка уже существует");
-        } else {
-            long id = ++count;
+    private <T> void checkingRowsInTable(Connection connection, T objectData) {
+        long id = 0;
+        Class<?> clazz = objectData.getClass();
 
-            try(PreparedStatement preparedStatement =
-                        connection.prepareStatement("INSERT INTO User(id, name, age) VALUES(?, ?, ?)")) {
+        // Определяем значение id
+        Field[] fields = clazz.getDeclaredFields();
+        for(Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object obj =  field.get(objectData);
+                if(obj instanceof Long) {
 
-                user.setId(id);
-                preparedStatement.setLong(1, id);
-                preparedStatement.setString(2, user.getName());
-                preparedStatement.setInt(3, user.getAge());
-
-                preparedStatement.executeUpdate();
-            } catch (SQLException e) {
+                    // Не работает так, все id = 0. Потому что удалил строку где я через user.setId устанавливал id
+                    id = (long) obj;
+                    System.out.println(id);
+                }
+                field.setAccessible(false);
+            } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
+        }
+
+        // Каждая строка (экземпляр класса) имеет id > 0 при добавлении в таблицу
+        // Ниже проводим проверку
+        if(id > 0) {
+            System.out.println("Такая строка уже существует");
+        } else {
+            id = ++count;
+
+            // Добавляем строку в таблицу
+            addRowToTable(connection, objectData, id);
+        }
+    }
+
+    /**
+     * Метод addRowToTable добавляет строки в таблицу БД
+     * @param connection - текущее соединение connection
+     * @param objectData - экземпляр класса, которого добавляем в таблицу БД
+     */
+    private <T> void addRowToTable(Connection connection, T objectData, long id) {
+        String fieldId = "";
+        String fieldName = "";
+        String fieldAge = "";
+        String name = "";
+        int age = 0;
+
+        Class<?> clazz = objectData.getClass();
+
+        // Определяем значение name и age
+        Field[] fields = clazz.getDeclaredFields();
+        for(Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object obj =  field.get(objectData);
+
+                if(obj instanceof Long) {
+                    fieldId = field.getName();
+                }
+                if(obj instanceof String) {
+                    fieldName = field.getName();
+                    name = (String) obj;
+                }
+                if(obj instanceof Integer) {
+                    fieldAge = field.getName();
+                    age = (int) obj;
+                }
+
+                field.setAccessible(false);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        // Почему-то не работает с name??? Если заменить на fieldName, вылетает ошибка
+
+
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement("INSERT INTO " + clazz.getSimpleName() +
+                            "(" + fieldId + ", name, " + fieldAge + ") VALUES(?, ?, ?)")) {
+
+            preparedStatement.setLong(1, id);
+            preparedStatement.setString(2, name);
+            preparedStatement.setInt(3, age);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

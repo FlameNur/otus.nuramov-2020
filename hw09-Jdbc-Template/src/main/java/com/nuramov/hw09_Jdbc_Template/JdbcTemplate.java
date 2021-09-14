@@ -9,7 +9,7 @@ public interface JdbcTemplate {
      * @param objectData
      * @param <T>
      */
-    <T> void create(User objectData); // (T objectData)
+    <T> void create(T objectData); // (T objectData)
 
     /**
      *
@@ -30,7 +30,7 @@ public interface JdbcTemplate {
      * @param objectData
      * @param <T>
      */
-    <T> void insertRecord(User objectData);
+    <T> void insertRecord(T objectData);
 
     /**
      * Получаем названия всех таблиц в базе даных

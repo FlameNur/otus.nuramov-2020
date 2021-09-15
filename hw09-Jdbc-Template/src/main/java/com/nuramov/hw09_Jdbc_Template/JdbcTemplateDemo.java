@@ -27,21 +27,21 @@ public class JdbcTemplateDemo {
 
         user1.setName("Yo");
 
-        jdbcTemplate.update(1, user1);
+        jdbcTemplate.update(user1);
 
-        User loadedUser1 = jdbcTemplate.load(1);
+        User loadedUser1 = jdbcTemplate.load(1, User.class);
         System.out.println(loadedUser1);
 
         System.out.println(user2);
 
         System.out.println("\nВставляем строку:__________________________________");
         jdbcTemplate.insertRecord(user2);
-        User loadedUser2 = jdbcTemplate.load(2);
+        User loadedUser2 = jdbcTemplate.load(2, User.class);
         System.out.println(loadedUser2);
 
         jdbcTemplate.insertRecord(user1);
         jdbcTemplate.insertRecord(user3);
-        User loadedUser3 = jdbcTemplate.load(3);
+        User loadedUser3 = jdbcTemplate.load(3, User.class);
         System.out.println(loadedUser3);
 
         System.out.println("\n--------------------------------------------");

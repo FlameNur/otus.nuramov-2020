@@ -42,12 +42,47 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
     }
 
     @Override
-    public <T> void update(long id, User user) {  // public <T> void update(T objectData)
-        try(PreparedStatement preparedStatement =
-                    connection.prepareStatement("UPDATE USER SET name=?, age=? WHERE id=?")) {
+    public <T> void update(T objectData) {
+        String fieldId = "";
+        String fieldName = "";
+        String fieldAge = "";
+        long id = 0;
+        String name = "";
+        int age = 0;
 
-            preparedStatement.setString(1, user.getName());
-            preparedStatement.setInt(2, user.getAge());
+        Class<?> clazz = objectData.getClass();
+        // Определяем названия и значения полей для SQL запроса
+        Field[] fields = clazz.getDeclaredFields();
+        for(Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object obj =  field.get(objectData);
+
+                if(obj instanceof Long) {
+                    fieldId = field.getName();
+                    id = (Long) obj;
+                }
+                if(obj instanceof String) {
+                    fieldName = field.getName();
+                    name = (String) obj;
+                }
+                if(obj instanceof Integer) {
+                    fieldAge = field.getName();
+                    age = (Integer) obj;
+                }
+
+                field.setAccessible(false);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement("UPDATE " + clazz.getSimpleName() + " SET " +
+                            fieldName + "=?, " + fieldAge + "=? WHERE " + fieldId + "=?")) {
+
+            preparedStatement.setString(1, name);
+            preparedStatement.setInt(2, age);
             preparedStatement.setLong(3, id);
 
             int i = preparedStatement.executeUpdate();
@@ -58,25 +93,47 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
     }
 
     @Override
-    public User load(long id) { // public <T> T load(long id, Class<T> clazz)
-        User user = null;
+    public <T> T load(long id, Class<T> clazz) {
+        // Пока не понятно как сделать
+
+
+
+        Class<?> objectData = clazz;
 
         try(PreparedStatement preparedStatement =
-                    connection.prepareStatement("SELECT * FROM USER WHERE id=?")) {
+                    connection.prepareStatement("SELECT * FROM " + clazz.getSimpleName() + " WHERE id=?")) {
 
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
 
-            user = new User();
+            Field[] fields = clazz.getDeclaredFields();
+            for(Field field : fields) {
+                try {
+                    field.setAccessible(true);
+                    Object objectField =  field.get(objectData);
 
-            user.setId(resultSet.getLong(1));
-            user.setName(resultSet.getString(2));
-            user.setAge(resultSet.getInt(3));
+                    if(objectField instanceof Long) {
+                        //Устанавливаем значение id в поле полученного экземпляря класса
+                        field.setLong(objectData, resultSet.getLong(1));
+                    }
+                    if(objectField instanceof String) {
+                        //Устанавливаем значение name в поле полученного экземпляря класса
+                        field.set(objectData, resultSet.getString(2));
+                    }
+                    if(objectField instanceof Integer) {
+                        //Устанавливаем значение age в поле полученного экземпляря класса
+                        field.setInt(objectData, resultSet.getInt(3));
+                    }
+                    field.setAccessible(false);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return user;
+        return (T) objectData;
     }
 
     @Override
@@ -118,11 +175,37 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
      * @param objectData - экземпляр класса, для которого создаем таблицу в БД
      */
     private <T> void createTable(Connection connection, T objectData) {
-        Class<?> clazz = objectData.getClass();
+        String fieldId = "";
+        String fieldName = "";
+        String fieldAge = "";
 
-        // Создаем таблицу с названием класса clazz.getSimpleName()
+        Class<?> clazz = objectData.getClass();
+        // Определяем названия полей для SQL запроса
+        Field[] fields = clazz.getDeclaredFields();
+        for(Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object obj =  field.get(objectData);
+
+                if(obj instanceof Long) {
+                    fieldId = field.getName();
+                }
+                if(obj instanceof String) {
+                    fieldName = field.getName();
+                }
+                if(obj instanceof Integer) {
+                    fieldAge = field.getName();
+                }
+
+                field.setAccessible(false);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
         try (PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE " +
-                clazz.getSimpleName() + "(id bigint(20) NOT NULL auto_increment, name varchar(255), age int(3))")) {
+                    clazz.getSimpleName() + "(" + fieldId + " bigint(20) NOT NULL auto_increment, " + fieldName +
+                            " varchar(255), " + fieldAge + " int(3))")) {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -138,7 +221,6 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
     private <T> void checkingRowsInTable(Connection connection, T objectData) {
         long id = 0;
         Class<?> clazz = objectData.getClass();
-
         // Определяем значение id
         Field[] fields = clazz.getDeclaredFields();
         for(Field field : fields) {
@@ -146,24 +228,19 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
                 field.setAccessible(true);
                 Object obj =  field.get(objectData);
                 if(obj instanceof Long) {
-
-                    // Не работает так, все id = 0. Потому что удалил строку где я через user.setId устанавливал id
                     id = (long) obj;
-                    System.out.println(id);
                 }
                 field.setAccessible(false);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
-
-        // Каждая строка (экземпляр класса) имеет id > 0 при добавлении в таблицу
+        // Каждая строка (экземпляр класса) получае id > 0 при добавлении в таблицу
         // Ниже проводим проверку
         if(id > 0) {
             System.out.println("Такая строка уже существует");
         } else {
             id = ++count;
-
             // Добавляем строку в таблицу
             addRowToTable(connection, objectData, id);
         }
@@ -182,8 +259,8 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
         int age = 0;
 
         Class<?> clazz = objectData.getClass();
-
-        // Определяем значение name и age
+        // Определяем имена всех полей, значения полей name и age, чтобы вставить в SQL запрос
+        // Меняем значение поля id на новый, который установила БД
         Field[] fields = clazz.getDeclaredFields();
         for(Field field : fields) {
             try {
@@ -192,6 +269,8 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
 
                 if(obj instanceof Long) {
                     fieldId = field.getName();
+                    // Устанавливаем значение id в поле полученного экземпляря класса
+                    field.setLong(objectData, id);
                 }
                 if(obj instanceof String) {
                     fieldName = field.getName();
@@ -210,6 +289,9 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
 
 
         // Почему-то не работает с name??? Если заменить на fieldName, вылетает ошибка
+
+        //String sql = "INSERT INTO ";
+        //sql = sql.concat(clazz.getSimpleName()).concat("(").concat(fieldId).concat(", ").concat(fieldName).concat(", ").concat(fieldAge).concat(") VALUES(?, ?, ?)");
 
 
         try(PreparedStatement preparedStatement =

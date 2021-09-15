@@ -9,21 +9,21 @@ public interface JdbcTemplate {
      * @param objectData
      * @param <T>
      */
-    <T> void create(T objectData); // (T objectData)
+    <T> void create(T objectData);
 
     /**
      *
      * @param objectData
      * @param <T>
      */
-    <T> void update(long id, User objectData); // (T objectData)
+    <T> void update(T objectData);
 
     /**
      *
      * @param id
      * @return
      */
-    User load(long id); // <T> T load(long id, Class<T> clazz);
+    <T> T load(long id, Class<T> clazz);
 
     /**
      *

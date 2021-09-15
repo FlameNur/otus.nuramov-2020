@@ -5,6 +5,7 @@ import com.nuramov.hw09_Jdbc_Template.Annotations.id;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.channels.ClosedSelectorException;
 import java.sql.*;
 
 public class JdbcTemplateImpl<T> implements JdbcTemplate {
@@ -94,11 +95,14 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
 
     @Override
     public <T> T load(long id, Class<T> clazz) {
-        // Пока не понятно как сделать
-
-
-
-        Class<?> objectData = clazz;
+        //Создаем экземпляр класс
+        T objectData = null;
+        try {
+           objectData = clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException |
+                NoSuchMethodException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
 
         try(PreparedStatement preparedStatement =
                     connection.prepareStatement("SELECT * FROM " + clazz.getSimpleName() + " WHERE id=?")) {
@@ -125,6 +129,12 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
                         //Устанавливаем значение age в поле полученного экземпляря класса
                         field.setInt(objectData, resultSet.getInt(3));
                     }
+
+
+                    /*//Устанавливаем значение name в поле полученного экземпляря класса
+                    field.set(objectData, resultSet.getString(2));*/
+
+
                     field.setAccessible(false);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -133,7 +143,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return (T) objectData;
+        return objectData;
     }
 
     @Override

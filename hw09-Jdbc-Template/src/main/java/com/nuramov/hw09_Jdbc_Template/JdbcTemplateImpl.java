@@ -104,6 +104,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             e.printStackTrace();
         }
 
+        //Определяем нужную строку по id и получаем нужные значения
         try(PreparedStatement preparedStatement =
                     connection.prepareStatement("SELECT * FROM " + clazz.getSimpleName() + " WHERE id=?")) {
 
@@ -111,6 +112,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
 
+            //
             Field[] fields = clazz.getDeclaredFields();
             for(Field field : fields) {
                 try {

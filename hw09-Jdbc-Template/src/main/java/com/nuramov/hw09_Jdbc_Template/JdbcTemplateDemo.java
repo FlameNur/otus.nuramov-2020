@@ -40,6 +40,8 @@ public class JdbcTemplateDemo {
         System.out.println(loadedUser2);
 
         jdbcTemplate.insertRecord(user1);
+
+        user3.setName("Wow");
         jdbcTemplate.insertRecord(user3);
         User loadedUser3 = jdbcTemplate.load(3, User.class);
         System.out.println(loadedUser3);

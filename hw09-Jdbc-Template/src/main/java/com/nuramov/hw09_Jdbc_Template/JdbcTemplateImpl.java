@@ -23,19 +23,8 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
 
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
+            // Проверяем наличие аннотации "id" над одним из полей класса
             if(field.isAnnotationPresent(id.class)) {
-                /*try {
-                    // Проверяем наличие таблицы
-                    DatabaseMetaData metadata = connection.getMetaData();
-                    String[] types = {"TABLE"};
-                    ResultSet resultSet = metadata.getTables(null, null, "%", types);
-
-                    if(resultSet==null) createTable(connection);
-                    intoTable(connection, objectData, count);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }*/
-
                 createTable(connection, objectData);
                 checkingRowsInTable(connection, objectData);
             }
@@ -112,9 +101,13 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
 
+            // Получаем имя, но в цикле не получаем почему-то
+            //System.out.println("Получаем значение 2 колонки: " + resultSet.getString(2));
             //
             Field[] fields = clazz.getDeclaredFields();
             for(Field field : fields) {
+                // Так можно определить типы и доработать дальше
+                System.out.println("Type - " +  field.getType().getSimpleName());
                 try {
                     field.setAccessible(true);
                     Object objectField =  field.get(objectData);
@@ -124,6 +117,8 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
                         field.setLong(objectData, resultSet.getLong(1));
                     }
                     if(objectField instanceof String) {
+                        // Получается только при field.getType().getSimpleName()
+                        System.out.println("Получаем значение 2 колонки: " + resultSet.getString(2));
                         //Устанавливаем значение name в поле полученного экземпляря класса
                         field.set(objectData, resultSet.getString(2));
                     }

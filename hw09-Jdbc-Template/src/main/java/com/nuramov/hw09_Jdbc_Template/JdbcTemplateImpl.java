@@ -11,23 +11,18 @@ import java.sql.*;
 public class JdbcTemplateImpl<T> implements JdbcTemplate {
     private static long count = 0;
     private final Connection connection;
+    private FieldsSQLTypeAndValue fieldsSQLTypeAndValue;
 
     public JdbcTemplateImpl(Connection connection) {
         this.connection = connection;
+        fieldsSQLTypeAndValue = new FieldsSQLTypeAndValue();
     }
 
     @Override
     public <T> void create(T objectData) {
-        // Определяем поля класса
-        Class<?> clazz = objectData.getClass();
-
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            // Проверяем наличие аннотации "id" над одним из полей класса
-            if(field.isAnnotationPresent(id.class)) {
-                createTable(connection, objectData);
-                checkingRowsInTable(connection, objectData);
-            }
+        if(fieldsSQLTypeAndValue.getAnnotatedID(objectData)) {
+            createTable(connection, objectData);
+            checkingRowsInTable(connection, objectData);
         }
     }
 

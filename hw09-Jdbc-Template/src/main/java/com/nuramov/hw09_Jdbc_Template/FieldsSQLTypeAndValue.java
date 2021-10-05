@@ -58,7 +58,7 @@ public class FieldsSQLTypeAndValue {
     }
 
     /**
-     * Метод getAnnotatedID определяет наличие у полученного экземпляра класса поля с аннотацией @id
+     * Метод getAnnotatedID определяет наличие поля с аннотацией @id у полученного экземпляра класса
      * @param objectData - экземпляр класса
      * @return - возвращает true, если у поля имеется аннотация @id, и false, если нет
      */
@@ -77,11 +77,27 @@ public class FieldsSQLTypeAndValue {
     }
 
     /**
-     *
-     * @param objectData
-     * @param <T>
+     * Метод getIdValue определяет значение поля id у полученного экземпляра класса
+     * @param objectData - экземпляр класса
+     * @return - возвращает значение поля id
      */
-    <T> void getIdValue(T objectData) {
+    <T> Object getIdValue(T objectData) {
+        Object id = null;
 
+        // Определяем поля класса
+        Class<?> clazz = objectData.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            // Проверяем наличие аннотации "id" над одним из полей класса
+            if(field.isAnnotationPresent(id.class)) {
+                try {
+                    // Получаем значение id
+                    id = field.get(objectData);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return id;
     }
 }

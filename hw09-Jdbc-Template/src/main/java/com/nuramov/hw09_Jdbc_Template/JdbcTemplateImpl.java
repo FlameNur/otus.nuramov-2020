@@ -20,7 +20,9 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
 
     @Override
     public <T> void create(T objectData) {
-        if(fieldsSQLTypeAndValue.getAnnotatedID(objectData)) {
+        boolean idState = fieldsSQLTypeAndValue.getAnnotatedID(objectData);
+
+        if(idState) {
             createTable(connection, objectData);
             checkingRowsInTable(connection, objectData);
         }
@@ -62,6 +64,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             }
         }
 
+        // SQL: "UPDATE User SET name=?, age=? WHERE id=?"
         try(PreparedStatement preparedStatement =
                     connection.prepareStatement("UPDATE " + clazz.getSimpleName() + " SET " +
                             fieldName + "=?, " + fieldAge + "=? WHERE " + fieldId + "=?")) {

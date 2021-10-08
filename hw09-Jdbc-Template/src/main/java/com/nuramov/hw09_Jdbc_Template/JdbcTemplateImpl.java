@@ -4,23 +4,22 @@ import com.nuramov.hw09_Jdbc_Template.Annotations.id;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.channels.ClosedSelectorException;
 import java.sql.*;
+import java.util.Map;
 
 public class JdbcTemplateImpl<T> implements JdbcTemplate {
     private static long count = 0;
     private final Connection connection;
-    private FieldsSQLTypeAndValue fieldsSQLTypeAndValue;
+    private FieldsTypeAndValue fieldsTypeAndValue;
 
     public JdbcTemplateImpl(Connection connection) {
         this.connection = connection;
-        fieldsSQLTypeAndValue = new FieldsSQLTypeAndValue();
+        fieldsTypeAndValue = new FieldsTypeAndValue();
     }
 
     @Override
     public <T> void create(T objectData) {
-        boolean idState = fieldsSQLTypeAndValue.getAnnotatedID(objectData);
+        boolean idState = fieldsTypeAndValue.getAnnotatedID(objectData);
 
         if(idState) {
             createTable(connection, objectData);
@@ -104,8 +103,6 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             //
             Field[] fields = clazz.getDeclaredFields();
             for(Field field : fields) {
-                // Так можно определить типы и доработать дальше
-                System.out.println("Type - " +  field.getType().getSimpleName());
                 try {
                     field.setAccessible(true);
                     Object objectField =  field.get(objectData);
@@ -114,9 +111,8 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
                         //Устанавливаем значение id в поле полученного экземпляря класса
                         field.setLong(objectData, resultSet.getLong(1));
                     }
-                    if(objectField instanceof String) {
+                    if(field.getType().getSimpleName().startsWith("String")) {
                         // Получается только при field.getType().getSimpleName()
-                        System.out.println("Получаем значение 2 колонки: " + resultSet.getString(2));
                         //Устанавливаем значение name в поле полученного экземпляря класса
                         field.set(objectData, resultSet.getString(2));
                     }
@@ -180,7 +176,12 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
      * @param objectData - экземпляр класса, для которого создаем таблицу в БД
      */
     private <T> void createTable(Connection connection, T objectData) {
-        String fieldId = "";
+        Map<String, String > fieldsNameAndSQLType = fieldsTypeAndValue.getFieldsNameAndSQLType(objectData);
+
+
+
+
+        String fieldId = fieldsTypeAndValue.getIdName(objectData);
         String fieldName = "";
         String fieldAge = "";
 
@@ -192,9 +193,6 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
                 field.setAccessible(true);
                 Object obj =  field.get(objectData);
 
-                if(obj instanceof Long) {
-                    fieldId = field.getName();
-                }
                 if(obj instanceof String) {
                     fieldName = field.getName();
                 }
@@ -208,14 +206,47 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             }
         }
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE " +
-                    clazz.getSimpleName() + "(" + fieldId + " bigint(20) NOT NULL auto_increment, " + fieldName +
-                            " varchar(255), " + fieldAge + " int(3))")) {
+        // Создали таблицу User со столбцом id 
+        try (PreparedStatement columnId = connection.prepareStatement("CREATE TABLE " +
+                    clazz.getSimpleName() + "(" + fieldId + " bigint NOT NULL auto_increment)")) {
+
+            columnId.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        StringBuilder SQLString = new StringBuilder("ALTER TABLE " + clazz.getSimpleName() + " ADD ");
+
+        // Создаем стобцы таблицы для других поля класса
+        for(Map.Entry<String, String> fld : fieldsNameAndSQLType.entrySet()) {
+            SQLString.append(fld.getKey()).append(" ").append(fld.getValue());
+        }
+
+        SQLString.append(")");
+
+        // String.valueOf(SQLString) ????? как это работает
+        try(PreparedStatement otherColumns = connection.prepareStatement(String.valueOf(SQLString))) {
+
+            otherColumns.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+        // Старая версия. Выше проверяю новый способ
+        /*try (PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE " +
+                clazz.getSimpleName() + "(" + fieldId + " bigint NOT NULL auto_increment, " + fieldName +
+                " varchar, " + fieldAge + " int)")) {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
+        
     }
 
     /**
@@ -224,22 +255,8 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
      * @param objectData - экземпляр класса, которого добавляем в таблицу БД
      */
     private <T> void checkingRowsInTable(Connection connection, T objectData) {
-        long id = 0;
-        Class<?> clazz = objectData.getClass();
-        // Определяем значение id
-        Field[] fields = clazz.getDeclaredFields();
-        for(Field field : fields) {
-            try {
-                field.setAccessible(true);
-                Object obj =  field.get(objectData);
-                if(obj instanceof Long) {
-                    id = (long) obj;
-                }
-                field.setAccessible(false);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
+        long id = (long) fieldsTypeAndValue.getIdValue(objectData);
+
         // Каждая строка (экземпляр класса) получае id > 0 при добавлении в таблицу
         // Ниже проводим проверку
         if(id > 0) {

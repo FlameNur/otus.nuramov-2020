@@ -7,12 +7,10 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ */
 public class FieldsTypeAndValue {
-
-
-    public FieldsTypeAndValue() {
-    }
-
     /**
      * Метод getFieldsSQLTypeAndValue позволяет получить Map
      * @param objectData
@@ -33,51 +31,48 @@ public class FieldsTypeAndValue {
                 field.setAccessible(true);
                 // Пока использую SimpleName, потом возможно придется переделать
                 fieldSimpleName = field.getType().getSimpleName();
-
                 // Название поля
                 fieldName = field.getName();
                 // Значение поля
                 fieldValue = field.get(objectData);
 
-                if(fieldSimpleName.startsWith("String")) {
-                    fieldsNameAndSQLType.put(fieldName, "VARCHAR");
-                }
+                // Включаем в map fieldsNameAndSQLType поля без аннотации @id
+                if (!field.isAnnotationPresent(id.class)) {
+                    if(fieldSimpleName.startsWith("String")) {
+                        fieldsNameAndSQLType.put(fieldName, "VARCHAR");
+                    }
 
-                if (fieldValue instanceof Character) {
-                    fieldsNameAndSQLType.put(fieldName, "CHAR");
-                }
+                    if (fieldValue instanceof Character) {
+                        fieldsNameAndSQLType.put(fieldName, "CHAR");
+                    }
 
-                if (fieldValue instanceof Long) {
-                    fieldsNameAndSQLType.put(fieldName, "BIGINT");
-                }
+                    if (fieldValue instanceof Long) {
+                        fieldsNameAndSQLType.put(fieldName, "BIGINT");
+                    }
 
-                if(fieldValue instanceof Integer) {
-                    fieldsNameAndSQLType.put(fieldName, "INT");
-                }
+                    if(fieldValue instanceof Integer) {
+                        fieldsNameAndSQLType.put(fieldName, "INT");
+                    }
 
-                if(fieldValue instanceof Boolean) {
-                    fieldsNameAndSQLType.put(fieldName, "BOOLEAN");
-                }
+                    if(fieldValue instanceof Boolean) {
+                        fieldsNameAndSQLType.put(fieldName, "BOOLEAN");
+                    }
 
-                if(fieldValue instanceof Short) {
-                    fieldsNameAndSQLType.put(fieldName, "SMALLINT");
-                }
+                    if(fieldValue instanceof Short) {
+                        fieldsNameAndSQLType.put(fieldName, "SMALLINT");
+                    }
 
-                if(fieldValue instanceof Byte) {
-                    fieldsNameAndSQLType.put(fieldName, "TINYINT");
-                }
+                    if(fieldValue instanceof Byte) {
+                        fieldsNameAndSQLType.put(fieldName, "TINYINT");
+                    }
 
-                if(fieldValue instanceof Float) {
-                    fieldsNameAndSQLType.put(fieldName, "REAL");
-                }
+                    if(fieldValue instanceof Float) {
+                        fieldsNameAndSQLType.put(fieldName, "REAL");
+                    }
 
-                if(fieldValue instanceof Double) {
-                    fieldsNameAndSQLType.put(fieldName, "DOUBLE");
-                }
-
-                // fieldValue instanceof Object
-                if(fieldValue != null) {
-                    fieldsNameAndSQLType.put(fieldName, "OTHER");
+                    if(fieldValue instanceof Double) {
+                        fieldsNameAndSQLType.put(fieldName, "DOUBLE");
+                    }
                 }
                 field.setAccessible(false);
             } catch (IllegalAccessException e) {
@@ -131,8 +126,9 @@ public class FieldsTypeAndValue {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             // Проверяем наличие аннотации "id" над одним из полей класса
-            if(field.isAnnotationPresent(id.class)) {
+            if (field.isAnnotationPresent(id.class)) {
                 idState = true;
+                break;
             }
         }
         return idState;

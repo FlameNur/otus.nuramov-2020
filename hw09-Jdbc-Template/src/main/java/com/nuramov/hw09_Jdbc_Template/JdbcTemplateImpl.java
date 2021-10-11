@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.Map;
+import java.util.StringJoiner;
 
 public class JdbcTemplateImpl<T> implements JdbcTemplate {
     private static long count = 0;
@@ -167,46 +168,18 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
     }
 
     /**
-     * Метод createTable создает таблицу с названием полученного класса в базе данных H2 c полями:
+     * Метод createTable создает таблицу с названием полученного класса в базе данных H2 c полем id (@id):
      * id bigint(20) NOT NULL auto_increment
-     * name varchar(255)
-     * age int(3)
-     *
      * @param connection - текущее соединение connection
      * @param objectData - экземпляр класса, для которого создаем таблицу в БД
      */
     private <T> void createTable(Connection connection, T objectData) {
         Map<String, String > fieldsNameAndSQLType = fieldsTypeAndValue.getFieldsNameAndSQLType(objectData);
-
-
-
-
         String fieldId = fieldsTypeAndValue.getIdName(objectData);
-        String fieldName = "";
-        String fieldAge = "";
 
         Class<?> clazz = objectData.getClass();
-        // Определяем названия полей для SQL запроса
-        Field[] fields = clazz.getDeclaredFields();
-        for(Field field : fields) {
-            try {
-                field.setAccessible(true);
-                Object obj =  field.get(objectData);
 
-                if(obj instanceof String) {
-                    fieldName = field.getName();
-                }
-                if(obj instanceof Integer) {
-                    fieldAge = field.getName();
-                }
-
-                field.setAccessible(false);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Создали таблицу User со столбцом id 
+        // Создали таблицу User со столбцом id (поле с аннотацией @id, название поля может быть любым)
         try (PreparedStatement columnId = connection.prepareStatement("CREATE TABLE " +
                     clazz.getSimpleName() + "(" + fieldId + " bigint NOT NULL auto_increment)")) {
 
@@ -215,38 +188,36 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             e.printStackTrace();
         }
 
-        StringBuilder SQLString = new StringBuilder("ALTER TABLE " + clazz.getSimpleName() + " ADD ");
+        // Добавляем остальные колонки таблицы для каждого поля экземпляра класса
+        addOtherColumnsToTable(connection, objectData);
+    }
+
+    /**
+     * Метод addOtherColumnsToTable добавляет колонки в таблицу БД для каждого поля
+     * @param connection - текущее соединение connection
+     * @param objectData - экземпляр класса, для которого создаем таблицу в БД и добавляем колонки для каждого поля
+     */
+    private <T> void addOtherColumnsToTable(Connection connection, T objectData) {
+        Map<String, String > fieldsNameAndSQLType = fieldsTypeAndValue.getFieldsNameAndSQLType(objectData);
+
+        Class<?> clazz = objectData.getClass();
+
+        //
+        StringJoiner SQLString = new StringJoiner(", ", "(", ")");
+        String SQLSubString = "";
 
         // Создаем стобцы таблицы для других поля класса
         for(Map.Entry<String, String> fld : fieldsNameAndSQLType.entrySet()) {
-            SQLString.append(fld.getKey()).append(" ").append(fld.getValue());
+            SQLSubString = fld.getKey() + " " + fld.getValue();
+            SQLString.add(SQLSubString);
         }
 
-        SQLString.append(")");
-
-        // String.valueOf(SQLString) ????? как это работает
-        try(PreparedStatement otherColumns = connection.prepareStatement(String.valueOf(SQLString))) {
-
+        try(PreparedStatement otherColumns = connection.prepareStatement("ALTER TABLE " +
+                clazz.getSimpleName() + " ADD " + SQLString)) {
             otherColumns.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
-
-
-
-
-        // Старая версия. Выше проверяю новый способ
-        /*try (PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE " +
-                clazz.getSimpleName() + "(" + fieldId + " bigint NOT NULL auto_increment, " + fieldName +
-                " varchar, " + fieldAge + " int)")) {
-
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
-        
     }
 
     /**

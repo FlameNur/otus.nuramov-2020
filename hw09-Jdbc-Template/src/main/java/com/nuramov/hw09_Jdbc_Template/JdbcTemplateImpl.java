@@ -35,10 +35,9 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
         Class<?> clazz = objectData.getClass();
         String fieldIdName = fieldID.getIdName(objectData);
         Map<String, Object> fieldsNameAndValue = fieldsTypeAndValue.getFieldsNameAndValue(objectData);
-        //
-        StringBuilder fieldsName = new StringBuilder();
 
-        //
+        // Формируем перечисление имен полей "name=?, age=?" и т.д.
+        StringBuilder fieldsName = new StringBuilder();
         for(Map.Entry<String, Object> fld : fieldsNameAndValue.entrySet()) {
             fieldsName.append(fld.getKey()).append("=?, ");
         }

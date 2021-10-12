@@ -12,15 +12,17 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
     private static long count = 0;
     private final Connection connection;
     private FieldsTypeAndValue fieldsTypeAndValue;
+    private FieldID fieldID;
 
     public JdbcTemplateImpl(Connection connection) {
         this.connection = connection;
         fieldsTypeAndValue = new FieldsTypeAndValue();
+        fieldID = new FieldID();
     }
 
     @Override
     public <T> void create(T objectData) {
-        boolean idState = fieldsTypeAndValue.getAnnotatedID(objectData);
+        boolean idState = fieldID.getAnnotatedID(objectData);
 
         if(idState) {
             createTable(connection, objectData);
@@ -30,7 +32,45 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
 
     @Override
     public <T> void update(T objectData) {
-        String fieldId = "";
+        Class<?> clazz = objectData.getClass();
+        String fieldIdName = fieldID.getIdName(objectData);
+        Map<String, Object> fieldsNameAndValue = fieldsTypeAndValue.getFieldsNameAndValue(objectData);
+        //
+        StringBuilder fieldsName = new StringBuilder();
+
+        //
+        for(Map.Entry<String, Object> fld : fieldsNameAndValue.entrySet()) {
+            fieldsName.append(fld.getKey()).append("=?, ");
+        }
+        String resultFieldsName = fieldsName.toString();
+
+        // SQL: "UPDATE User SET name=?, age=? WHERE id=?"
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement("UPDATE " + clazz.getSimpleName() + " SET " +
+                            resultFieldsName + " WHERE " + fieldIdName + "=?")) {
+
+            // Осталось это допилить !!!!!!!!!!!!!!!!
+            //--------------------
+            long id = 0;
+            String name = "";
+            int age = 0;
+            //------------------------
+            // без этого выше
+            preparedStatement.setString(1, name);
+            preparedStatement.setInt(2, age);
+            preparedStatement.setLong(3, id);
+
+            int i = preparedStatement.executeUpdate();
+            System.out.println("Количество изменненых строк: " + i);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+        /*String fieldId = "";
         String fieldName = "";
         String fieldAge = "";
         long id = 0;
@@ -77,7 +117,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             System.out.println("Количество изменненых строк: " + i);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override
@@ -174,8 +214,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
      * @param objectData - экземпляр класса, для которого создаем таблицу в БД
      */
     private <T> void createTable(Connection connection, T objectData) {
-        Map<String, String > fieldsNameAndSQLType = fieldsTypeAndValue.getFieldsNameAndSQLType(objectData);
-        String fieldId = fieldsTypeAndValue.getIdName(objectData);
+        String fieldId = fieldID.getIdName(objectData);
 
         Class<?> clazz = objectData.getClass();
 
@@ -198,15 +237,14 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
      * @param objectData - экземпляр класса, для которого создаем таблицу в БД и добавляем колонки для каждого поля
      */
     private <T> void addOtherColumnsToTable(Connection connection, T objectData) {
-        Map<String, String > fieldsNameAndSQLType = fieldsTypeAndValue.getFieldsNameAndSQLType(objectData);
-
+        Map<String, String> fieldsNameAndSQLType = fieldsTypeAndValue.getFieldsNameAndSQLType(objectData);
         Class<?> clazz = objectData.getClass();
 
-        //
+        // Создаем перечисление ("название поля" "SQL тип поля")
         StringJoiner SQLString = new StringJoiner(", ", "(", ")");
         String SQLSubString = "";
 
-        // Создаем стобцы таблицы для других поля класса
+        // Создаем стобцы таблицы для других полей класса
         for(Map.Entry<String, String> fld : fieldsNameAndSQLType.entrySet()) {
             SQLSubString = fld.getKey() + " " + fld.getValue();
             SQLString.add(SQLSubString);
@@ -226,7 +264,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
      * @param objectData - экземпляр класса, которого добавляем в таблицу БД
      */
     private <T> void checkingRowsInTable(Connection connection, T objectData) {
-        long id = (long) fieldsTypeAndValue.getIdValue(objectData);
+        long id = (long) fieldID.getIdValue(objectData);
 
         // Каждая строка (экземпляр класса) получае id > 0 при добавлении в таблицу
         // Ниже проводим проверку

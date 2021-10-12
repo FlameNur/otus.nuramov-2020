@@ -1,5 +1,7 @@
 package com.nuramov.hw09_Jdbc_Template;
 
+import com.nuramov.hw09_Jdbc_Template.Example_Classes.User;
+
 import java.sql.*;
 
 public class JdbcTemplateDemo {

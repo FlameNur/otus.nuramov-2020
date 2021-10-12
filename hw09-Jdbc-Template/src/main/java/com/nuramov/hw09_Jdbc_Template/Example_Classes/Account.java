@@ -1,4 +1,4 @@
-package com.nuramov.hw09_Jdbc_Template;
+package com.nuramov.hw09_Jdbc_Template.Example_Classes;
 
 import com.nuramov.hw09_Jdbc_Template.Annotations.*;
 

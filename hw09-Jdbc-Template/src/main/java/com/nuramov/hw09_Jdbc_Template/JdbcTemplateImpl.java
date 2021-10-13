@@ -37,91 +37,38 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
         Map<String, Object> fieldsNameAndValue = fieldsTypeAndValue.getFieldsNameAndValue(objectData);
 
         // Формируем перечисление имен полей "name=?, age=?" и т.д.
-        StringBuilder fieldsName = new StringBuilder();
+        StringJoiner fieldsName = new StringJoiner("=?, ");
         for(Map.Entry<String, Object> fld : fieldsNameAndValue.entrySet()) {
-            fieldsName.append(fld.getKey()).append("=?, ");
+            fieldsName.add(fld.getKey());
         }
-        String resultFieldsName = fieldsName.toString();
+        String resultFieldsName = fieldsName + "=? ";
 
         // SQL: "UPDATE User SET name=?, age=? WHERE id=?"
         try(PreparedStatement preparedStatement =
                     connection.prepareStatement("UPDATE " + clazz.getSimpleName() + " SET " +
-                            resultFieldsName + " WHERE " + fieldIdName + "=?")) {
+                            resultFieldsName + "WHERE " + fieldIdName + "=?")) {
 
-            // Осталось это допилить !!!!!!!!!!!!!!!!
-            //--------------------
-            long id = 0;
-            String name = "";
-            int age = 0;
-            //------------------------
-            // без этого выше
-            preparedStatement.setString(1, name);
-            preparedStatement.setInt(2, age);
-            preparedStatement.setLong(3, id);
-
-            int i = preparedStatement.executeUpdate();
-            System.out.println("Количество изменненых строк: " + i);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-
-
-
-        /*String fieldId = "";
-        String fieldName = "";
-        String fieldAge = "";
-        long id = 0;
-        String name = "";
-        int age = 0;
-
-        Class<?> clazz = objectData.getClass();
-        // Определяем названия и значения полей для SQL запроса
-        Field[] fields = clazz.getDeclaredFields();
-        for(Field field : fields) {
-            try {
-                field.setAccessible(true);
-                Object obj =  field.get(objectData);
-
-                if(obj instanceof Long) {
-                    fieldId = field.getName();
-                    id = (Long) obj;
-                }
-                if(obj instanceof String) {
-                    fieldName = field.getName();
-                    name = (String) obj;
-                }
-                if(obj instanceof Integer) {
-                    fieldAge = field.getName();
-                    age = (Integer) obj;
-                }
-
-                field.setAccessible(false);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            // Устанавливаем значения полей по порядку в SQL запросе
+            // 1: name = значение, 2: age = значение, 3: id = значение
+            int count = 0;
+            for(Map.Entry<String, Object> fld : fieldsNameAndValue.entrySet()) {
+                count++;
+                preparedStatement.setObject(count, fld.getValue());
             }
-        }
-
-        // SQL: "UPDATE User SET name=?, age=? WHERE id=?"
-        try(PreparedStatement preparedStatement =
-                    connection.prepareStatement("UPDATE " + clazz.getSimpleName() + " SET " +
-                            fieldName + "=?, " + fieldAge + "=? WHERE " + fieldId + "=?")) {
-
-            preparedStatement.setString(1, name);
-            preparedStatement.setInt(2, age);
-            preparedStatement.setLong(3, id);
+            // Значение поля id устанавливаем отдельно, т.к. в map fieldsNameAndValue его нет
+            count++;
+            preparedStatement.setObject(count, fieldID.getIdValue(objectData));
 
             int i = preparedStatement.executeUpdate();
             System.out.println("Количество изменненых строк: " + i);
         } catch (SQLException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     @Override
     public <T> T load(long id, Class<T> clazz) {
-        //Создаем экземпляр класс
+        //Создаем экземпляр класс. Поля будут заполнены данными из таблицы
         T objectData = null;
         try {
            objectData = clazz.getDeclaredConstructor().newInstance();
@@ -130,42 +77,30 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             e.printStackTrace();
         }
 
-        //Определяем нужную строку по id и получаем нужные значения
+        // Определяем название поля с аннотацией @id
+        String fieldIdName = null;
+        if (objectData != null) {
+            fieldIdName = fieldID.getIdName(objectData);
+        }
+
+        //Определяем нужную строку по id и получаем нужные значения полей
+        //SQL: "SELECT * FROM User WHERE id=?"
         try(PreparedStatement preparedStatement =
-                    connection.prepareStatement("SELECT * FROM " + clazz.getSimpleName() + " WHERE id=?")) {
+                    connection.prepareStatement("SELECT * FROM " + clazz.getSimpleName() + " WHERE " + fieldIdName + "=?")) {
 
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
 
-            // Получаем имя, но в цикле не получаем почему-то
-            //System.out.println("Получаем значение 2 колонки: " + resultSet.getString(2));
-            //
+            int count = 0;
+            // Заполняем поля нужными значениями через resultSet, который получили ранее
             Field[] fields = clazz.getDeclaredFields();
             for(Field field : fields) {
                 try {
                     field.setAccessible(true);
-                    Object objectField =  field.get(objectData);
-
-                    if(objectField instanceof Long) {
-                        //Устанавливаем значение id в поле полученного экземпляря класса
-                        field.setLong(objectData, resultSet.getLong(1));
-                    }
-                    if(field.getType().getSimpleName().startsWith("String")) {
-                        // Получается только при field.getType().getSimpleName()
-                        //Устанавливаем значение name в поле полученного экземпляря класса
-                        field.set(objectData, resultSet.getString(2));
-                    }
-                    if(objectField instanceof Integer) {
-                        //Устанавливаем значение age в поле полученного экземпляря класса
-                        field.setInt(objectData, resultSet.getInt(3));
-                    }
-
-
-                    /*//Устанавливаем значение name в поле полученного экземпляря класса
-                    field.set(objectData, resultSet.getString(2));*/
-
-
+                    // count определяет порядковый номер поля, значение которого мы должны получить
+                    count++;
+                    field.set(objectData, resultSet.getObject(count));
                     field.setAccessible(false);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -282,56 +217,40 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
      * @param objectData - экземпляр класса, которого добавляем в таблицу БД
      */
     private <T> void addRowToTable(Connection connection, T objectData, long id) {
-        String fieldId = "";
-        String fieldName = "";
-        String fieldAge = "";
-        String name = "";
-        int age = 0;
-
         Class<?> clazz = objectData.getClass();
-        // Определяем имена всех полей, значения полей name и age, чтобы вставить в SQL запрос
-        // Меняем значение поля id на новый, который установила БД
-        Field[] fields = clazz.getDeclaredFields();
-        for(Field field : fields) {
-            try {
-                field.setAccessible(true);
-                Object obj =  field.get(objectData);
+        String fieldIdName = fieldID.getIdName(objectData);
+        Map<String, Object> fieldsNameAndValue = fieldsTypeAndValue.getFieldsNameAndValue(objectData);
 
-                if(obj instanceof Long) {
-                    fieldId = field.getName();
-                    // Устанавливаем значение id в поле полученного экземпляря класса
-                    field.setLong(objectData, id);
-                }
-                if(obj instanceof String) {
-                    fieldName = field.getName();
-                    name = (String) obj;
-                }
-                if(obj instanceof Integer) {
-                    fieldAge = field.getName();
-                    age = (int) obj;
-                }
-
-                field.setAccessible(false);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+        // Формируем перечисление имен полей "name, age" и т.д.  и "?, ?" и т.д.
+        StringJoiner fieldsName = new StringJoiner(", ");
+        StringJoiner values = new StringJoiner(", ");
+        for(Map.Entry<String, Object> fld : fieldsNameAndValue.entrySet()) {
+            fieldsName.add(fld.getKey());
+            values.add("?");
         }
+        // Формируем перечисление имен всех полей для SQL запроса
+        // (id, name, age) и (?, ?, ?)
+        String resultFieldsName = "(" + fieldIdName + ", " + fieldsName + ")";
+        String resultValues = "(?, " + values + ")";
 
+        // Меняем значение поля id на новый, который установила БД (id > 0)
+        fieldID.setIdValue(objectData, id);
 
-        // Почему-то не работает с name??? Если заменить на fieldName, вылетает ошибка
-
-        //String sql = "INSERT INTO ";
-        //sql = sql.concat(clazz.getSimpleName()).concat("(").concat(fieldId).concat(", ").concat(fieldName).concat(", ").concat(fieldAge).concat(") VALUES(?, ?, ?)");
-
-
+        //SQL: "INSERT INTO User (id, name, age) VALUES(?, ?, ?)"
         try(PreparedStatement preparedStatement =
                     connection.prepareStatement("INSERT INTO " + clazz.getSimpleName() +
-                            "(" + fieldId + ", name, " + fieldAge + ") VALUES(?, ?, ?)")) {
+                            resultFieldsName + " VALUES" + resultValues)) {
 
+            // Устанавливаем значения полей по порядку в SQL запросе
+            // 1: id = значение
             preparedStatement.setLong(1, id);
-            preparedStatement.setString(2, name);
-            preparedStatement.setInt(3, age);
 
+            // 2: name = значение, 3: age = значение
+            int count = 1;
+            for(Map.Entry<String, Object> fld : fieldsNameAndValue.entrySet()) {
+                count++;
+                preparedStatement.setObject(count, fld.getValue());
+            }
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -2,8 +2,6 @@ package com.nuramov.hw09_Jdbc_Template.Example_Classes;
 
 import com.nuramov.hw09_Jdbc_Template.Annotations.*;
 
-import java.math.BigInteger;
-
 public class User {
     @id
     private long id = 0;

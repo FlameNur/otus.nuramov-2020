@@ -77,4 +77,24 @@ public class FieldID {
         }
         return name;
     }
+
+    <T> void setIdValue(T objectData, long id) {
+        // Определяем поля класса
+        Class<?> clazz = objectData.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            // Проверяем наличие аннотации "id" над одним из полей класса
+            if(field.isAnnotationPresent(id.class)) {
+                field.setAccessible(true);
+
+                try {
+                    // Устанавливаем новое значение id
+                    field.setLong(objectData, id);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                field.setAccessible(false);
+            }
+        }
+    }
 }

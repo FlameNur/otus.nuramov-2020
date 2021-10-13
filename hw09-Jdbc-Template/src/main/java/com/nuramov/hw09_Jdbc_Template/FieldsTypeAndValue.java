@@ -5,6 +5,7 @@ import com.nuramov.hw09_Jdbc_Template.Annotations.id;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -18,7 +19,7 @@ public class FieldsTypeAndValue {
      */
     <T> Map<String, String> getFieldsNameAndSQLType (T objectData) {
         //
-        Map<String, String> fieldsNameAndSQLType = new HashMap<>();
+        Map<String, String> fieldsNameAndSQLType = new LinkedHashMap<>();
 
         String fieldSimpleName;
         String fieldName;
@@ -90,7 +91,7 @@ public class FieldsTypeAndValue {
      */
     <T> Map<String, Object> getFieldsNameAndValue(T objectData) {
         //
-        Map<String, Object> fieldsNameAndValue = new HashMap<>();
+        Map<String, Object> fieldsNameAndValue = new LinkedHashMap<>();
 
         String fieldName;
         Object fieldValue;
@@ -105,7 +106,10 @@ public class FieldsTypeAndValue {
                 // Значение поля
                 fieldValue = field.get(objectData);
 
-                fieldsNameAndValue.put(fieldName, fieldValue);
+                // Включаем в map fieldsNameAndValue поля без аннотации @id
+                if (!field.isAnnotationPresent(id.class)) {
+                    fieldsNameAndValue.put(fieldName, fieldValue);
+                }
                 field.setAccessible(false);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();

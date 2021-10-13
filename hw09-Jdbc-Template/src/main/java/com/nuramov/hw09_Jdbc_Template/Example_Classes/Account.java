@@ -6,15 +6,11 @@ public class Account {
     @id
     private long no = 0;
 
-    private static long count = 0;
     private String type;
     private int rest;
+    private String test;
 
-    public Account() {
-        no = ++count;
-    }
-
-    public long getID() {
+    public long getNo() {
         return no;
     }
 
@@ -25,6 +21,11 @@ public class Account {
     public int getRest() {
         return rest;
     }
+
+    public String getTest() {
+        return test;
+    }
+
 
     public void setNo(long no) {
         this.no = no;
@@ -38,12 +39,17 @@ public class Account {
         this.rest = rest;
     }
 
+    public void setTest(String test) {
+        this.test = test;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
                 "no=" + no +
                 ", type='" + type + '\'' +
                 ", rest=" + rest +
+                ", test='" + test + '\'' +
                 '}';
     }
 }

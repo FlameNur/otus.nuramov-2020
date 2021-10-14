@@ -1,4 +1,4 @@
-package com.nuramov.hw09_Jdbc_Template;
+package com.nuramov.hw09_Jdbc_Template.Fields;
 
 import com.nuramov.hw09_Jdbc_Template.Annotations.id;
 
@@ -9,16 +9,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- *
+ * class FieldsTypeAndValue позволяет работать со всеми полями полученного экземпляра класса
+ * кроме поля с аннотацией @id
  */
 public class FieldsTypeAndValue {
     /**
-     * Метод getFieldsSQLTypeAndValue позволяет получить Map
-     * @param objectData
-     * @return
+     * Метод getFieldsSQLTypeAndValue позволяет получить Map с именами полей (key) и SQL типами этих полей (value)
+     * @param objectData - экземпляр класса
+     * @return - возвращает Map fieldsNameAndSQLType с именами полей (key) и SQL типами этих полей (value)
      */
-    <T> Map<String, String> getFieldsNameAndSQLType (T objectData) {
-        //
+    public <T> Map<String, String> getFieldsNameAndSQLType (T objectData) {
+        // Map с именами полей (key) и SQL типами этих полей (value)
         Map<String, String> fieldsNameAndSQLType = new LinkedHashMap<>();
 
         String fieldSimpleName;
@@ -84,16 +85,16 @@ public class FieldsTypeAndValue {
     }
 
     /**
-     * Метод getFieldsNameAndValue позволяет получить навание поля (key) и его значание (value)
-     * @param objectData
-     * @param <T>
-     * @return
+     * Метод getFieldsNameAndValue позволяет получить Map c именами полей (key) и его значаниями (value)
+     * @param objectData - экземпляр класса
+     * @return - возвращает Map fieldsNameAndValue c именами полей (key) и его значаниями (value)
      */
-    <T> Map<String, Object> getFieldsNameAndValue(T objectData) {
-        //
+    public <T> Map<String, Object> getFieldsNameAndValue(T objectData) {
+        // Map c именами полей (key) и его значаниями (value)
         Map<String, Object> fieldsNameAndValue = new LinkedHashMap<>();
-
+        // Название поля
         String fieldName;
+        // Значение поля
         Object fieldValue;
 
         Class<?> cls = objectData.getClass();
@@ -101,9 +102,7 @@ public class FieldsTypeAndValue {
         for(Field field : fields) {
             try {
                 field.setAccessible(true);
-                // Название поля
                 fieldName = field.getName();
-                // Значение поля
                 fieldValue = field.get(objectData);
 
                 // Включаем в map fieldsNameAndValue поля без аннотации @id

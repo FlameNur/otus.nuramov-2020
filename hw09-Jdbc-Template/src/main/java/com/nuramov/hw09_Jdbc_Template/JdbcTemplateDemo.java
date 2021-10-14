@@ -8,11 +8,11 @@ import java.sql.*;
 public class JdbcTemplateDemo {
     private static final String URL = "jdbc:h2:mem:";
 
-    public static void main(String[] args) throws SQLException {
-        JdbcTemplateDemo demo = new JdbcTemplateDemo();
-        Connection connection = demo.getConnection();
+    public static void main(String[] args) {
+        JdbcConnection jdbcConnection = new JdbcConnection();
+        Connection connection = jdbcConnection.getConnection(URL);
 
-        JdbcTemplate jdbcTemplate = new JdbcTemplateImpl<>(connection);
+        JdbcTemplate jdbcTemplate = new JdbcTemplateImpl(connection);
 
         User user1 = new User();
         user1.setAge(10);
@@ -27,7 +27,7 @@ public class JdbcTemplateDemo {
 
         // Работаем с классом User
         System.out.println("Работаем с классом User:");
-        /*jdbcTemplate.create(user1);
+        jdbcTemplate.create(user1);
 
         user1.setName("Yo");
 
@@ -49,7 +49,7 @@ public class JdbcTemplateDemo {
         user3.setAge(1);
         jdbcTemplate.insertRecord(user3);
         User loadedUser3 = jdbcTemplate.load(3, User.class);
-        System.out.println(loadedUser3);*/
+        System.out.println(loadedUser3);
 
         // Работаем с классом Account
         System.out.println("\n-----------------------------------------");
@@ -58,12 +58,12 @@ public class JdbcTemplateDemo {
         Account account1 = new Account();
         account1.setRest(100);
         account1.setType("AAA");
-        account1.setTest("test1");
+        account1.setTest(2.38);
 
         Account account2 = new Account();
         account2.setRest(222);
         account2.setType("BBB");
-        account2.setTest("test2");
+        account2.setTest(5.74);
 
         Account account3 = new Account();
 
@@ -74,14 +74,14 @@ public class JdbcTemplateDemo {
 
         jdbcTemplate.update(account1);
 
-        Account loadedAccount1 = jdbcTemplate.load(1, Account.class);
+        Account loadedAccount1 = jdbcTemplate.load(4, Account.class);
         System.out.println(loadedAccount1);
 
         System.out.println(account2);
 
         System.out.println("\nВставляем строку:__________________________________");
         jdbcTemplate.insertRecord(account2);
-        Account loadedAccount2 = jdbcTemplate.load(2, Account.class);
+        Account loadedAccount2 = jdbcTemplate.load(5, Account.class);
         System.out.println(loadedAccount2);
 
         jdbcTemplate.insertRecord(account1);
@@ -89,32 +89,14 @@ public class JdbcTemplateDemo {
         account3.setType("CCC");
         account3.setRest(444);
         jdbcTemplate.insertRecord(account3);
-        Account loadedAccount3 = jdbcTemplate.load(3, Account.class);
+        Account loadedAccount3 = jdbcTemplate.load(6, Account.class);
         System.out.println(loadedAccount3);
 
 
         System.out.println("\n--------------------------------------------");
+        System.out.println("Названия всех таблиц в базе даных:");
         jdbcTemplate.getDatabaseMetaData();
 
-        demo.close(connection);
-    }
-
-    /**
-     * Метод getConnection() подключает к базе данных H2
-     * @return Возвращает текущее соединение
-     * @throws SQLException
-     */
-    private Connection getConnection() throws SQLException {
-        Connection connection = DriverManager.getConnection(URL);
-        connection.setAutoCommit(false);
-        return connection;
-    }
-
-    /**
-     * Метод close() закрывает соединение
-     * @throws SQLException
-     */
-    public void close(Connection connection) throws SQLException {
-        connection.close();
+        jdbcConnection.close(connection);
     }
 }

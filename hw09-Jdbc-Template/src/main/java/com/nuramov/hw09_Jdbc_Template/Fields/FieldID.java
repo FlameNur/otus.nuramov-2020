@@ -1,4 +1,4 @@
-package com.nuramov.hw09_Jdbc_Template;
+package com.nuramov.hw09_Jdbc_Template.Fields;
 
 import com.nuramov.hw09_Jdbc_Template.Annotations.id;
 
@@ -13,7 +13,7 @@ public class FieldID {
      * @param objectData - экземпляр класса
      * @return - возвращает true, если у поля имеется аннотация @id, и false, если нет
      */
-    <T> boolean getAnnotatedID (T objectData) {
+    public <T> boolean getAnnotatedID (T objectData) {
         boolean idState = false;
         // Определяем поля класса
         Class<?> clazz = objectData.getClass();
@@ -33,7 +33,7 @@ public class FieldID {
      * @param objectData - экземпляр класса
      * @return - возвращает значение поля с аннотацией @id
      */
-    <T> Object getIdValue(T objectData) {
+    public <T> Object getIdValue(T objectData) {
         Object id = null;
 
         // Определяем поля класса
@@ -60,7 +60,7 @@ public class FieldID {
      * @param objectData - экземпляр класса
      * @return - возвращает наименование/название поля с аннотацией @id
      */
-    <T> String getIdName(T objectData) {
+    public <T> String getIdName(T objectData) {
         String  name = null;
 
         // Определяем поля класса
@@ -78,7 +78,12 @@ public class FieldID {
         return name;
     }
 
-    <T> void setIdValue(T objectData, long id) {
+    /**
+     * Метод setIdValue позволяет установить новое значение поля с аннотацией @id
+     * @param objectData - экземпляр класса
+     * @param id - новое значение для поля с аннотацией @id
+     */
+    public <T> void setIdValue(T objectData, long id) {
         // Определяем поля класса
         Class<?> clazz = objectData.getClass();
         Field[] fields = clazz.getDeclaredFields();

@@ -1,6 +1,8 @@
 package com.nuramov.hw09_Jdbc_Template;
 
 import com.nuramov.hw09_Jdbc_Template.Annotations.id;
+import com.nuramov.hw09_Jdbc_Template.Fields.FieldID;
+import com.nuramov.hw09_Jdbc_Template.Fields.FieldsTypeAndValue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -8,9 +10,12 @@ import java.sql.*;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class JdbcTemplateImpl<T> implements JdbcTemplate {
+/**
+ * класс JdbcTemplateImpl позволяет работать с таблицей в БД
+ */
+public class JdbcTemplateImpl implements JdbcTemplate {
     private static long count = 0;
-    private final Connection connection;
+    private Connection connection;
     private FieldsTypeAndValue fieldsTypeAndValue;
     private FieldID fieldID;
 
@@ -59,8 +64,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             count++;
             preparedStatement.setObject(count, fieldID.getIdValue(objectData));
 
-            int i = preparedStatement.executeUpdate();
-            System.out.println("Количество изменненых строк: " + i);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -132,7 +136,6 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             String[] types = {"TABLE"};
             ResultSet rs = databaseMetaData.getTables(null, null, "%", types);
             while (rs.next()) {
-                System.out.println("Названия всех таблиц в базе даных:");
                 System.out.println(rs.getString("TABLE_NAME"));
             }
         }
@@ -140,6 +143,18 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             e.printStackTrace();
         }
     }
+
+    /*@Override
+    public <T> int deleteAllRecord(Class<T> clazz) {
+        int i = -1;
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement("DELETE FROM " + clazz.getSimpleName())) {
+            i = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return i;
+    }*/
 
     /**
      * Метод createTable создает таблицу с названием полученного класса в базе данных H2 c полем id (@id):
@@ -149,13 +164,12 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
      */
     private <T> void createTable(Connection connection, T objectData) {
         String fieldId = fieldID.getIdName(objectData);
-
         Class<?> clazz = objectData.getClass();
 
         // Создали таблицу User со столбцом id (поле с аннотацией @id, название поля может быть любым)
+        // SQL: "CREATE TABLE User (id bigint NOT NULL auto_increment)"
         try (PreparedStatement columnId = connection.prepareStatement("CREATE TABLE " +
                     clazz.getSimpleName() + "(" + fieldId + " bigint NOT NULL auto_increment)")) {
-
             columnId.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -184,6 +198,7 @@ public class JdbcTemplateImpl<T> implements JdbcTemplate {
             SQLString.add(SQLSubString);
         }
 
+        // SQL: "ALTER TABLE User ADD (name VARCHAR, age INT)
         try(PreparedStatement otherColumns = connection.prepareStatement("ALTER TABLE " +
                 clazz.getSimpleName() + " ADD " + SQLString)) {
             otherColumns.executeUpdate();

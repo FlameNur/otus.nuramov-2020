@@ -2,13 +2,16 @@ package com.nuramov.hw09_Jdbc_Template.Example_Classes;
 
 import com.nuramov.hw09_Jdbc_Template.Annotations.*;
 
+/**
+ * class Account используется в качестве примера
+ */
 public class Account {
     @id
     private long no = 0;
 
     private String type;
     private int rest;
-    private String test;
+    private double test;
 
     public long getNo() {
         return no;
@@ -22,7 +25,7 @@ public class Account {
         return rest;
     }
 
-    public String getTest() {
+    public double getTest() {
         return test;
     }
 
@@ -39,7 +42,7 @@ public class Account {
         this.rest = rest;
     }
 
-    public void setTest(String test) {
+    public void setTest(double test) {
         this.test = test;
     }
 
@@ -49,7 +52,7 @@ public class Account {
                 "no=" + no +
                 ", type='" + type + '\'' +
                 ", rest=" + rest +
-                ", test='" + test + '\'' +
+                ", test=" + test +
                 '}';
     }
 }

@@ -1,39 +1,46 @@
 package com.nuramov.hw09_Jdbc_Template;
 
-import java.sql.SQLException;
-
+/**
+ * Интерфейс JdbcTemplate задает основные методы работы с таблицей БД
+ */
 public interface JdbcTemplate {
 
     /**
-     *
-     * @param objectData
-     * @param <T>
+     * Метод create позволяет создать таблицу с данными,
+     * соответсвующими значениям полей заданного экземпляра класса
+     * @param objectData - экземпляр класса
      */
     <T> void create(T objectData);
 
     /**
-     *
-     * @param objectData
-     * @param <T>
+     * Метод update позволяет обновить информацию в таблице (строке) по заданному экземпляру класса
+     * @param objectData - экземпляр класса
      */
     <T> void update(T objectData);
 
     /**
-     *
-     * @param id
-     * @return
+     * Метод load позволяет получить нужную строку из таблицы в БД по заданным id и классу
+     * и сформировать экземпляр класса со значениями полей, заданных в таблице
+     * @param id - требуемый id
+     * @param clazz - требуемый класс
+     * @return - возвращает экземпляр класса
      */
     <T> T load(long id, Class<T> clazz);
 
     /**
-     *
-     * @param objectData
-     * @param <T>
+     * Метод insertRecord позволяет добавить новую запись в таблицу
+     * @param objectData - экземпляр класса
      */
     <T> void insertRecord(T objectData);
 
     /**
-     * Получаем названия всех таблиц в базе даных
+     * Метод getDatabaseMetaData позволяет получить названия всех таблиц в базе даных
      */
     void getDatabaseMetaData();
+
+    /**
+     * Метод deleteAllRecord позволяет удалить все записи в заданной таблице
+     * @param clazz - требуемый класс
+     */
+    //<T> int deleteAllRecord(Class<T> clazz);
 }

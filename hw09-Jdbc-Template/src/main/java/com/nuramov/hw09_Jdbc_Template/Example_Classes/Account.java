@@ -29,11 +29,6 @@ public class Account {
         return test;
     }
 
-
-    public void setNo(long no) {
-        this.no = no;
-    }
-
     public void setType(String type) {
         this.type = type;
     }

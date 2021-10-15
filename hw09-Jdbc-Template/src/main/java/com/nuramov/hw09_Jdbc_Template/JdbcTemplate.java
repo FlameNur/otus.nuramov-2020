@@ -37,10 +37,4 @@ public interface JdbcTemplate {
      * Метод getDatabaseMetaData позволяет получить названия всех таблиц в базе даных
      */
     void getDatabaseMetaData();
-
-    /**
-     * Метод deleteAllRecord позволяет удалить все записи в заданной таблице
-     * @param clazz - требуемый класс
-     */
-    //<T> int deleteAllRecord(Class<T> clazz);
 }

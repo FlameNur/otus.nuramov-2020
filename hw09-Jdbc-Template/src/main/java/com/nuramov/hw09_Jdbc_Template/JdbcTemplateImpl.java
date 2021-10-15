@@ -144,18 +144,6 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         }
     }
 
-    /*@Override
-    public <T> int deleteAllRecord(Class<T> clazz) {
-        int i = -1;
-        try(PreparedStatement preparedStatement =
-                    connection.prepareStatement("DELETE FROM " + clazz.getSimpleName())) {
-            i = preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return i;
-    }*/
-
     /**
      * Метод createTable создает таблицу с названием полученного класса в базе данных H2 c полем id (@id):
      * id bigint(20) NOT NULL auto_increment

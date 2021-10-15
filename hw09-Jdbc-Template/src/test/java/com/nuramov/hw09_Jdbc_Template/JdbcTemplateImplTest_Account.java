@@ -1,24 +1,25 @@
 package com.nuramov.hw09_Jdbc_Template;
 
-import com.nuramov.hw09_Jdbc_Template.Example_Classes.User;
+import com.nuramov.hw09_Jdbc_Template.Example_Classes.Account;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JdbcTemplateImplTest_User {
+public class JdbcTemplateImplTest_Account {
     private static final String URL = "jdbc:h2:mem:";
     private static Connection connection;
     private static JdbcTemplateImpl jdbcTemplate;
     private static JdbcConnection jdbcConnection;
-    private static User user;
+    private static Account account;
 
     @BeforeAll
     static void setUpUser() {
-        user = new User();
-        user.setName("Bill");
-        user.setAge(10);
+        account = new Account();
+        account.setType("AAA");
+        account.setRest(11);
+        account.setTest(4.73);
     }
 
     @BeforeEach
@@ -35,18 +36,19 @@ class JdbcTemplateImplTest_User {
 
     @Test
     void Test() {
-        jdbcTemplate.create(user);
-        user.setName("Yo");
-        jdbcTemplate.update(user);
-        User loadedUser = jdbcTemplate.load(1, User.class);
+        jdbcTemplate.create(account);
+        account.setType("BBB");
+        jdbcTemplate.update(account);
+        Account loadedAccount = jdbcTemplate.load(1, Account.class);
 
-        assertEquals(1, loadedUser.getID());
-        assertNotEquals("Bill", loadedUser.getName());
-        assertEquals("Yo", loadedUser.getName());
-        assertEquals(10, loadedUser.getAge());
+        assertEquals(1, loadedAccount.getNo());
+        assertNotEquals("AAA", loadedAccount.getType());
+        assertEquals("BBB", loadedAccount.getType());
+        assertEquals(11, loadedAccount.getRest());
+        assertEquals(4.73, loadedAccount.getTest());
 
-        System.out.println("user: " + user);
-        System.out.println("loadedUser: " + loadedUser);
+        System.out.println("account: " + account);
+        System.out.println("loadedAccount: " + loadedAccount);
     }
 
     @AfterEach

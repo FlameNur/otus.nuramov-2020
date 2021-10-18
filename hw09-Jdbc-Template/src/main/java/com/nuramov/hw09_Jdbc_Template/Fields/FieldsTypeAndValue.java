@@ -26,8 +26,8 @@ public class FieldsTypeAndValue {
         String fieldName;
         Object fieldValue;
 
-        Class<?> cls = objectData.getClass();
-        Field[] fields = cls.getDeclaredFields();
+        Class<?> clazz = objectData.getClass();
+        Field[] fields = clazz.getDeclaredFields();
         for(Field field : fields) {
             try {
                 field.setAccessible(true);

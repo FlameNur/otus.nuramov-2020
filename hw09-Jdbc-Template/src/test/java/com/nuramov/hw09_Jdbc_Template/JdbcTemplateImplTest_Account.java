@@ -9,9 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class JdbcTemplateImplTest_Account {
     private static final String URL = "jdbc:h2:mem:";
-    private static Connection connection;
     private static JdbcTemplateImpl jdbcTemplate;
-    private static JdbcConnection jdbcConnection;
     private static Account account;
 
     @BeforeAll
@@ -24,9 +22,7 @@ public class JdbcTemplateImplTest_Account {
 
     @BeforeEach
     void getConnection() {
-        jdbcConnection = new JdbcConnection();
-        connection = jdbcConnection.getConnection(URL);
-        jdbcTemplate = new JdbcTemplateImpl(connection);
+        jdbcTemplate = new JdbcTemplateImpl(URL);
     }
 
     @BeforeEach
@@ -54,10 +50,5 @@ public class JdbcTemplateImplTest_Account {
     @AfterEach
     void TestEnd() {
         System.out.println("Тест успешно завершен");
-    }
-
-    @AfterEach
-    void closeConnection() {
-        jdbcConnection.close(connection);
     }
 }

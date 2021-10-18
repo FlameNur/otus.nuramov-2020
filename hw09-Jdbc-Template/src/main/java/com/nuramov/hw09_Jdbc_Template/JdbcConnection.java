@@ -29,7 +29,7 @@ public class JdbcConnection {
      * Метод close() закрывает соединение
      * @param connection - текущее соединение
      */
-    void close(Connection connection) {
+    void closeConnection(Connection connection) {
         try {
             connection.close();
         } catch (SQLException e) {

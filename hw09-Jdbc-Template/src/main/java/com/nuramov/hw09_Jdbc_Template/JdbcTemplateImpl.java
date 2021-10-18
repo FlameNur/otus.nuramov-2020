@@ -14,29 +14,55 @@ import java.util.StringJoiner;
  * класс JdbcTemplateImpl позволяет работать с таблицей в БД
  */
 public class JdbcTemplateImpl implements JdbcTemplate {
+    private static String URL = "";
     private static long count = 0;
     private Connection connection;
-    private FieldsTypeAndValue fieldsTypeAndValue;
-    private FieldID fieldID;
+    private final FieldsTypeAndValue fieldsTypeAndValue;
+    private final FieldID fieldID;
+    private final JdbcConnection jdbcConnection;
 
-    public JdbcTemplateImpl(Connection connection) {
-        this.connection = connection;
+    public JdbcTemplateImpl(String URL) {
+        JdbcTemplateImpl.URL = URL;
         fieldsTypeAndValue = new FieldsTypeAndValue();
         fieldID = new FieldID();
+        jdbcConnection = new JdbcConnection();
+
+        // Пока здесь сделал connection, т.к. отдельно пока не работает
+        connection = jdbcConnection.getConnection(URL);
+    }
+
+    @Override
+    public <T> void createTable(T objectData) {
+        // Проверяем наличие поля с аннотацией @id
+        boolean idState = fieldID.getAnnotatedID(objectData);
+        if(!idState) return;
+
+        // Проверяем наличие таблицы
+        boolean tableState = getDatabaseMetaData(objectData);
+        if(tableState) return;
+
+        //Не работает почему-то
+        createTable(connection, objectData);
     }
 
     @Override
     public <T> void create(T objectData) {
-        boolean idState = fieldID.getAnnotatedID(objectData);
+        Class<?> clazz = objectData.getClass();
+        boolean idState = fieldID.getAnnotatedID(clazz);
 
         if(idState) {
-            createTable(connection, objectData);
+            //createTable(connection, objectData);
             checkingRowsInTable(connection, objectData);
         }
     }
 
     @Override
     public <T> void update(T objectData) {
+        // Пока так делаем и в конце метода закрываем
+        //Connection connection = jdbcConnection.getConnection(URL);
+
+
+
         Class<?> clazz = objectData.getClass();
         String fieldIdName = fieldID.getIdName(objectData);
         Map<String, Object> fieldsNameAndValue = fieldsTypeAndValue.getFieldsNameAndValue(objectData);
@@ -68,10 +94,19 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+
+        //jdbcConnection.closeConnection(connection);
     }
 
     @Override
     public <T> T load(long id, Class<T> clazz) {
+        // Пока так делаем и в конце метода закрываем
+        //Connection connection = jdbcConnection.getConnection(URL);
+
+
+
+
         //Создаем экземпляр класс. Поля будут заполнены данными из таблицы
         T objectData = null;
         try {
@@ -113,13 +148,19 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+
+
+        //jdbcConnection.closeConnection(connection);
         return objectData;
     }
 
     @Override
     public <T> void insertRecord(T objectData) {
-        Class<?> cls = objectData.getClass();
+        // Пока так делаем и в конце метода закрываем
+        //Connection connection = jdbcConnection.getConnection(URL);
 
+        Class<?> cls = objectData.getClass();
         Field[] fields = cls.getDeclaredFields();
         for (Field field : fields) {
             // Проверяем наличие аннотации, прежде чем добавить в таблицу
@@ -127,21 +168,35 @@ public class JdbcTemplateImpl implements JdbcTemplate {
                 checkingRowsInTable(connection, objectData);
             }
         }
+
+
+        //jdbcConnection.closeConnection(connection);
     }
 
-    @Override
-    public void getDatabaseMetaData() {
+    /**
+     * Метод getDatabaseMetaData позволяет получить название таблицы в БД, соответсвующий названию класса
+     * @param objectData - экземпляр класса
+     * @return - возвращает true, если такая таблица уже есть, и false, если нет
+     */
+    private <T> boolean getDatabaseMetaData(T objectData) {
+        Class<?> clazz = objectData.getClass();
+        boolean tableState = false;
         try {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             String[] types = {"TABLE"};
             ResultSet rs = databaseMetaData.getTables(null, null, "%", types);
             while (rs.next()) {
-                System.out.println(rs.getString("TABLE_NAME"));
+                if(rs.getString("TABLE_NAME").startsWith(clazz.getSimpleName().toUpperCase())) {
+                    tableState = true;
+                }
+                // если надо вывести названия всех таблицв БД
+                //System.out.println(rs.getString("TABLE_NAME"));
             }
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
+        return tableState;
     }
 
     /**
@@ -235,6 +290,14 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         // (id, name, age) и (?, ?, ?)
         String resultFieldsName = "(" + fieldIdName + ", " + fieldsName + ")";
         String resultValues = "(?, " + values + ")";
+
+        /*// Делаю запрос для получения id и использования дальше
+        // До этого, id генерил сам и вставлял со стороннего метода
+        int myId = 0;
+        try(PreparedStatement preparedStatement = connection.prepareStatement()) {
+            preparedStatement.setLong();
+        }*/
+
 
         // Меняем значение поля id на новый, который установила БД (id > 0)
         fieldID.setIdValue(objectData, id);

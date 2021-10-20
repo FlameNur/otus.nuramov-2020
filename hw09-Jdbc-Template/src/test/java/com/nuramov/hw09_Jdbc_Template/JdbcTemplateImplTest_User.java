@@ -31,7 +31,7 @@ class JdbcTemplateImplTest_User {
 
     @Test
     void Test() {
-        jdbcTemplate.createTable(user);
+        //jdbcTemplate.createTable(user);
         jdbcTemplate.create(user);
         user.setName("Yo");
         jdbcTemplate.update(user);

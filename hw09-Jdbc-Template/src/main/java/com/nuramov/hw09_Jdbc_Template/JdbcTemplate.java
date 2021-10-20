@@ -32,10 +32,4 @@ public interface JdbcTemplate {
      * @return - возвращает экземпляр класса
      */
     <T> T load(long id, Class<T> clazz);
-
-    /**
-     * Метод insertRecord позволяет добавить новую запись в таблицу
-     * @param objectData - экземпляр класса
-     */
-    <T> void insertRecord(T objectData);
 }

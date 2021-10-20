@@ -1,6 +1,5 @@
 package com.nuramov.hw09_Jdbc_Template;
 
-import com.nuramov.hw09_Jdbc_Template.Annotations.id;
 import com.nuramov.hw09_Jdbc_Template.Fields.FieldID;
 import com.nuramov.hw09_Jdbc_Template.Fields.FieldsTypeAndValue;
 
@@ -16,19 +15,13 @@ import java.util.StringJoiner;
 public class JdbcTemplateImpl implements JdbcTemplate {
     private static String URL = "";
     private static long count = 0;
-    private Connection connection;
     private final FieldsTypeAndValue fieldsTypeAndValue;
     private final FieldID fieldID;
-    private final JdbcConnection jdbcConnection;
 
     public JdbcTemplateImpl(String URL) {
         JdbcTemplateImpl.URL = URL;
         fieldsTypeAndValue = new FieldsTypeAndValue();
         fieldID = new FieldID();
-        jdbcConnection = new JdbcConnection();
-
-        // Пока здесь сделал connection, т.к. отдельно пока не работает
-        connection = jdbcConnection.getConnection(URL);
     }
 
     @Override
@@ -37,32 +30,32 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         boolean idState = fieldID.getAnnotatedID(objectData);
         if(!idState) return;
 
-        // Проверяем наличие таблицы
-        boolean tableState = getDatabaseMetaData(objectData);
-        if(tableState) return;
-
-        //Не работает почему-то
-        createTable(connection, objectData);
+        try (Connection connection = DriverManager.getConnection(URL)) {
+            // Проверяем наличие таблицы
+            boolean tableState = getDatabaseMetaData(objectData, connection);
+            if(tableState) return;
+            //Создаем таблицу
+            createTable(connection, objectData);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public <T> void create(T objectData) {
-        Class<?> clazz = objectData.getClass();
-        boolean idState = fieldID.getAnnotatedID(clazz);
-
-        if(idState) {
-            //createTable(connection, objectData);
+        // Проверяем наличие поля с аннотацией @id
+        boolean idState = fieldID.getAnnotatedID(objectData);
+        if(!idState) return;
+        // Добавляем строку
+        try (Connection connection = DriverManager.getConnection(URL)) {
             checkingRowsInTable(connection, objectData);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public <T> void update(T objectData) {
-        // Пока так делаем и в конце метода закрываем
-        //Connection connection = jdbcConnection.getConnection(URL);
-
-
-
         Class<?> clazz = objectData.getClass();
         String fieldIdName = fieldID.getIdName(objectData);
         Map<String, Object> fieldsNameAndValue = fieldsTypeAndValue.getFieldsNameAndValue(objectData);
@@ -75,7 +68,8 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         String resultFieldsName = fieldsName + "=? ";
 
         // SQL: "UPDATE User SET name=?, age=? WHERE id=?"
-        try(PreparedStatement preparedStatement =
+        try(Connection connection = DriverManager.getConnection(URL);
+                PreparedStatement preparedStatement =
                     connection.prepareStatement("UPDATE " + clazz.getSimpleName() + " SET " +
                             resultFieldsName + "WHERE " + fieldIdName + "=?")) {
 
@@ -94,19 +88,10 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
-        //jdbcConnection.closeConnection(connection);
     }
 
     @Override
     public <T> T load(long id, Class<T> clazz) {
-        // Пока так делаем и в конце метода закрываем
-        //Connection connection = jdbcConnection.getConnection(URL);
-
-
-
-
         //Создаем экземпляр класс. Поля будут заполнены данными из таблицы
         T objectData = null;
         try {
@@ -124,8 +109,10 @@ public class JdbcTemplateImpl implements JdbcTemplate {
 
         //Определяем нужную строку по id и получаем нужные значения полей
         //SQL: "SELECT * FROM User WHERE id=?"
-        try(PreparedStatement preparedStatement =
-                    connection.prepareStatement("SELECT * FROM " + clazz.getSimpleName() + " WHERE " + fieldIdName + "=?")) {
+        try(Connection connection = DriverManager.getConnection(URL);
+                PreparedStatement preparedStatement =
+                    connection.prepareStatement("SELECT * FROM " + clazz.getSimpleName() +
+                            " WHERE " + fieldIdName + "=?")) {
 
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -148,29 +135,7 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
-
-        //jdbcConnection.closeConnection(connection);
         return objectData;
-    }
-
-    @Override
-    public <T> void insertRecord(T objectData) {
-        // Пока так делаем и в конце метода закрываем
-        //Connection connection = jdbcConnection.getConnection(URL);
-
-        Class<?> cls = objectData.getClass();
-        Field[] fields = cls.getDeclaredFields();
-        for (Field field : fields) {
-            // Проверяем наличие аннотации, прежде чем добавить в таблицу
-            if(field.isAnnotationPresent(id.class)) {
-                checkingRowsInTable(connection, objectData);
-            }
-        }
-
-
-        //jdbcConnection.closeConnection(connection);
     }
 
     /**
@@ -178,7 +143,7 @@ public class JdbcTemplateImpl implements JdbcTemplate {
      * @param objectData - экземпляр класса
      * @return - возвращает true, если такая таблица уже есть, и false, если нет
      */
-    private <T> boolean getDatabaseMetaData(T objectData) {
+    private <T> boolean getDatabaseMetaData(T objectData, Connection connection) {
         Class<?> clazz = objectData.getClass();
         boolean tableState = false;
         try {
@@ -190,7 +155,7 @@ public class JdbcTemplateImpl implements JdbcTemplate {
                     tableState = true;
                 }
                 // если надо вывести названия всех таблицв БД
-                //System.out.println(rs.getString("TABLE_NAME"));
+                System.out.println(rs.getString("TABLE_NAME"));
             }
         }
         catch (SQLException e) {
@@ -217,7 +182,6 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         // Добавляем остальные колонки таблицы для каждого поля экземпляра класса
         addOtherColumnsToTable(connection, objectData);
     }
@@ -265,19 +229,52 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         } else {
             id = ++count;
             // Добавляем строку в таблицу
-            addRowToTable(connection, objectData, id);
+            insertRecord(connection, objectData, id);
         }
     }
 
     /**
-     * Метод addRowToTable добавляет строки в таблицу БД
+     * Метод insertRecord добавляет строку (запись) в таблицу БД
      * @param connection - текущее соединение connection
      * @param objectData - экземпляр класса, которого добавляем в таблицу БД
      */
-    private <T> void addRowToTable(Connection connection, T objectData, long id) {
+    private <T> void insertRecord(Connection connection, T objectData, long id) {
         Class<?> clazz = objectData.getClass();
         String fieldIdName = fieldID.getIdName(objectData);
         Map<String, Object> fieldsNameAndValue = fieldsTypeAndValue.getFieldsNameAndValue(objectData);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Формируем перечисление имен полей "name, age" и т.д.  и "?, ?" и т.д.
         StringJoiner fieldsName = new StringJoiner(", ");
@@ -291,14 +288,6 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         String resultFieldsName = "(" + fieldIdName + ", " + fieldsName + ")";
         String resultValues = "(?, " + values + ")";
 
-        /*// Делаю запрос для получения id и использования дальше
-        // До этого, id генерил сам и вставлял со стороннего метода
-        int myId = 0;
-        try(PreparedStatement preparedStatement = connection.prepareStatement()) {
-            preparedStatement.setLong();
-        }*/
-
-
         // Меняем значение поля id на новый, который установила БД (id > 0)
         fieldID.setIdValue(objectData, id);
 
@@ -306,7 +295,6 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         try(PreparedStatement preparedStatement =
                     connection.prepareStatement("INSERT INTO " + clazz.getSimpleName() +
                             resultFieldsName + " VALUES" + resultValues)) {
-
             // Устанавливаем значения полей по порядку в SQL запросе
             // 1: id = значение
             preparedStatement.setLong(1, id);

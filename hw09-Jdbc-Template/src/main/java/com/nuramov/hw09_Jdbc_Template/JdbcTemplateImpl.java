@@ -48,7 +48,7 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         if(!idState) return;
         // Добавляем строку
         try (Connection connection = DriverManager.getConnection(URL)) {
-            checkingRowsInTable(connection, objectData);
+            insertRecord(connection, objectData);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -155,7 +155,7 @@ public class JdbcTemplateImpl implements JdbcTemplate {
                     tableState = true;
                 }
                 // если надо вывести названия всех таблицв БД
-                System.out.println(rs.getString("TABLE_NAME"));
+                //System.out.println(rs.getString("TABLE_NAME"));
             }
         }
         catch (SQLException e) {
@@ -215,97 +215,61 @@ public class JdbcTemplateImpl implements JdbcTemplate {
     }
 
     /**
-     * В методе checkingRowsInTable проводится проверка возможности добавления нового объекта в таблицу
-     * @param connection - текущее соединение connection
-     * @param objectData - экземпляр класса, которого добавляем в таблицу БД
-     */
-    private <T> void checkingRowsInTable(Connection connection, T objectData) {
-        long id = (long) fieldID.getIdValue(objectData);
-
-        // Каждая строка (экземпляр класса) получае id > 0 при добавлении в таблицу
-        // Ниже проводим проверку
-        if(id > 0) {
-            System.out.println("Такая строка уже существует");
-        } else {
-            id = ++count;
-            // Добавляем строку в таблицу
-            insertRecord(connection, objectData, id);
-        }
-    }
-
-    /**
      * Метод insertRecord добавляет строку (запись) в таблицу БД
      * @param connection - текущее соединение connection
-     * @param objectData - экземпляр класса, которого добавляем в таблицу БД
+     * @param objectData - экземпляр класса, который добавляем в таблицу БД
      */
-    private <T> void insertRecord(Connection connection, T objectData, long id) {
+    private <T> void insertRecord(Connection connection, T objectData) {
         Class<?> clazz = objectData.getClass();
         String fieldIdName = fieldID.getIdName(objectData);
         Map<String, Object> fieldsNameAndValue = fieldsTypeAndValue.getFieldsNameAndValue(objectData);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // Формируем перечисление имен полей "name, age" и т.д.  и "?, ?" и т.д.
-        StringJoiner fieldsName = new StringJoiner(", ");
-        StringJoiner values = new StringJoiner(", ");
+        // Формируем перечисление имен полей для SQL запроса
+        // fieldsName = "(name, age и т.д.)"  и values = "(?, ? и т.д.)"
+        StringJoiner fieldsName = new StringJoiner(", ", "(", ")");
+        StringJoiner values = new StringJoiner(", ", "(", ")");
         for(Map.Entry<String, Object> fld : fieldsNameAndValue.entrySet()) {
             fieldsName.add(fld.getKey());
             values.add("?");
         }
-        // Формируем перечисление имен всех полей для SQL запроса
-        // (id, name, age) и (?, ?, ?)
-        String resultFieldsName = "(" + fieldIdName + ", " + fieldsName + ")";
-        String resultValues = "(?, " + values + ")";
-
-        // Меняем значение поля id на новый, который установила БД (id > 0)
-        fieldID.setIdValue(objectData, id);
 
         //SQL: "INSERT INTO User (id, name, age) VALUES(?, ?, ?)"
         try(PreparedStatement preparedStatement =
                     connection.prepareStatement("INSERT INTO " + clazz.getSimpleName() +
-                            resultFieldsName + " VALUES" + resultValues)) {
+                            fieldsName + " VALUES" + values)) {
             // Устанавливаем значения полей по порядку в SQL запросе
-            // 1: id = значение
-            preparedStatement.setLong(1, id);
-
-            // 2: name = значение, 3: age = значение
-            int count = 1;
+            // 1: name = значение, 2: age = значение
+            int count = 0;
             for(Map.Entry<String, Object> fld : fieldsNameAndValue.entrySet()) {
                 count++;
                 preparedStatement.setObject(count, fld.getValue());
             }
             preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        setNewIdValue(connection, objectData);
+    }
+
+    /**
+     * Метод setNewIdValue позволяет установить новое значение поля id, установленное БД
+     * @param connection - текущее соединение connection
+     * @param objectData - экземпляр класса, который добавляем в таблицу БД
+     */
+    private <T> void setNewIdValue(Connection connection, T objectData) {
+        Class<?> clazz = objectData.getClass();
+        String fieldIdName = fieldID.getIdName(objectData);
+
+        // Меняем значение поля id на новый, который установила БД (id > 0)
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement("SELECT MAX(" + fieldIdName + ") FROM " + clazz.getSimpleName())) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            // Получаем значение id из БД
+            long id = resultSet.getLong(1);
+            // Устанавливаем новое значение поля id у экземпляра класса
+            fieldID.setIdValue(objectData, id);
         } catch (SQLException e) {
             e.printStackTrace();
         }

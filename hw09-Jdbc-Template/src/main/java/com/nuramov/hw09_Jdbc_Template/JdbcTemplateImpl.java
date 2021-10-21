@@ -233,10 +233,10 @@ public class JdbcTemplateImpl implements JdbcTemplate {
             values.add("?");
         }
 
-        //SQL: "INSERT INTO User (id, name, age) VALUES(?, ?, ?)"
+        //SQL: "INSERT INTO User (name, age) VALUES(?, ?)"
+        String query = "INSERT INTO " + clazz.getSimpleName() + fieldsName + " VALUES" + values;
         try(PreparedStatement preparedStatement =
-                    connection.prepareStatement("INSERT INTO " + clazz.getSimpleName() +
-                            fieldsName + " VALUES" + values)) {
+                    connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             // Устанавливаем значения полей по порядку в SQL запросе
             // 1: name = значение, 2: age = значение
             int count = 0;
@@ -245,31 +245,14 @@ public class JdbcTemplateImpl implements JdbcTemplate {
                 preparedStatement.setObject(count, fld.getValue());
             }
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
-        setNewIdValue(connection, objectData);
-    }
-
-    /**
-     * Метод setNewIdValue позволяет установить новое значение поля id, установленное БД
-     * @param connection - текущее соединение connection
-     * @param objectData - экземпляр класса, который добавляем в таблицу БД
-     */
-    private <T> void setNewIdValue(Connection connection, T objectData) {
-        Class<?> clazz = objectData.getClass();
-        String fieldIdName = fieldID.getIdName(objectData);
-
-        // Меняем значение поля id на новый, который установила БД (id > 0)
-        try(PreparedStatement preparedStatement =
-                    connection.prepareStatement("SELECT MAX(" + fieldIdName + ") FROM " + clazz.getSimpleName())) {
-            ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            // Получаем значение id из БД
-            long id = resultSet.getLong(1);
-            // Устанавливаем новое значение поля id у экземпляра класса
-            fieldID.setIdValue(objectData, id);
+            // Прописываем новое значение id в поле экземпляра класса
+            // id генерируется БД и чтобы его получить прописали выше Statement.RETURN_GENERATED_KEYS
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if(resultSet.next()) {
+                long id = resultSet.getLong(1);
+                fieldID.setIdValue(objectData, id);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

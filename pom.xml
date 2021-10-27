@@ -27,6 +27,7 @@
         <module>hw07-ATM-Department</module>
         <module>hw08-JSON-Object-Writer</module>
         <module>hw09-Jdbc-Template</module>
+        <module>hw10-Hibernate-ORM</module>
     </modules>
 
     <properties>

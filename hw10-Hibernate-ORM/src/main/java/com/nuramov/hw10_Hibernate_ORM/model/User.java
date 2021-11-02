@@ -16,14 +16,30 @@ public class User {
     @Column(name = "age")
     private int age;
 
-    //@OneToOne
-    class AddressDataSet {
-        private String street;
+    //Тут куча вопросов
+    @ManyToOne
+    @Column(name = "address")
+    AddressDataSet address;
+
+    //Тут куча вопросов
+    @OneToOne
+    @Column(name = "phone")
+    PhoneDataSet phone;
+
+    public String getName() {
+        return name;
     }
 
-    //@OneToMany
-    class PhoneDataSet {
-        private String number;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     @Override

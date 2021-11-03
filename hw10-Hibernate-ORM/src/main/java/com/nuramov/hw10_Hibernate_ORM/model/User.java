@@ -2,6 +2,9 @@ package com.nuramov.hw10_Hibernate_ORM.model;
 
 import javax.persistence.*;
 
+/**
+ *
+ */
 @Entity
 @Table(name = "user")
 public class User {
@@ -16,15 +19,24 @@ public class User {
     @Column(name = "age")
     private int age;
 
-    //Тут куча вопросов
-    @ManyToOne
-    @Column(name = "address")
-    AddressDataSet address;
+    // @JoinColumn(name = "address_id") - создает столбец "address_id" в таблице "user",
+    // чтобы связать ее с таблицей "address"
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private AddressDataSet address;
 
-    //Тут куча вопросов
-    @OneToOne
-    @Column(name = "phone")
-    PhoneDataSet phone;
+
+    // @OneToOne - Атрибут cascade означает, что операция обновления должна распространяться на дочерние записи,
+    // т.е. удалив user'a мы удалим и phone
+    // @JoinColumn(name = "phone_id") - создает столбец "phone_id" в таблице "user",
+    // чтобы связать ее с таблицей "phone"
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "phone_id")
+    private PhoneDataSet phone;
+
+    public long getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
@@ -40,6 +52,22 @@ public class User {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public AddressDataSet getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDataSet address) {
+        this.address = address;
+    }
+
+    public PhoneDataSet getPhone() {
+        return phone;
+    }
+
+    public void setPhone(PhoneDataSet phone) {
+        this.phone = phone;
     }
 
     @Override

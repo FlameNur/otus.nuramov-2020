@@ -6,10 +6,28 @@ import javax.persistence.*;
 @Table(name = "phone")
 public class PhoneDataSet {
 
-    //Тут куча вопросов
-    @OneToOne(cascade = CascadeType.ALL)
-    @Column(name = "namber")
+    @Id
+    @GeneratedValue
+    private long id;
+
+    @Column(name = "number")
     private String number;
+
+    // @OneToOne - атрибут mappedBy = "phone" связывает классы User и Phone через поле phone
+    @OneToOne(mappedBy = "phone")
+    private User user;
+
+    public long getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getNumber() {
         return number;

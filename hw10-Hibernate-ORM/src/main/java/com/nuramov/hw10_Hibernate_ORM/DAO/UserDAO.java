@@ -1,50 +1,19 @@
 package com.nuramov.hw10_Hibernate_ORM.DAO;
 
-import com.nuramov.hw10_Hibernate_ORM.HibernateUtil;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
-import java.util.List;
+/**
+ * interface UserDAO позволяет создать в приложении слой, который отвечает только за доступ к данным
+ * DAO (data access object) — один из наиболее распространенных паттернов проектирования, "Доступ к данным".
+ */
+public interface UserDAO {
+    public User findById(int id);
 
-public class UserDAO {
-    // Просто примеры методов
+    public void save(User user);
 
+    public void update(User user);
 
-    public User findById(int id) {
-        return HibernateUtil.getSessionFactory().openSession().get(User.class, id);
-    }
+    public void delete(User user);
 
-    public void save(User user) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.save(user);
-        transaction.commit();
-        session.close();
-    }
-
-    public void update(User user) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.update(user);
-        transaction.commit();
-        session.close();
-    }
-
-    public void delete(User user) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.delete(user);
-        transaction.commit();
-        session.close();
-    }
-
-    /*public Auto findAutoById(int id) {
-        return HibernateUtil.getSessionFactory().openSession().get(Auto.class, id);
-    }*/
-
-    public List<User> findAll() {
-        List<User> users = (List<User>)  HibernateUtil.getSessionFactory().openSession().createQuery("From User").list();
-        return users;
-    }
+    //public Auto findAutoById(int id);
 }

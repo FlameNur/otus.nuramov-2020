@@ -16,15 +16,22 @@ public class UserDAOImp implements UserDAO {
 
     @Override
     public User findById(int id) {
-        return HibernateUtil.getSessionFactory().openSession().get(User.class, id);
+        User user;
+        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+            user = session.get(User.class, id);
+        }
+        return user;
     }
 
     public void save(User user) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.save(user);
-        transaction.commit();
-        session.close();
+        User savedUser = user;
+        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+            //Transaction transaction = session.beginTransaction();
+            session.beginTransaction();
+            session.save(savedUser);
+            //transaction.commit();
+            session.getTransaction().commit();
+        }
     }
 
     @Override

@@ -3,7 +3,9 @@ package com.nuramov.hw10_Hibernate_ORM.model;
 import javax.persistence.*;
 
 /**
- *
+ * class User формирует таблицу "user" (пользователей) и имеет отношения с классами
+ * AddressDataSet - @ManyToOne
+ * PhoneDataSet - @OneToOne
  */
 @Entity
 @Table(name = "user")
@@ -21,15 +23,14 @@ public class User {
 
     // @JoinColumn(name = "address_id") - создает столбец "address_id" в таблице "user",
     // чтобы связать ее с таблицей "address"
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private AddressDataSet address;
 
-
-    // @OneToOne - Атрибут cascade означает, что операция обновления должна распространяться на дочерние записи,
+    // Атрибут cascade означает, что операция обновления должна распространяться на дочерние записи,
     // т.е. удалив user'a мы удалим и phone
     // @JoinColumn(name = "phone_id") - создает столбец "phone_id" в таблице "user",
-    // чтобы связать ее с таблицей "phone"
+    // чтобы связать ее с таблицей "phone" */
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "phone_id")
     private PhoneDataSet phone;

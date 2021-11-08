@@ -15,44 +15,39 @@ import java.util.List;
 public class UserDAOImp implements UserDAO {
 
     @Override
-    public User findById(int id) {
+    public User findById(long id) {
         User user;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+            session.beginTransaction();
             user = session.get(User.class, id);
+            session.getTransaction().commit();
         }
         return user;
     }
 
     public void save(User user) {
-        User savedUser = user;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
-            //Transaction transaction = session.beginTransaction();
             session.beginTransaction();
-            session.save(savedUser);
-            //transaction.commit();
+            session.save(user);
             session.getTransaction().commit();
         }
     }
 
     @Override
     public void update(User user) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.update(user);
-        transaction.commit();
-        session.close();
+        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            session.update(user);
+            session.getTransaction().commit();
+        }
     }
 
     @Override
     public void delete(User user) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.delete(user);
-        transaction.commit();
-        session.close();
+        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            session.delete(user);
+            session.getTransaction().commit();
+        }
     }
-
-    /*public Auto findAutoById(int id) {
-        return HibernateUtil.getSessionFactory().openSession().get(Auto.class, id);
-    }*/
 }

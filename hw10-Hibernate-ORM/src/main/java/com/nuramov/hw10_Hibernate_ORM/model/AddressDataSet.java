@@ -4,6 +4,9 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * class AddressDataSet формирует таблицу "address" (адресов) и имеет отношение с классом User @OneToMany
+ */
 @Entity
 @Table(name = "address")
 public class AddressDataSet {
@@ -15,8 +18,8 @@ public class AddressDataSet {
     @Column(name = "street")
     private String street;
 
-    // @OneToMany(через mappedBy указано свойство класса User, которое связывает его классом AddressDataSet,
-    // orphanRemoval = true - Если мы удалим улицу из БД — все связанные с ним юзеры также будут удалены
+    // Атрибут mappedBy = "address" связывает классы User и AddressDataSet через поле address класса User
+    // orphanRemoval = true — Если мы удалим улицу из БД — все связанные с ним юзеры также будут удалены
     // Атрибут cascade означает, что операция обновления должна распространяться на дочерние записи
     // FetchType.LAZY — ленивая выборка. Элементы коллекции будут выбираться из базы данных
     // только при обращении к какому-либо свойству коллекции
@@ -52,7 +55,7 @@ public class AddressDataSet {
         users.add(user);
     }
 
-    public void removeAuto(User user) {
+    public void removeUser(User user) {
         users.remove(user);
         user.setAddress(null);
     }

@@ -2,6 +2,9 @@ package com.nuramov.hw10_Hibernate_ORM.model;
 
 import javax.persistence.*;
 
+/**
+ * class PhoneDataSe формирует таблицу "phone" (телефонов) и имеет отношение с классом User @OneToOne
+ */
 @Entity
 @Table(name = "phone")
 public class PhoneDataSet {
@@ -13,7 +16,7 @@ public class PhoneDataSet {
     @Column(name = "number")
     private String number;
 
-    // @OneToOne - атрибут mappedBy = "phone" связывает классы User и Phone через поле phone
+    // Атрибут mappedBy = "phone" связывает классы User и Phone через поле phone класса User
     @OneToOne(mappedBy = "phone")
     private User user;
 

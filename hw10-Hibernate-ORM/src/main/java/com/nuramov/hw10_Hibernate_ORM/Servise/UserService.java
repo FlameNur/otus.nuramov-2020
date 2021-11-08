@@ -30,8 +30,4 @@ public class UserService {
     public void updateUser(User user) {
         userDAOImp.update(user);
     }
-
-    /*public Auto findAutoById(int id) {
-        return usersDao.findAutoById(id);
-    }*/
 }

@@ -1,9 +1,7 @@
-package com.nuramov.hw10_Hibernate_ORM.Servise;
+package com.nuramov.hw10_Hibernate_ORM.Service;
 
 import com.nuramov.hw10_Hibernate_ORM.DAO.UserDAOImp;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
-
-import java.util.List;
 
 /**
  * class UserService представляет собой слой данных в приложении, отвечающий за выполнение бизнес-логики.

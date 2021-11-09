@@ -21,9 +21,11 @@ public class User {
     @Column(name = "age")
     private int age;
 
+    // Атрибут cascade означает, что операция обновления должна распространяться на дочерние записи,
+    // т.е. удалив address мы удалим и всех user по этому адресу
     // @JoinColumn(name = "address_id") - создает столбец "address_id" в таблице "user",
     // чтобы связать ее с таблицей "address"
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private AddressDataSet address;
 
@@ -31,7 +33,7 @@ public class User {
     // т.е. удалив user'a мы удалим и phone
     // @JoinColumn(name = "phone_id") - создает столбец "phone_id" в таблице "user",
     // чтобы связать ее с таблицей "phone" */
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "phone_id")
     private PhoneDataSet phone;
 

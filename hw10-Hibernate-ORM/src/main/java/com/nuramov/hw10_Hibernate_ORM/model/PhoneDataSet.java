@@ -17,7 +17,7 @@ public class PhoneDataSet {
     private String number;
 
     // Атрибут mappedBy = "phone" связывает классы User и Phone через поле phone класса User
-    @OneToOne(mappedBy = "phone")
+    @OneToOne(mappedBy = "phone", cascade = CascadeType.ALL)
     private User user;
 
     public long getId() {
@@ -28,12 +28,12 @@ public class PhoneDataSet {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public String getNumber() {
         return number;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setNumber(String number) {

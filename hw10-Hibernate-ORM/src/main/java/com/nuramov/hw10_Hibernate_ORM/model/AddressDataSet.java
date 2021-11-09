@@ -20,10 +20,11 @@ public class AddressDataSet {
 
     // Атрибут mappedBy = "address" связывает классы User и AddressDataSet через поле address класса User
     // orphanRemoval = true — Если мы удалим улицу из БД — все связанные с ним юзеры также будут удалены
-    // Атрибут cascade означает, что операция обновления должна распространяться на дочерние записи
+    // Атрибут cascade означает, что операция обновления должна распространяться на дочерние записи,
+    // т.е. удалив address мы удалим и всех user по этому адресу
     // FetchType.LAZY — ленивая выборка. Элементы коллекции будут выбираться из базы данных
     // только при обращении к какому-либо свойству коллекции
-    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<User> users;
 
     public AddressDataSet() {

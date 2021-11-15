@@ -9,6 +9,7 @@ public class Demo {
     public static void main(String[] args) {
         UserService userService = new UserService();
 
+        // Создали user'ов 1, 2 и 3
         User user1 = new User();
         user1.setAge(10);
         user1.setName("Bill");
@@ -21,59 +22,68 @@ public class Demo {
         user3.setAge(50);
         user3.setName("Huanita");
 
-        PhoneDataSet phoneDataSet1 = new PhoneDataSet();
-        phoneDataSet1.setNumber("111");
-        phoneDataSet1.setUser(user1);
+        // Создали адресы для каждого User'a
+        AddressDataSet addressDataSet1 = new AddressDataSet();
+        addressDataSet1.setStreet("адрес1");
 
-        PhoneDataSet phoneDataSet2 = new PhoneDataSet();
-        phoneDataSet2.setNumber("222");
-        phoneDataSet2.setUser(user2);
+        AddressDataSet addressDataSet2 = new AddressDataSet();
+        addressDataSet2.setStreet("адрес2");
 
-        PhoneDataSet phoneDataSet3 = new PhoneDataSet();
-        phoneDataSet3.setNumber("555");
-        phoneDataSet3.setUser(user3);
+        AddressDataSet addressDataSet3 = new AddressDataSet();
+        addressDataSet3.setStreet("адрес3");
 
-        AddressDataSet addressDataSet = new AddressDataSet();
-        addressDataSet.setStreet("dadkakjda");
+        // Добавили адресы
+        user1.setAddress(addressDataSet1);
+        user2.setAddress(addressDataSet2);
+        user3.setAddress(addressDataSet3);
 
-        addressDataSet.addUsers(user1);
-        addressDataSet.addUsers(user2);
-        addressDataSet.addUsers(user3);
+        // Создали телефон для User'ов 1, 2 и 3
+        PhoneDataSet phoneDataSet = new PhoneDataSet();
+        phoneDataSet.setNumber("111");
+        phoneDataSet.addUser(user1);
+        phoneDataSet.addUser(user2);
+        phoneDataSet.addUser(user3);
 
-        user1.setAddress(addressDataSet);
-        user1.setPhone(phoneDataSet1);
+        // Добавили телефон для для каждого User'a
+        user1.setPhone(phoneDataSet);
+        user2.setPhone(phoneDataSet);
+        user3.setPhone(phoneDataSet);
 
-        user2.setAddress(addressDataSet);
-        user2.setPhone(phoneDataSet2);
-
-        user3.setAddress(addressDataSet);
-        user3.setPhone(phoneDataSet3);
-
+        // Сохраняем User'a 1 в БД
         userService.saveUser(user1);
+
+        // Обновили имя User'a 1 и обновили информацию в БД
         user1.setName("New name");
         userService.updateUser(user1);
 
+        // Сохранили User'ов 2 и 3
         userService.saveUser(user2);
         userService.saveUser(user3);
 
+        // Нашли User'ов 1, 2 и 3 по их id в БД
         User newUser1 = userService.findUser(1);
         System.out.println(newUser1);
 
-        User newUser2 = userService.findUser(3);
+        User newUser2 = userService.findUser(4);
         System.out.println(newUser2);
 
-        User newUser3 = userService.findUser(5);
+        User newUser3 = userService.findUser(6);
         System.out.println(newUser3);
 
-        PhoneDataSet phoneUser3 = newUser3.getPhone();
+        // Получили адрес и телефон у User'a 3
         AddressDataSet addressUser3 = newUser3.getAddress();
-        System.out.println(phoneUser3.getNumber());    // 555 все правильно
-        System.out.println(addressUser3.getStreet());  // dadkakjda все правильно
+        System.out.println(addressUser3.getStreet());  // "адрес3" все правильно
+        PhoneDataSet phoneUser3 = newUser3.getPhone();
+        System.out.println(phoneUser3.getNumber());    // "111" все правильно
 
 
+        // Удаляем  User'a 1 из БД
         userService.deleteUser(user1);
         User deletedUser1 = userService.findUser(1);
         System.out.println(deletedUser1);
+
+        System.out.println(user2);
+        System.out.println(user3);
 
     }
 }

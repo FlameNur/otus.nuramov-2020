@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Table(name = "user")
 public class User {
 
+    // Генерация id стоит по дефолту
     @Id
     @GeneratedValue
     private long id = 0;
@@ -22,10 +23,10 @@ public class User {
     private int age;
 
     // Атрибут cascade означает, что операция обновления должна распространяться на дочерние записи,
-    // т.е. удалив address мы удалим и всех user по этому адресу
+    // т.е. удалив user'a, мы удаляем и address
     // @JoinColumn(name = "address_id") - создает столбец "address_id" в таблице "user",
     // чтобы связать ее с таблицей "address"
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private AddressDataSet address;
 
@@ -33,7 +34,7 @@ public class User {
     // т.е. удалив user'a мы удалим и phone
     // @JoinColumn(name = "phone_id") - создает столбец "phone_id" в таблице "user",
     // чтобы связать ее с таблицей "phone" */
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "phone_id")
     private PhoneDataSet phone;
 
@@ -45,20 +46,20 @@ public class User {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getAge() {
         return age;
     }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
-
     public AddressDataSet getAddress() {
         return address;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public void setAddress(AddressDataSet address) {

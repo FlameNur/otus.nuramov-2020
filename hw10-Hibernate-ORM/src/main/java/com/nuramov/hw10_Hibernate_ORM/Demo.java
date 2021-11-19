@@ -64,10 +64,10 @@ public class Demo {
         User newUser1 = userService.findUser(1);
         System.out.println(newUser1);
 
-        User newUser2 = userService.findUser(4);
+        User newUser2 = userService.findUser(2);
         System.out.println(newUser2);
 
-        User newUser3 = userService.findUser(6);
+        User newUser3 = userService.findUser(3);
         System.out.println(newUser3);
 
         // Получили адрес и телефон у User'a 3
@@ -81,6 +81,10 @@ public class Demo {
         userService.deleteUser(user1);
         User deletedUser1 = userService.findUser(1);
         System.out.println(deletedUser1);
+
+        userService.deleteUser(user2);
+        User deletedUser2 = userService.findUser(2);
+        System.out.println(deletedUser2);
 
         System.out.println(user2);
         System.out.println(user3);

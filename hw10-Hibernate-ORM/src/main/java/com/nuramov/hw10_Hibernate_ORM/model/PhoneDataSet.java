@@ -11,16 +11,15 @@ import java.util.List;
 @Table(name = "phone")
 public class PhoneDataSet {
 
-    // Генерация id стоит по дефолту
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "number")
     private String number;
 
     // Атрибут mappedBy = "phone" связывает классы User и Phone через поле phone класса User
-    @OneToMany(mappedBy = "phone", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "phone", fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
     private List<User> users;
 
     public PhoneDataSet() {

@@ -9,9 +9,8 @@ import javax.persistence.*;
 @Table(name = "address")
 public class AddressDataSet {
 
-    // Генерация id стоит по дефолту
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "street")

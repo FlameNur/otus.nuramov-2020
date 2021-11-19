@@ -11,9 +11,8 @@ import javax.persistence.*;
 @Table(name = "user")
 public class User {
 
-    // Генерация id стоит по дефолту
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id = 0;
 
     @Column(name = "name")
@@ -33,9 +32,9 @@ public class User {
     // Атрибут cascade означает, что операция обновления должна распространяться на дочерние записи,
     // т.е. удалив user'a мы удалим и phone
     // @JoinColumn(name = "phone_id") - создает столбец "phone_id" в таблице "user",
-    // чтобы связать ее с таблицей "phone" */
+    // чтобы связать ее с таблицей "phone"
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "phone_id")
+    @JoinColumn(name = "phone_id", referencedColumnName = "id")
     private PhoneDataSet phone;
 
     public long getId() {

@@ -46,6 +46,12 @@ public class UserDAOImp implements UserDAO {
     public void delete(User user) {
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
+
+            user.setPhone(null);                // добавил
+            session.update(user);               // добавил
+            //session.getTransaction().commit();  // добавил
+            //session.beginTransaction();
+
             session.delete(user);
             session.getTransaction().commit();
         }

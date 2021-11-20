@@ -19,7 +19,9 @@ public class PhoneDataSet {
     private String number;
 
     // Атрибут mappedBy = "phone" связывает классы User и Phone через поле phone класса User
-    @OneToMany(mappedBy = "phone", fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
+    // {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}
+    // orphanRemoval=true
+    @OneToMany(mappedBy = "phone", fetch = FetchType.EAGER)
     private List<User> users;
 
     public PhoneDataSet() {

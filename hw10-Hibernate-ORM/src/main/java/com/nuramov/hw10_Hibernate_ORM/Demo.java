@@ -44,11 +44,6 @@ public class Demo {
         phoneDataSet.addUser(user2);
         phoneDataSet.addUser(user3);
 
-        // Добавили телефон для для каждого User'a
-        user1.setPhone(phoneDataSet);
-        user2.setPhone(phoneDataSet);
-        user3.setPhone(phoneDataSet);
-
         // Сохраняем User'a 1 в БД
         userService.saveUser(user1);
 
@@ -80,11 +75,11 @@ public class Demo {
         // Удаляем  User'a 1 из БД
         userService.deleteUser(user1);
         User deletedUser1 = userService.findUser(1);
-        System.out.println(deletedUser1);
+        System.out.println("Первый удаленный персонаж: " + deletedUser1);
 
         userService.deleteUser(user2);
         User deletedUser2 = userService.findUser(2);
-        System.out.println(deletedUser2);
+        System.out.println("Второй удаленный персонаж: " + deletedUser2);
 
         System.out.println(user2);
         System.out.println(user3);

@@ -33,8 +33,8 @@ public class User {
     // т.е. удалив user'a мы удалим и phone
     // @JoinColumn(name = "phone_id") - создает столбец "phone_id" в таблице "user",
     // чтобы связать ее с таблицей "phone"
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "phone_id", referencedColumnName = "id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "phone_id")
     private PhoneDataSet phone;
 
     public long getId() {

@@ -68,10 +68,17 @@ class HiberORM_Test {
     }
 
     @BeforeEach
-    void addPhone() {
+    void addUsersToPhone() {
         phoneDataSet.addUser(user1);
         phoneDataSet.addUser(user2);
         phoneDataSet.addUser(user3);
+    }
+
+    @BeforeEach
+    void addPhone() {
+        user1.setPhone(phoneDataSet);
+        user2.setPhone(phoneDataSet);
+        user3.setPhone(phoneDataSet);
     }
 
     @BeforeEach

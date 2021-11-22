@@ -21,7 +21,7 @@ public class PhoneDataSet {
     // Атрибут mappedBy = "phone" связывает классы User и Phone через поле phone класса User
     // Атрибут fetch = FetchType.EAGER - загрузка заставляет ORM загружать связанные сущности и коллекции сразу,
     // вместе с корневой сущностью
-    @OneToMany(mappedBy = "phone", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "phone")
     private List<User> users;
 
     public PhoneDataSet() {
@@ -45,7 +45,6 @@ public class PhoneDataSet {
     }
 
     public void addUser(User user) {
-        user.setPhone(this);
         users.add(user);
     }
 

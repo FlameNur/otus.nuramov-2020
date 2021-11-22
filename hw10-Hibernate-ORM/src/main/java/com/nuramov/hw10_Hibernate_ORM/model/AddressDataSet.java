@@ -3,7 +3,7 @@ package com.nuramov.hw10_Hibernate_ORM.model;
 import javax.persistence.*;
 
 /**
- * class AddressDataSet формирует таблицу "address" (адресов) и имеет отношение с классом User @OneToMany
+ * class AddressDataSet формирует таблицу "address" (адресов) и имеет отношение с классом User @OneToOne
  */
 @Entity
 @Table(name = "address")

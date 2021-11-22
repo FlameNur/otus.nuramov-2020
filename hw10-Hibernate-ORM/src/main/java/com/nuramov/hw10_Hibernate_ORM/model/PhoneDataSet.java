@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * class PhoneDataSe формирует таблицу "phone" (телефонов) и имеет отношение с классом User @OneToOne
+ * class PhoneDataSe формирует таблицу "phone" (телефонов) и имеет отношение с классом User @OneToMany
  */
 @Entity
 @Table(name = "phone")
@@ -19,8 +19,8 @@ public class PhoneDataSet {
     private String number;
 
     // Атрибут mappedBy = "phone" связывает классы User и Phone через поле phone класса User
-    // {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}
-    // orphanRemoval=true
+    // Атрибут fetch = FetchType.EAGER - загрузка заставляет ORM загружать связанные сущности и коллекции сразу,
+    // вместе с корневой сущностью
     @OneToMany(mappedBy = "phone", fetch = FetchType.EAGER)
     private List<User> users;
 

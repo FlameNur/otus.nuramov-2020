@@ -4,8 +4,8 @@ import javax.persistence.*;
 
 /**
  * class User формирует таблицу "user" (пользователей) и имеет отношения с классами
- * AddressDataSet - @ManyToOne
- * PhoneDataSet - @OneToOne
+ * AddressDataSet - @OneToOne
+ * PhoneDataSet - @ManyToOne
  */
 @Entity
 @Table(name = "user")
@@ -21,7 +21,7 @@ public class User {
     @Column(name = "age")
     private int age;
 
-    // Атрибут cascade означает, что операция обновления должна распространяться на дочерние записи,
+    // Атрибут cascade = CascadeType.ALL означает, что операция обновления должна распространяться на дочерние записи,
     // т.е. удалив user'a, мы удаляем и address
     // @JoinColumn(name = "address_id") - создает столбец "address_id" в таблице "user",
     // чтобы связать ее с таблицей "address"

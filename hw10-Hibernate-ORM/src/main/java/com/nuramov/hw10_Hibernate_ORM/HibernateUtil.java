@@ -11,12 +11,13 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
 /**
- *
+ * класс HibernateUtil позволяет создавать для приложения фабрику сессий для работы с БД
  */
 public class HibernateUtil {
     private static SessionFactory sessionFactory;
 
-    public static SessionFactory buildSessionFactory() {
+    private static SessionFactory buildSessionFactory() {
+        // Конфигурация Hibernate записана в .xml файле
         Configuration configuration = new Configuration()
                 .configure("hibernate.cfg.xml");
 

@@ -7,11 +7,28 @@ import com.nuramov.hw10_Hibernate_ORM.model.User;
  * DAO (data access object) — один из наиболее распространенных паттернов проектирования, "Доступ к данным".
  */
 public interface UserDAO {
-    public User findById(long id);
+    /**
+     * Метод findById позволяет найти пользователя (User) по его id в БД
+     * @param id - id пользователя (User)
+     * @return - пользователя (User)
+     */
+    User findById(long id);
 
-    public void save(User user);
+    /**
+     * Метод save позволяет сохранить пользователя (User) в БД
+     * @param user - пользователь (User), которого сохраняем в БД
+     */
+    void save(User user);
 
-    public void update(User user);
+    /**
+     * Метод update позволяет обновить данные пользователя (User) в БД
+     * @param user - пользователь (User), чьи данные обновляются в БД
+     */
+    void update(User user);
 
-    public void delete(User user);
+    /**
+     * Метод delete позволяет удалить пользователя (User) из БД
+     * @param user - пользователь (User), которого удаляем из БД
+     */
+    void delete(User user);
 }

@@ -9,8 +9,6 @@ import java.util.List;
 
 /**
  * class UserDAOImp реализует интерфейс UserDAO
- * class UserDAOImp позволяет создать в приложении слой, который отвечает только за доступ к данным.
- * DAO (data access object) — один из наиболее распространенных паттернов проектирования, "Доступ к данным".
  */
 public class UserDAOImp implements UserDAO {
 
@@ -19,15 +17,18 @@ public class UserDAOImp implements UserDAO {
         User user;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
+            // Находим пользователя (User) по id
             user = session.get(User.class, id);
             session.getTransaction().commit();
         }
         return user;
     }
 
+    @Override
     public void save(User user) {
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
+            // Сохраняем пользователя (User) в БД
             session.save(user);
             session.getTransaction().commit();
         }
@@ -37,6 +38,7 @@ public class UserDAOImp implements UserDAO {
     public void update(User user) {
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
+            // Обновляем данные пользователя (User) в БД
             session.update(user);
             session.getTransaction().commit();
         }
@@ -46,12 +48,11 @@ public class UserDAOImp implements UserDAO {
     public void delete(User user) {
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
-
-            user.setPhone(null);                // добавил
-            session.update(user);               // добавил
-            //session.getTransaction().commit();  // добавил
-            //session.beginTransaction();
-
+            // Сначала присваиваем полю phone значение null, чтобы в случае удаления пользователя (User) из БД
+            // не был удален Phone, на котрого ссылаются другие пользователи
+            user.setPhone(null);
+            session.update(user);
+            // Удаляем пользователя (User) из БД
             session.delete(user);
             session.getTransaction().commit();
         }

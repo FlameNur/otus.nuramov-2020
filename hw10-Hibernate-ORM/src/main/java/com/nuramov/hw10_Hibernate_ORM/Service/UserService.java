@@ -1,5 +1,6 @@
 package com.nuramov.hw10_Hibernate_ORM.Service;
 
+import com.nuramov.hw10_Hibernate_ORM.DAO.UserDAO;
 import com.nuramov.hw10_Hibernate_ORM.DAO.UserDAOImp;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 
@@ -8,24 +9,25 @@ import com.nuramov.hw10_Hibernate_ORM.model.User;
  * Сервис содержит внутри себя UserDao, и в своих методах вызывает методы DAO.
  */
 public class UserService {
-    private UserDAOImp userDAOImp = new UserDAOImp();
+    private UserDAO userDAO;
 
     public UserService() {
+        userDAO = new UserDAOImp();
     }
 
-    public User findUser(int id) {
-        return userDAOImp.findById(id);
+    public User findUser(long id) {
+        return userDAO.findById(id);
     }
 
     public void saveUser(User user) {
-        userDAOImp.save(user);
+        userDAO.save(user);
     }
 
     public void deleteUser(User user) {
-        userDAOImp.delete(user);
+        userDAO.delete(user);
     }
 
     public void updateUser(User user) {
-        userDAOImp.update(user);
+        userDAO.update(user);
     }
 }

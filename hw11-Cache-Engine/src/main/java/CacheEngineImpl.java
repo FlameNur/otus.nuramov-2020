@@ -8,8 +8,14 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     private static final int TIME_THRESHOLD_MS = 5;
 
     private final int maxElements;
+
+    // Время жизни объекта в кэше/сколько объекту позволяется жить в кэше до его удаления оттуда
     private final long lifeTimeMs;
+
+    // Сколько объект может простаивать с момента последнего запроса/доступа
     private final long idleTimeMs;
+
+    // Если lifeTime и idleTime =0, то все элементы живут в кэше вечно и будут удаляться по максимальному размеру
     private final boolean isEternal;
 
     private final Map<K, MyElement<K, V>> elements = new LinkedHashMap<>();
@@ -25,12 +31,16 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
         this.isEternal = lifeTimeMs == 0 && idleTimeMs == 0 || isEternal;
     }
 
+    // кладем элемент в кэш
     public void put(MyElement<K, V> element) {
+        // Перед добавлением элемента в кэш, проводим проверку размера кэша,
+        // если он заполнен, то удаляем первый добавленный элемент/самый старый элемент
         if (elements.size() == maxElements) {
             K firstKey = elements.keySet().iterator().next();
             elements.remove(firstKey);
         }
 
+        // дальше пока хз что там...
         K key = element.getKey();
         elements.put(key, element);
 
@@ -70,6 +80,8 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
         timer.cancel();
     }
 
+    // Задаем максимальное время, которое элемент в кэше должен жить
+    // Работает с lifeTime и idleTime
     private TimerTask getTimerTask(final K key, Function<MyElement<K, V>, Long> timeFunction) {
         return new TimerTask() {
             @Override

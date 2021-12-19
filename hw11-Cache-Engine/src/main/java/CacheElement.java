@@ -1,18 +1,18 @@
 import java.lang.ref.SoftReference;
 
-public class CacheElement<T> {
-    private final SoftReference<T> softReferenceElement;
+public class CacheElement<V> {
+    private final SoftReference<V> softReferenceElement;
     private final long creationTime;
     private long lastAccessTime;
 
 
-    public CacheElement(T dbElement) {
+    public CacheElement(V dbElement) {
         this.softReferenceElement = new SoftReference<>(dbElement);
         this.creationTime = getCurrentTime();
         this.lastAccessTime = getCurrentTime();
     }
 
-    T getElement() {
+    V getElement() {
         return softReferenceElement.get();
     }
 

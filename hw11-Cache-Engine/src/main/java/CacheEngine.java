@@ -2,9 +2,9 @@
 
 public interface CacheEngine<K, V> {
 
-    void put(MyElement<K, V> element);
+    void put(CacheElement<V> element);
 
-    MyElement<K, V> get(K key);
+    CacheElement<V> get(K key);
 
     int getHitCount();
 

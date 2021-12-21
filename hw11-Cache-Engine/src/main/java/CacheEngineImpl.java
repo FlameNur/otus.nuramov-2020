@@ -5,8 +5,10 @@ import java.util.TimerTask;
 import java.util.function.Function;
 
 public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
+    // ???
     private static final int TIME_THRESHOLD_MS = 5;
 
+    // Максимальное количество элементов в кэше
     private final int maxElements;
 
     // Время жизни объекта в кэше/сколько объекту позволяется жить в кэше до его удаления оттуда
@@ -18,10 +20,13 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     // Если lifeTime и idleTime =0, то все элементы живут в кэше вечно и будут удаляться по максимальному размеру
     private final boolean isEternal;
 
-    private final Map<K, MyElement<K, V>> elements = new LinkedHashMap<>();
+    private final Map<K, CacheElement<V>> elements = new LinkedHashMap<>();
     private final Timer timer = new Timer();
 
+    // Количество удачных запросов в кэш
     private int hit = 0;
+
+    // Количетво неудачных запросов в кэш
     private int miss = 0;
 
     CacheEngineImpl(int maxElements, long lifeTimeMs, long idleTimeMs, boolean isEternal) {
@@ -32,7 +37,7 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     }
 
     // кладем элемент в кэш
-    public void put(MyElement<K, V> element) {
+    public void put(K key, V value) {
         // Перед добавлением элемента в кэш, проводим проверку размера кэша,
         // если он заполнен, то удаляем первый добавленный элемент/самый старый элемент
         if (elements.size() == maxElements) {
@@ -40,9 +45,10 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
             elements.remove(firstKey);
         }
 
+        CacheElement<V> cacheElement = new CacheElement<>(value);
+
         // дальше пока хз что там...
-        K key = element.getKey();
-        elements.put(key, element);
+        elements.put(key, cacheElement);
 
         if (!isEternal) {
             if (lifeTimeMs != 0) {
@@ -56,8 +62,8 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
         }
     }
 
-    public MyElement<K, V> get(K key) {
-        MyElement<K, V> element = elements.get(key);
+    public CacheElement<V> get(K key) {
+        CacheElement<V> element = elements.get(key);
         if (element != null) {
             hit++;
             element.setAccessed();
@@ -82,11 +88,11 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
 
     // Задаем максимальное время, которое элемент в кэше должен жить
     // Работает с lifeTime и idleTime
-    private TimerTask getTimerTask(final K key, Function<MyElement<K, V>, Long> timeFunction) {
+    private TimerTask getTimerTask(final K key, Function<CacheElement<V>, Long> timeFunction) {
         return new TimerTask() {
             @Override
             public void run() {
-                MyElement<K, V> element = elements.get(key);
+                CacheElement<V> element = elements.get(key);
                 if (element == null || isT1BeforeT2(timeFunction.apply(element), System.currentTimeMillis())) {
                     elements.remove(key);
                     this.cancel();

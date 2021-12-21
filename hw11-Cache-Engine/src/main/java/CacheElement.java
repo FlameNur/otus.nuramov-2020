@@ -1,18 +1,24 @@
 import java.lang.ref.SoftReference;
 
-public class CacheElement<V> {
-    private final SoftReference<V> softReferenceElement;
+/**
+ * class CacheElement создет обертку SoftReference вокруг полученного объекта из БД
+ * GC удаляет все объекты SoftReference при переполненности памяти,
+ * т.е. все объекты SoftReference будут удалены до ошибки OutOfMemory
+ * @param <T> - класс объекта, который мы получили из БД
+ */
+public class CacheElement<T> {
+    private final SoftReference<T> softReferenceElement;
     private final long creationTime;
     private long lastAccessTime;
 
 
-    public CacheElement(V dbElement) {
+    public CacheElement(T dbElement) {
         this.softReferenceElement = new SoftReference<>(dbElement);
         this.creationTime = getCurrentTime();
         this.lastAccessTime = getCurrentTime();
     }
 
-    V getElement() {
+    T getElement() {
         return softReferenceElement.get();
     }
 

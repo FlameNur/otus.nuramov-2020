@@ -4,6 +4,7 @@ public class CacheMain {
         new CacheMain().lifeCacheExample();
     }
 
+    // Метод eternalCacheExample определяет работу с кэшом по максимальному количеству элементов в кэше
     private void eternalCacheExample() {
         int size = 5;
         CacheEngine<Integer, String> cache = new CacheEngineImpl<>(size, 0, 0, true);
@@ -23,6 +24,7 @@ public class CacheMain {
         cache.dispose();
     }
 
+    // Метод lifeCacheExample определяет работу с кэшом по lifeTime/удаляет элементы из кэша по истечению lifeTime
     private void lifeCacheExample() throws InterruptedException {
         int size = 5;
         CacheEngine<Integer, String> cache = new CacheEngineImpl<>(size, 1000, 0, false);
@@ -39,6 +41,7 @@ public class CacheMain {
         System.out.println("Cache hits: " + cache.getHitCount());
         System.out.println("Cache misses: " + cache.getMissCount());
 
+        // lifeTime = 1000, ждем 1000 мс и все элементы в кэше =null
         Thread.sleep(1000);
 
         for (int i = 0; i < size; i++) {

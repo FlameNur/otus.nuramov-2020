@@ -1,7 +1,8 @@
 public class CacheMain {
     public static void main(String[] args) throws InterruptedException {
         //new CacheMain().eternalCacheExample();
-        new CacheMain().lifeCacheExample();
+        //new CacheMain().lifeCacheExample();
+        new CacheMain().idleCacheExample();
     }
 
     // Метод eternalCacheExample определяет работу с кэшом по максимальному количеству элементов в кэше
@@ -46,6 +47,37 @@ public class CacheMain {
 
         for (int i = 0; i < size; i++) {
             CacheElement<String> element = cache.get(i);
+            System.out.println("String for " + i + ": " + (element != null ? element.getElement() : "null"));
+        }
+
+        System.out.println("Cache hits: " + cache.getHitCount());
+        System.out.println("Cache misses: " + cache.getMissCount());
+
+        cache.dispose();
+    }
+
+    private void idleCacheExample() throws InterruptedException {
+        int size = 5;
+        CacheEngine<Integer, String> cache = new CacheEngineImpl<>(size, 0, 3000, false);
+
+        for (int i = 0; i < size; i++) {
+            cache.put(i, "String: " + i);
+        }
+
+        for (int i = 0; i < size; i++) {
+            CacheElement<String> element = cache.get(i);
+            System.out.println("String for " + i + ": " + (element != null ? element.getElement() : "null"));
+        }
+
+        System.out.println("Cache hits: " + cache.getHitCount());
+        System.out.println("Cache misses: " + cache.getMissCount());
+
+        for (int i = 0; i < size; i++) {
+            CacheElement<String> element = cache.get(i);
+
+            // idleTime = 3000, ждем по 3000 мс, по истечению idleTime элементы в кэше будут удалены
+            Thread.sleep(3000);
+
             System.out.println("String for " + i + ": " + (element != null ? element.getElement() : "null"));
         }
 

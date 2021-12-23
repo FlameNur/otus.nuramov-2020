@@ -5,7 +5,7 @@ import java.util.TimerTask;
 import java.util.function.Function;
 
 public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
-    // ???
+    // Запас по времени
     private static final int TIME_THRESHOLD_MS = 5;
 
     // Максимальное количество элементов в кэше
@@ -23,7 +23,7 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     // Кэш
     private final Map<K, CacheElement<V>> elements = new LinkedHashMap<>();
 
-    // ???
+    // Таймер для планирование задач по времени
     private final Timer timer = new Timer();
 
     // Количество удачных запросов в кэш
@@ -43,6 +43,7 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     public void put(K key, V value) {
         // Перед добавлением элемента в кэш, проводим проверку размера кэша,
         // если он заполнен, то удаляем первый добавленный элемент/самый старый элемент
+        // FIFO eviction policy
         if (elements.size() == maxElements) {
             K firstKey = elements.keySet().iterator().next();
             elements.remove(firstKey);
@@ -93,8 +94,8 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
         timer.cancel();
     }
 
-    // Задаем максимальное время, которое элемент в кэше должен жить
-    // Работает с lifeTime и idleTime
+    // При работе с lifeTime и idleTime можно планировать запуск задания на определённое время в будущем (с таймером)
+    // Удаляем элемент в кэше, если =null или вышло требуемое время
     private TimerTask getTimerTask(final K key, Function<CacheElement<V>, Long> timeFunction) {
         return new TimerTask() {
             @Override
@@ -108,6 +109,7 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
         };
     }
 
+    // Задаем запас по времени (в мс) и сравниваем
     private boolean isT1BeforeT2(long t1, long t2) {
         return t1 < t2 + TIME_THRESHOLD_MS;
     }

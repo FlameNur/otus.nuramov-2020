@@ -1,33 +1,19 @@
 package com.nuramov.hw10_Hibernate_ORM.Service;
 
-import com.nuramov.hw10_Hibernate_ORM.DAO.UserDAO;
 import com.nuramov.hw10_Hibernate_ORM.DAO.UserDAOImp;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 
 /**
- * class UserService представляет собой слой данных в приложении, отвечающий за выполнение бизнес-логики.
+ * interface UserService представляет собой слой данных в приложении, отвечающий за выполнение бизнес-логики.
  * Сервис содержит внутри себя UserDao, и в своих методах вызывает методы DAO.
  */
-public class UserService {
-    private UserDAO userDAO;
+public interface UserService {
 
-    public UserService() {
-        userDAO = new UserDAOImp();
-    }
+    User findUser(long id);
 
-    public User findUser(long id) {
-        return userDAO.findById(id);
-    }
+    void saveUser(User user);
 
-    public void saveUser(User user) {
-        userDAO.save(user);
-    }
+    void deleteUser(User user);
 
-    public void deleteUser(User user) {
-        userDAO.delete(user);
-    }
-
-    public void updateUser(User user) {
-        userDAO.update(user);
-    }
+    void updateUser(User user);
 }

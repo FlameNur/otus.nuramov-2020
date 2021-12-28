@@ -1,7 +1,9 @@
+package com.nuramov.hw11_CacheEngine.CacheElement;
+
 import java.lang.ref.SoftReference;
 
 /**
- * class CacheElement создет обертку SoftReference вокруг полученного объекта из БД
+ * class com.nuramov.hw11_CacheEngine.CacheElement.CacheElement создет обертку SoftReference вокруг полученного объекта из БД
  * GC удаляет все объекты SoftReference при переполненности памяти,
  * т.е. все объекты SoftReference будут удалены до ошибки OutOfMemory
  * @param <T> - класс объекта, который мы получили из БД
@@ -18,7 +20,7 @@ public class CacheElement<T> {
         this.lastAccessTime = getCurrentTime();
     }
 
-    T getElement() {
+    public T getElement() {
         return softReferenceElement.get();
     }
 
@@ -26,15 +28,15 @@ public class CacheElement<T> {
         return System.currentTimeMillis();
     }
 
-    long getCreationTime() {
+    public long getCreationTime() {
         return creationTime;
     }
 
-    long getLastAccessTime() {
+    public long getLastAccessTime() {
         return lastAccessTime;
     }
 
-    void setAccessed() {
+    public void setAccessed() {
         lastAccessTime = getCurrentTime();
     }
 }

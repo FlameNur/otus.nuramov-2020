@@ -1,3 +1,7 @@
+package com.nuramov.hw11_CacheEngine.CacheEngine;
+
+import com.nuramov.hw11_CacheEngine.CacheElement.CacheElement;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -17,14 +21,14 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     // Сколько объект может простаивать с момента последнего запроса/доступа
     private final long idleTimeMs;
 
-    // Если lifeTime и idleTime =0, то все элементы живут в кэше вечно и будут удаляться по максимальному размеру
-    private final boolean isEternal;
-
     // Кэш
     private final Map<K, CacheElement<V>> elements = new LinkedHashMap<>();
 
     // Таймер для планирование задач по времени
     private final Timer timer = new Timer();
+
+    // Если lifeTime и idleTime =0, то все элементы живут в кэше вечно и будут удаляться по максимальному размеру
+    private boolean isEternal = false;
 
     // Количество удачных запросов в кэш
     private int hit = 0;
@@ -32,11 +36,13 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     // Количетво неудачных запросов в кэш
     private int miss = 0;
 
-    CacheEngineImpl(int maxElements, long lifeTimeMs, long idleTimeMs, boolean isEternal) {
+    public CacheEngineImpl(int maxElements, long lifeTimeMs, long idleTimeMs) {
         this.maxElements = maxElements;
         this.lifeTimeMs = lifeTimeMs > 0 ? lifeTimeMs : 0;
         this.idleTimeMs = idleTimeMs > 0 ? idleTimeMs : 0;
-        this.isEternal = lifeTimeMs == 0 && idleTimeMs == 0 || isEternal;
+        if(lifeTimeMs == 0 && idleTimeMs == 0) {
+            this.isEternal = true;
+        }
     }
 
     @Override
@@ -68,15 +74,16 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     }
 
     @Override
-    public CacheElement<V> get(K key) {
+    public V get(K key) {
         CacheElement<V> element = elements.get(key);
         if (element != null) {
             hit++;
             element.setAccessed();
+            return element.getElement();
         } else {
             miss++;
         }
-        return element;
+        return null;
     }
 
     @Override

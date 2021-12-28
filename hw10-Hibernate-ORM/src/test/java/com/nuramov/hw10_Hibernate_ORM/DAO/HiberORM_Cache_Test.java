@@ -2,6 +2,7 @@ package com.nuramov.hw10_Hibernate_ORM.DAO;
 
 import com.nuramov.hw10_Hibernate_ORM.Service.UserService;
 import com.nuramov.hw10_Hibernate_ORM.Service.UserServiceImp;
+import com.nuramov.hw10_Hibernate_ORM.Service.UserServiceImp_Cache;
 import com.nuramov.hw10_Hibernate_ORM.model.AddressDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.PhoneDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
@@ -12,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HiberORM_Test {
+public class HiberORM_Cache_Test {
     private static UserService userService;
 
     private static User user1;
@@ -27,7 +28,7 @@ class HiberORM_Test {
 
     @BeforeAll
     static void createUserService() {
-        userService = new UserServiceImp();
+        userService = new UserServiceImp_Cache();
     }
 
     @BeforeAll

@@ -12,16 +12,22 @@ import org.hibernate.Session;
 public class UserDAOImp_Cache implements UserDAO {
     CacheEngine<Long, User> cacheEngine;
 
-    public UserDAOImp_Cache() {
-        // Параметры кэша желательно отдельно вводить
-        cacheEngine = new CacheEngineImpl<>(5, 0, 10000);
+    public UserDAOImp_Cache(int maxElements, long lifeTimeMs, long idleTimeMs) {
+        cacheEngine = new CacheEngineImpl<>(maxElements, lifeTimeMs, idleTimeMs);
     }
 
     @Override
     public User findById(long id) {
+        // Оцениваем время доступа через кэш и БД
+        long startTime = System.currentTimeMillis();
+        long accessTime;
+
         // Проверяем в кэше наличие нужного User'a (кэш 2-го уровня)
         User user = cacheEngine.get(id);
         if(user != null) {
+            System.out.println("Работаем через кэш");
+            accessTime = System.currentTimeMillis() - startTime;
+            System.out.println("Время доступа: " + accessTime);
             return user;
         }
 
@@ -37,6 +43,9 @@ public class UserDAOImp_Cache implements UserDAO {
                 throw new RuntimeException(e);
             }
         }
+        System.out.println("Работаем через БД");
+        accessTime = System.currentTimeMillis() - startTime;
+        System.out.println("Время доступа: " + accessTime);
         return user;
     }
 
@@ -63,35 +72,11 @@ public class UserDAOImp_Cache implements UserDAO {
 
     @Override
     public void update(User user) {
-        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
-            try {
-                session.beginTransaction();
-                // Обновляем данные пользователя (User) в БД
-                session.update(user);
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                session.getTransaction().rollback();
-                throw new RuntimeException(e);
-            }
-        }
+        // Не реализовано
     }
 
     @Override
     public void delete(User user) {
-        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
-            try {
-                session.beginTransaction();
-                // Сначала присваиваем полю phone значение null, чтобы в случае удаления пользователя (User) из БД
-                // не был удален Phone, на которого ссылаются другие пользователи
-                user.setPhone(null);
-                session.update(user);
-                // Удаляем пользователя (User) из БД
-                session.delete(user);
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                session.getTransaction().rollback();
-                throw new RuntimeException(e);
-            }
-        }
+        // Не реализовано
     }
 }

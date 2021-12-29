@@ -10,8 +10,8 @@ import com.nuramov.hw10_Hibernate_ORM.model.User;
 public class UserServiceImp_Cache implements UserService{
     private UserDAO userDAO;
 
-    public UserServiceImp_Cache() {
-        userDAO = new UserDAOImp_Cache();
+    public UserServiceImp_Cache(int maxElements, long lifeTimeMs, long idleTimeMs) {
+        userDAO = new UserDAOImp_Cache(maxElements, lifeTimeMs, idleTimeMs);
     }
 
     @Override

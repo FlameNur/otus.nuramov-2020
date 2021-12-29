@@ -1,7 +1,6 @@
 package com.nuramov.hw10_Hibernate_ORM.DAO;
 
 import com.nuramov.hw10_Hibernate_ORM.Service.UserService;
-import com.nuramov.hw10_Hibernate_ORM.Service.UserServiceImp;
 import com.nuramov.hw10_Hibernate_ORM.Service.UserServiceImp_Cache;
 import com.nuramov.hw10_Hibernate_ORM.model.AddressDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.PhoneDataSet;
@@ -28,7 +27,7 @@ public class HiberORM_Cache_Test {
 
     @BeforeAll
     static void createUserService() {
-        userService = new UserServiceImp_Cache();
+        userService = new UserServiceImp_Cache(5, 5000, 0);
     }
 
     @BeforeAll
@@ -91,15 +90,9 @@ public class HiberORM_Cache_Test {
     }
 
     @Test
-    void Test() {
-        // Сохраняем User'a 1 в БД
+    void Test() throws InterruptedException {
+        // Сохраняем User'ов 1, 2 и 3 в БД
         userService.saveUser(user1);
-
-        // Обновили имя User'a 1 и обновили информацию в БД
-        user1.setName("New name");
-        userService.updateUser(user1);
-
-        // Сохранили User'ов 2 и 3
         userService.saveUser(user2);
         userService.saveUser(user3);
 
@@ -107,21 +100,19 @@ public class HiberORM_Cache_Test {
         User newUser1 = userService.findUser(1);
 
         assertEquals(1, newUser1.getId());
-        assertNotEquals("Bill", newUser1.getName());
-        assertEquals("New name", newUser1.getName());
+        assertEquals("Bill", newUser1.getName());
         assertEquals(10, newUser1.getAge());
         assertEquals("адрес1", newUser1.getAddress().getStreet());
         assertEquals("111", newUser1.getPhone().getNumber());
 
-        // Удаляем  User'a 1 из БД
-        userService.deleteUser(user1);
-        User deletedUser1 = userService.findUser(1);
-        assertNull(deletedUser1);
+        Thread.sleep(6000);
 
-        // Удаляем  User'a 2 из БД
-        userService.deleteUser(user2);
-        User deletedUser2 = userService.findUser(2);
-        assertNull(deletedUser2);
+        User userFromDB = userService.findUser(1);
+        assertEquals(1, userFromDB.getId());
+        assertEquals("Bill", userFromDB.getName());
+        assertEquals(10, userFromDB.getAge());
+        assertEquals("адрес1", userFromDB.getAddress().getStreet());
+        assertEquals("111", userFromDB.getPhone().getNumber());
     }
 
     @AfterEach

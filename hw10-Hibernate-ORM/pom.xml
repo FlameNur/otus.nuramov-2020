@@ -11,11 +11,6 @@
 
     <artifactId>hw10-Hibernate-ORM</artifactId>
 
-    <properties>
-        <maven.compiler.source>12</maven.compiler.source>
-        <maven.compiler.target>12</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.h2database</groupId>

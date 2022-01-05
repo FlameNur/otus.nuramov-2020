@@ -5,6 +5,8 @@ import com.nuramov.hw10_Hibernate_ORM.Service.UserServiceImp_Cache;
 import com.nuramov.hw10_Hibernate_ORM.model.AddressDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.PhoneDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
+import com.nuramov.hw11_CacheEngine.CacheEngine.CacheEngine;
+import com.nuramov.hw11_CacheEngine.CacheEngine.CacheEngineImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HiberORM_Cache_Test {
     private static UserService userService;
+    private static CacheEngine<Long, User> cacheEngine;
 
     private static User user1;
     private static User user2;
@@ -27,7 +30,8 @@ public class HiberORM_Cache_Test {
 
     @BeforeAll
     static void createUserService() {
-        userService = new UserServiceImp_Cache(5, 5000, 0);
+        cacheEngine = new CacheEngineImpl<>(5, 5000, 0);
+        userService = new UserServiceImp_Cache(cacheEngine);
     }
 
     @BeforeAll
@@ -96,9 +100,17 @@ public class HiberORM_Cache_Test {
         userService.saveUser(user2);
         userService.saveUser(user3);
 
+        // Оцениваем время доступа через кэш и БД
+        long startTime_Cache = System.currentTimeMillis();
+
         // Нашли User'а 1 по id в БД
         User newUser1 = userService.findUser(1);
 
+        System.out.println("Работаем через кэш");
+        long accessTime_Cache = System.currentTimeMillis() - startTime_Cache;
+        System.out.println("Время доступа: " + accessTime_Cache);
+
+        // Проводим проверки
         assertEquals(1, newUser1.getId());
         assertEquals("Bill", newUser1.getName());
         assertEquals(10, newUser1.getAge());
@@ -107,7 +119,16 @@ public class HiberORM_Cache_Test {
 
         Thread.sleep(6000);
 
+        // Оцениваем время доступа через БД
+        long startTime_DB = System.currentTimeMillis();
+
         User userFromDB = userService.findUser(1);
+
+        System.out.println("Работаем через БД");
+        long accessTime_DB = System.currentTimeMillis() - startTime_DB;
+        System.out.println("Время доступа: " + accessTime_DB);
+
+        // Проводим проверки
         assertEquals(1, userFromDB.getId());
         assertEquals("Bill", userFromDB.getName());
         assertEquals(10, userFromDB.getAge());

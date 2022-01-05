@@ -12,22 +12,15 @@ import org.hibernate.Session;
 public class UserDAOImp_Cache implements UserDAO {
     CacheEngine<Long, User> cacheEngine;
 
-    public UserDAOImp_Cache(int maxElements, long lifeTimeMs, long idleTimeMs) {
-        cacheEngine = new CacheEngineImpl<>(maxElements, lifeTimeMs, idleTimeMs);
+    public UserDAOImp_Cache(CacheEngine<Long, User> cacheEngine) {
+        this.cacheEngine = cacheEngine;
     }
 
     @Override
     public User findById(long id) {
-        // Оцениваем время доступа через кэш и БД
-        long startTime = System.currentTimeMillis();
-        long accessTime;
-
         // Проверяем в кэше наличие нужного User'a (кэш 2-го уровня)
         User user = cacheEngine.get(id);
         if(user != null) {
-            System.out.println("Работаем через кэш");
-            accessTime = System.currentTimeMillis() - startTime;
-            System.out.println("Время доступа: " + accessTime);
             return user;
         }
 
@@ -43,9 +36,6 @@ public class UserDAOImp_Cache implements UserDAO {
                 throw new RuntimeException(e);
             }
         }
-        System.out.println("Работаем через БД");
-        accessTime = System.currentTimeMillis() - startTime;
-        System.out.println("Время доступа: " + accessTime);
         return user;
     }
 

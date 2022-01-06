@@ -10,8 +10,8 @@ import com.nuramov.hw10_Hibernate_ORM.model.User;
 public class UserServiceImp implements UserService {
     private UserDAO userDAO;
 
-    public UserServiceImp() {
-        userDAO = new UserDAOImp();
+    public UserServiceImp(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     @Override

@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HiberORM_Test {
     private static UserService userService;
+    private static UserDAO userDAO;
 
     private static User user1;
     private static User user2;
@@ -27,7 +28,8 @@ class HiberORM_Test {
 
     @BeforeAll
     static void createUserService() {
-        userService = new UserServiceImp();
+        userDAO = new UserDAOImp();
+        userService = new UserServiceImp(userDAO);
     }
 
     @BeforeAll

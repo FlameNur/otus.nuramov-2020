@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HiberORM_Cache_Test {
     private static UserService userService;
+    private static UserDAO userDAO;
     private static CacheEngine<Long, User> cacheEngine;
 
     private static User user1;
@@ -24,8 +25,9 @@ public class HiberORM_Cache_Test {
 
     @BeforeAll
     static void createUserService() {
+        userDAO = new UserDAOImp();
         cacheEngine = new CacheEngineImpl<>(5, 5000, 0);
-        userService = new UserServiceImp_Cache(cacheEngine);
+        userService = new UserServiceImp_Cache(userDAO, cacheEngine);
     }
 
     @BeforeAll

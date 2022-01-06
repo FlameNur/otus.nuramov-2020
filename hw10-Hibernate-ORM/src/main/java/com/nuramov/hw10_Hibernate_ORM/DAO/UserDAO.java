@@ -18,7 +18,7 @@ public interface UserDAO {
      * Метод save позволяет сохранить пользователя (User) в БД
      * @param user - пользователь (User), которого сохраняем в БД
      */
-    void save(User user);
+    long save(User user);
 
     /**
      * Метод update позволяет обновить данные пользователя (User) в БД

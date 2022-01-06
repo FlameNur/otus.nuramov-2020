@@ -27,9 +27,6 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     // Таймер для планирование задач по времени
     private final Timer timer = new Timer();
 
-    // Если lifeTime и idleTime =0, то все элементы живут в кэше вечно и будут удаляться по максимальному размеру
-    private boolean isEternal = false;
-
     // Количество удачных запросов в кэш
     private int hit = 0;
 
@@ -40,9 +37,6 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
         this.maxElements = maxElements;
         this.lifeTimeMs = lifeTimeMs > 0 ? lifeTimeMs : 0;
         this.idleTimeMs = idleTimeMs > 0 ? idleTimeMs : 0;
-        if(lifeTimeMs == 0 && idleTimeMs == 0) {
-            this.isEternal = true;
-        }
     }
 
     @Override
@@ -61,15 +55,13 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
         // Кладем элементы в Map
         elements.put(key, cacheElement);
 
-        if (!isEternal) {
-            if (lifeTimeMs != 0) {
-                TimerTask lifeTimerTask = getTimerTask(key, lifeElement -> lifeElement.getCreationTime() + lifeTimeMs);
-                timer.schedule(lifeTimerTask, lifeTimeMs);
-            }
-            if (idleTimeMs != 0) {
-                TimerTask idleTimerTask = getTimerTask(key, idleElement -> idleElement.getLastAccessTime() + idleTimeMs);
-                timer.schedule(idleTimerTask, idleTimeMs, idleTimeMs);
-            }
+        if (lifeTimeMs != 0) {
+            TimerTask lifeTimerTask = getTimerTask(key, lifeElement -> lifeElement.getCreationTime() + lifeTimeMs);
+            timer.schedule(lifeTimerTask, lifeTimeMs);
+        }
+        if (idleTimeMs != 0) {
+            TimerTask idleTimerTask = getTimerTask(key, idleElement -> idleElement.getLastAccessTime() + idleTimeMs);
+            timer.schedule(idleTimerTask, idleTimeMs, idleTimeMs);
         }
     }
 

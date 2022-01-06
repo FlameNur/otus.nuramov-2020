@@ -92,18 +92,18 @@ class HiberORM_Test {
     @Test
     void Test() {
         // Сохраняем User'a 1 в БД
-        userService.saveUser(user1);
+        long id1 = userService.saveUser(user1);
 
         // Обновили имя User'a 1 и обновили информацию в БД
         user1.setName("New name");
         userService.updateUser(user1);
 
         // Сохранили User'ов 2 и 3
-        userService.saveUser(user2);
-        userService.saveUser(user3);
+        long id2 = userService.saveUser(user2);
+        long id3 = userService.saveUser(user3);
 
         // Нашли User'а 1 по id в БД
-        User newUser1 = userService.findUser(1);
+        User newUser1 = userService.findUser(id1);
 
         assertEquals(1, newUser1.getId());
         assertNotEquals("Bill", newUser1.getName());
@@ -114,12 +114,12 @@ class HiberORM_Test {
 
         // Удаляем  User'a 1 из БД
         userService.deleteUser(user1);
-        User deletedUser1 = userService.findUser(1);
+        User deletedUser1 = userService.findUser(id1);
         assertNull(deletedUser1);
 
         // Удаляем  User'a 2 из БД
         userService.deleteUser(user2);
-        User deletedUser2 = userService.findUser(2);
+        User deletedUser2 = userService.findUser(id2);
         assertNull(deletedUser2);
     }
 

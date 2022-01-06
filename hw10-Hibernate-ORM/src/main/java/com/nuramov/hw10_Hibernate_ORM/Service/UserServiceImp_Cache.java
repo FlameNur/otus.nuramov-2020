@@ -21,8 +21,8 @@ public class UserServiceImp_Cache implements UserService{
     }
 
     @Override
-    public void saveUser(User user) {
-        userDAO.save(user);
+    public long saveUser(User user) {
+        return userDAO.save(user);
     }
 
     @Override

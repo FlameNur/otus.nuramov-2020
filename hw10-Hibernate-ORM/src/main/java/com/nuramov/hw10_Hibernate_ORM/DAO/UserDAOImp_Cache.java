@@ -27,12 +27,11 @@ public class UserDAOImp_Cache implements UserDAO {
         // Если в кэше нужного User'a нет, обращаем к Hibernate (кэш 1-го уровня и БД)
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             try {
-                session.beginTransaction();
                 // Находим пользователя (User) по id
                 user = session.get(User.class, id);
-                session.getTransaction().commit();
+                // Сохраняем User'a в кэше 2-го уровня, чтобы в следующий раз достать его уже из кэша
+                cacheEngine.put(id, user);
             } catch (Exception e) {
-                session.getTransaction().rollback();
                 throw new RuntimeException(e);
             }
         }
@@ -40,7 +39,7 @@ public class UserDAOImp_Cache implements UserDAO {
     }
 
     @Override
-    public void save(User user) {
+    public long save(User user) {
         // id User'a в БД
         long id;
         // Сначала сохраняем User'a в БД
@@ -55,18 +54,20 @@ public class UserDAOImp_Cache implements UserDAO {
                 throw new RuntimeException(e);
             }
         }
-
         // Сохраняем User'a в кэше 2-го уровня
         cacheEngine.put(id, user);
+        return id;
     }
 
     @Override
     public void update(User user) {
         // Не реализовано
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void delete(User user) {
         // Не реализовано
+        throw new UnsupportedOperationException();
     }
 }

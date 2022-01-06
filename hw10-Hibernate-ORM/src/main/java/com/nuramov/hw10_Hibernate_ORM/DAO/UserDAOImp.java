@@ -14,12 +14,9 @@ public class UserDAOImp implements UserDAO {
         User user;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             try {
-                session.beginTransaction();
                 // Находим пользователя (User) по id
                 user = session.get(User.class, id);
-                session.getTransaction().commit();
             } catch (Exception e) {
-                session.getTransaction().rollback();
                 throw new RuntimeException(e);
             }
         }
@@ -27,18 +24,20 @@ public class UserDAOImp implements UserDAO {
     }
 
     @Override
-    public void save(User user) {
+    public long save(User user) {
+        long id;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             try {
                 session.beginTransaction();
                 // Сохраняем пользователя (User) в БД
-                session.save(user);
+                id = (long) session.save(user);
                 session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();
                 throw new RuntimeException(e);
             }
         }
+        return id;
     }
 
     @Override

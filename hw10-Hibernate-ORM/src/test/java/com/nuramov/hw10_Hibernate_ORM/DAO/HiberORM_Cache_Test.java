@@ -19,14 +19,8 @@ public class HiberORM_Cache_Test {
     private static CacheEngine<Long, User> cacheEngine;
 
     private static User user1;
-    private static User user2;
-    private static User user3;
-
     private static PhoneDataSet phoneDataSet;
-
     private static AddressDataSet addressDataSet1;
-    private static AddressDataSet addressDataSet2;
-    private static AddressDataSet addressDataSet3;
 
     @BeforeAll
     static void createUserService() {
@@ -39,14 +33,6 @@ public class HiberORM_Cache_Test {
         user1 = new User();
         user1.setAge(10);
         user1.setName("Bill");
-
-        user2 = new User();
-        user2.setAge(20);
-        user2.setName("Sally");
-
-        user3 = new User();
-        user3.setAge(50);
-        user3.setName("Huanita");
     }
 
     @BeforeAll
@@ -59,12 +45,6 @@ public class HiberORM_Cache_Test {
     static void createAddress() {
         addressDataSet1 = new AddressDataSet();
         addressDataSet1.setStreet("адрес1");
-
-        addressDataSet2 = new AddressDataSet();
-        addressDataSet2.setStreet("адрес2");
-
-        addressDataSet3 = new AddressDataSet();
-        addressDataSet3.setStreet("адрес3");
     }
 
     @BeforeEach
@@ -75,36 +55,28 @@ public class HiberORM_Cache_Test {
     @BeforeEach
     void addUsersToPhone() {
         phoneDataSet.addUser(user1);
-        phoneDataSet.addUser(user2);
-        phoneDataSet.addUser(user3);
     }
 
     @BeforeEach
     void addPhone() {
         user1.setPhone(phoneDataSet);
-        user2.setPhone(phoneDataSet);
-        user3.setPhone(phoneDataSet);
     }
 
     @BeforeEach
     void addAddress() {
         user1.setAddress(addressDataSet1);
-        user2.setAddress(addressDataSet2);
-        user3.setAddress(addressDataSet3);
     }
 
     @Test
     void Test() throws InterruptedException {
-        // Сохраняем User'ов 1, 2 и 3 в БД
-        userService.saveUser(user1);
-        userService.saveUser(user2);
-        userService.saveUser(user3);
+        // Сохраняем User'а 1 в БД
+        long id1 = userService.saveUser(user1);
 
         // Оцениваем время доступа через кэш и БД
         long startTime_Cache = System.currentTimeMillis();
 
         // Нашли User'а 1 по id в БД
-        User newUser1 = userService.findUser(1);
+        User newUser1 = userService.findUser(id1);
 
         System.out.println("Работаем через кэш");
         long accessTime_Cache = System.currentTimeMillis() - startTime_Cache;
@@ -122,7 +94,7 @@ public class HiberORM_Cache_Test {
         // Оцениваем время доступа через БД
         long startTime_DB = System.currentTimeMillis();
 
-        User userFromDB = userService.findUser(1);
+        User userFromDB = userService.findUser(id1);
 
         System.out.println("Работаем через БД");
         long accessTime_DB = System.currentTimeMillis() - startTime_DB;

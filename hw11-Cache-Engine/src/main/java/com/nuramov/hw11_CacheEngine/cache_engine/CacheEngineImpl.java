@@ -1,11 +1,8 @@
-package com.nuramov.hw11_CacheEngine.CacheEngine;
+package com.nuramov.hw11_CacheEngine.cache_engine;
 
-import com.nuramov.hw11_CacheEngine.CacheElement.CacheElement;
+import com.nuramov.hw11_CacheEngine.cache_element.CacheElement;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.function.Function;
 
 public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
@@ -90,7 +87,8 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
 
     @Override
     public void dispose() {
-        timer.cancel();
+        elements.clear();
+        //timer.cancel();
     }
 
     // При работе с lifeTime и idleTime можно планировать запуск задания на определённое время в будущем (с таймером)

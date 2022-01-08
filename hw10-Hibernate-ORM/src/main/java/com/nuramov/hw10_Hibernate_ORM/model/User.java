@@ -37,6 +37,16 @@ public class User {
     @JoinColumn(name = "phone_id")
     private PhoneDataSet phone;
 
+    // Должен быть дефолтный конструктор для @Entity класса
+    public User() {
+
+    }
+
+    public User(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
     public long getId() {
         return id;
     }
@@ -71,6 +81,9 @@ public class User {
 
     public void setPhone(PhoneDataSet phone) {
         this.phone = phone;
+        if (this.phone != null) {
+            this.phone.addUser(this);
+        }
     }
 
     @Override

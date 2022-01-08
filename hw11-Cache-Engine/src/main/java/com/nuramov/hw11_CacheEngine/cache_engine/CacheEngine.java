@@ -1,4 +1,4 @@
-package com.nuramov.hw11_CacheEngine.CacheEngine;
+package com.nuramov.hw11_CacheEngine.cache_engine;
 
 /**
  * interface com.nuramov.hw11_CacheEngine.CacheEngine.CacheEngine определяет методы работы с кэшом

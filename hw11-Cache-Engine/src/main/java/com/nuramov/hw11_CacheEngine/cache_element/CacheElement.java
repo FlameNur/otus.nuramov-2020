@@ -1,4 +1,4 @@
-package com.nuramov.hw11_CacheEngine.CacheElement;
+package com.nuramov.hw11_CacheEngine.cache_element;
 
 import java.lang.ref.SoftReference;
 

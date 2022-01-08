@@ -1,7 +1,7 @@
-package com.nuramov.hw10_Hibernate_ORM.DAO;
+package com.nuramov.hw10_Hibernate_ORM.dao;
 
-import com.nuramov.hw10_Hibernate_ORM.Service.UserService;
-import com.nuramov.hw10_Hibernate_ORM.Service.UserServiceImp;
+import com.nuramov.hw10_Hibernate_ORM.service.UserService;
+import com.nuramov.hw10_Hibernate_ORM.service.UserServiceImp;
 import com.nuramov.hw10_Hibernate_ORM.model.AddressDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.PhoneDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
@@ -14,37 +14,25 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HiberORM_Test {
     private static UserService userService;
-    private static UserDAO userDAO;
 
     private static User user1;
     private static User user2;
-    private static User user3;
 
     private static PhoneDataSet phoneDataSet;
 
     private static AddressDataSet addressDataSet1;
     private static AddressDataSet addressDataSet2;
-    private static AddressDataSet addressDataSet3;
 
     @BeforeAll
     static void createUserService() {
-        userDAO = new UserDAOImp();
+        UserDAO userDAO = new UserDAOImp();
         userService = new UserServiceImp(userDAO);
     }
 
     @BeforeAll
     static void createUser() {
-        user1 = new User();
-        user1.setAge(10);
-        user1.setName("Bill");
-
-        user2 = new User();
-        user2.setAge(20);
-        user2.setName("Sally");
-
-        user3 = new User();
-        user3.setAge(50);
-        user3.setName("Huanita");
+        user1 = new User("Bill", 10);
+        user2 = new User("Sally", 20);
     }
 
     @BeforeAll
@@ -60,9 +48,6 @@ class HiberORM_Test {
 
         addressDataSet2 = new AddressDataSet();
         addressDataSet2.setStreet("адрес2");
-
-        addressDataSet3 = new AddressDataSet();
-        addressDataSet3.setStreet("адрес3");
     }
 
     @BeforeEach
@@ -71,28 +56,19 @@ class HiberORM_Test {
     }
 
     @BeforeEach
-    void addUsersToPhone() {
-        phoneDataSet.addUser(user1);
-        phoneDataSet.addUser(user2);
-        phoneDataSet.addUser(user3);
-    }
-
-    @BeforeEach
     void addPhone() {
         user1.setPhone(phoneDataSet);
         user2.setPhone(phoneDataSet);
-        user3.setPhone(phoneDataSet);
     }
 
     @BeforeEach
     void addAddress() {
         user1.setAddress(addressDataSet1);
         user2.setAddress(addressDataSet2);
-        user3.setAddress(addressDataSet3);
     }
 
     @Test
-    void Test() {
+    void userServiceMethodsTest() {
         // Сохраняем User'a 1 в БД
         long id1 = userService.saveUser(user1);
 
@@ -102,12 +78,11 @@ class HiberORM_Test {
 
         // Сохранили User'ов 2 и 3
         long id2 = userService.saveUser(user2);
-        long id3 = userService.saveUser(user3);
 
         // Нашли User'а 1 по id в БД
         User newUser1 = userService.findUser(id1);
 
-        assertEquals(1, newUser1.getId());
+        assertEquals(id1, newUser1.getId());
         assertNotEquals("Bill", newUser1.getName());
         assertEquals("New name", newUser1.getName());
         assertEquals(10, newUser1.getAge());

@@ -1,8 +1,12 @@
-package com.nuramov.hw10_Hibernate_ORM.DAO;
+package com.nuramov.hw10_Hibernate_ORM.dao;
 
 import com.nuramov.hw10_Hibernate_ORM.HibernateUtil;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 import org.hibernate.Session;
+
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * class UserDAOImp реализует интерфейс UserDAO
@@ -12,6 +16,7 @@ public class UserDAOImp implements UserDAO {
     @Override
     public User findById(long id) {
         User user;
+        Optional<User> optionalUser;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             try {
                 // Находим пользователя (User) по id
@@ -19,6 +24,10 @@ public class UserDAOImp implements UserDAO {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+
+            /*// Работаем с Optional, чтобы исключить возможность получения null
+            optionalUser = Optional.ofNullable(session.get(User.class, id));
+            user = optionalUser.orElseThrow(() -> new RuntimeException("User is not found"));*/
         }
         return user;
     }

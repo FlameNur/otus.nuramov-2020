@@ -1,6 +1,5 @@
-package com.nuramov.hw10_Hibernate_ORM.Service;
+package com.nuramov.hw10_Hibernate_ORM.service;
 
-import com.nuramov.hw10_Hibernate_ORM.DAO.UserDAOImp;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 
 /**

@@ -1,8 +1,8 @@
-package com.nuramov.hw10_Hibernate_ORM.Service;
+package com.nuramov.hw10_Hibernate_ORM.service;
 
-import com.nuramov.hw10_Hibernate_ORM.DAO.UserDAO;
+import com.nuramov.hw10_Hibernate_ORM.dao.UserDAO;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
-import com.nuramov.hw11_CacheEngine.CacheEngine.CacheEngine;
+import com.nuramov.hw11_CacheEngine.cache_engine.CacheEngine;
 
 /**
  * class UserService реализует interface UserService и работает с кэшом из модуля hw11_CacheEngine на этом уровне
@@ -50,5 +50,9 @@ public class UserServiceImp_Cache implements UserService{
     public void updateUser(User user) {
         // Не реализовано
         throw new UnsupportedOperationException();
+    }
+
+    public void clearCache() {
+        cacheEngine.dispose();
     }
 }

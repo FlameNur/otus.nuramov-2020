@@ -1,7 +1,7 @@
 package com.nuramov.hw11_CacheEngine;
 
-import com.nuramov.hw11_CacheEngine.CacheEngine.CacheEngine;
-import com.nuramov.hw11_CacheEngine.CacheEngine.CacheEngineImpl;
+import com.nuramov.hw11_CacheEngine.cache_engine.CacheEngine;
+import com.nuramov.hw11_CacheEngine.cache_engine.CacheEngineImpl;
 
 public class CacheMain {
     public static void main(String[] args) throws InterruptedException {

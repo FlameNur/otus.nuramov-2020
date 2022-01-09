@@ -73,6 +73,19 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
             miss++;
         }
         return null;
+
+        /*Optional<CacheElement<V>> optionalElement = Optional.ofNullable(elements.get(key));
+        CacheElement<V> element;
+
+        if(optionalElement.isPresent()) {
+            hit++;
+            element = optionalElement.get();
+            element.setAccessed();
+            return element.getElement();
+        } else {
+            miss++;
+            return element = optionalElement.orElse(new CacheElement<V>());
+        }*/
     }
 
     @Override

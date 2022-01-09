@@ -6,6 +6,7 @@ import org.hibernate.Session;
 
 import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -16,18 +17,11 @@ public class UserDAOImp implements UserDAO {
     @Override
     public User findById(long id) {
         User user;
-        Optional<User> optionalUser;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
-            try {
-                // Находим пользователя (User) по id
-                user = session.get(User.class, id);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-            /*// Работаем с Optional, чтобы исключить возможность получения null
-            optionalUser = Optional.ofNullable(session.get(User.class, id));
-            user = optionalUser.orElseThrow(() -> new RuntimeException("User is not found"));*/
+            // Для исключения возможности получения значения null, воспользовались Optional
+            // Вместо значения null получаем new User("", 0)
+            user = Optional.ofNullable(session.get(User.class, id))
+                    .orElse(new User("", 0));
         }
         return user;
     }

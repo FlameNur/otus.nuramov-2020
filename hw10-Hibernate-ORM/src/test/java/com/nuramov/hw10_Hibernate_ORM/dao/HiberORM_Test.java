@@ -92,12 +92,12 @@ class HiberORM_Test {
         // Удаляем  User'a 1 из БД
         userService.deleteUser(user1);
         User deletedUser1 = userService.findUser(id1);
-        assertNull(deletedUser1);
+        System.out.println(deletedUser1);
 
         // Удаляем  User'a 2 из БД
         userService.deleteUser(user2);
         User deletedUser2 = userService.findUser(id2);
-        assertNull(deletedUser2);
+        System.out.println(deletedUser2);
     }
 
     @AfterEach

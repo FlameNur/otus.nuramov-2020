@@ -63,8 +63,8 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     }
 
     @Override
-    public V get(K key) {
-        CacheElement<V> element = elements.get(key);
+    public Optional<V> get(K key) {
+        /*CacheElement<V> element = elements.get(key);
         if (element != null) {
             hit++;
             element.setAccessed();
@@ -72,20 +72,19 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
         } else {
             miss++;
         }
-        return null;
+        return null;*/
 
-        /*Optional<CacheElement<V>> optionalElement = Optional.ofNullable(elements.get(key));
+        Optional<CacheElement<V>> optionalElement = Optional.ofNullable(elements.get(key));
         CacheElement<V> element;
 
         if(optionalElement.isPresent()) {
             hit++;
             element = optionalElement.get();
             element.setAccessed();
-            return element.getElement();
         } else {
             miss++;
-            return element = optionalElement.orElse(new CacheElement<V>());
-        }*/
+        }
+        return (Optional<V>) optionalElement;
     }
 
     @Override

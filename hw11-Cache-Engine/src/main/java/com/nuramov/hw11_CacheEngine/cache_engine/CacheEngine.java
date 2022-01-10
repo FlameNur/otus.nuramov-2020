@@ -1,5 +1,7 @@
 package com.nuramov.hw11_CacheEngine.cache_engine;
 
+import java.util.Optional;
+
 /**
  * interface com.nuramov.hw11_CacheEngine.CacheEngine.CacheEngine определяет методы работы с кэшом
  * @param <K> - ключ в кэше
@@ -19,7 +21,7 @@ public interface CacheEngine<K, V> {
      * @param key - ключ кэша, по которому получаем нужный элемент
      * @return - элемент кэша
      */
-    V get(K key);
+    Optional<V> get(K key);
 
     /**
      * Метод getHitCount позволяет получить количество удачных запросов в кэш

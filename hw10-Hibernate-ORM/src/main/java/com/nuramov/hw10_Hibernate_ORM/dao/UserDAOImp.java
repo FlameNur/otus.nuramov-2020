@@ -15,15 +15,14 @@ import static java.util.Optional.ofNullable;
 public class UserDAOImp implements UserDAO {
 
     @Override
-    public User findById(long id) {
-        User user;
+    public Optional<User> findById(long id) {
+        Optional<User> optionalUser;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // Для исключения возможности получения значения null, воспользовались Optional
-            // Вместо значения null получаем new User("", 0)
-            user = Optional.ofNullable(session.get(User.class, id))
-                    .orElse(new User("", 0));
+            // Для исключения возможности получения значения null и NullPointerException в будущем,
+            // воспользовались Optional - обертку вокруг User
+            optionalUser = Optional.ofNullable(session.get(User.class, id));
         }
-        return user;
+        return optionalUser;
     }
 
     @Override

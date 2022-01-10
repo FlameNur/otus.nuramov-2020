@@ -15,7 +15,13 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User findUser(long id) {
-        return userDAO.findById(id);
+        User user = null;
+        // Проверяем наличие внутри Optional наличие User'a
+        if(userDAO.findById(id).isPresent()) {
+            // Получаем User'a из БД
+            user = userDAO.findById(id).get();
+        }
+        return user;
     }
 
     @Override

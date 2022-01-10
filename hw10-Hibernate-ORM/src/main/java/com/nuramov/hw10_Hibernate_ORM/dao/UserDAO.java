@@ -2,6 +2,8 @@ package com.nuramov.hw10_Hibernate_ORM.dao;
 
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 
+import java.util.Optional;
+
 /**
  * interface UserDAO позволяет создать в приложении слой, который отвечает только за доступ к данным
  * DAO (data access object) — один из наиболее распространенных паттернов проектирования, "Доступ к данным".
@@ -12,7 +14,7 @@ public interface UserDAO {
      * @param id - id пользователя (User)
      * @return - пользователя (User)
      */
-    User findById(long id);
+    Optional<User> findById(long id);
 
     /**
      * Метод save позволяет сохранить пользователя (User) в БД

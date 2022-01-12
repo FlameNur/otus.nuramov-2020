@@ -15,13 +15,8 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User findUser(long id) {
-        User user = null;
-        // Проверяем наличие внутри Optional наличие User'a
-        if(userDAO.findById(id).isPresent()) {
-            // Получаем User'a из БД
-            user = userDAO.findById(id).get();
-        }
-        return user;
+        // Из Optional<User> optionalUser получаем User'a или null
+        return userDAO.findById(id).orElse(null);
     }
 
     @Override

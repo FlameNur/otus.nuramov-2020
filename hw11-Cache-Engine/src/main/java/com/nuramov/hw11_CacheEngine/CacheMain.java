@@ -6,8 +6,8 @@ import com.nuramov.hw11_CacheEngine.cache_engine.CacheEngineImpl;
 public class CacheMain {
     public static void main(String[] args) throws InterruptedException {
         new CacheMain().eternalCacheExample();
-        new CacheMain().lifeCacheExample();
-        new CacheMain().idleCacheExample();
+        //new CacheMain().lifeCacheExample();
+        //new CacheMain().idleCacheExample();
     }
 
     // Метод eternalCacheExample определяет работу с кэшом по максимальному количеству элементов в кэше

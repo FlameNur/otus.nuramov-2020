@@ -20,30 +20,17 @@ public class UserServiceImp_Cache implements UserService{
 
     @Override
     public User findUser(long id) {
-        /*// Проверяем в кэше наличие нужного User'a (кэш 2-го уровня)
-        User user = cacheEngine.get(id);
-        if(user != null) {
-            return user;
-        } else {
-            // Проверяем наличие внутри Optional наличие User'a
-            if(userDAO.findById(id).isPresent()) {
-                // Если в кэше нужного User'a нет, обращаем к Hibernate (кэш 1-го уровня и БД)
-                user = userDAO.findById(id).get();
-                // Сохраняем User'a в кэше 2-го уровня, чтобы в следующий раз достать его уже из кэша
-                cacheEngine.put(id, user);
-            }
-        }
-        return user;*/
-
+        // Проверяем в кэше наличие нужного User'a (кэш 2-го уровня)
         Optional<User> optionalUser = cacheEngine.get(id);
         User user = null;
         if(optionalUser.isPresent()) {
             return optionalUser.get();
         } else {
+            optionalUser = userDAO.findById(id);
             // Проверяем наличие внутри Optional наличие User'a
-            if(userDAO.findById(id).isPresent()) {
+            if(optionalUser.isPresent()) {
                 // Если в кэше нужного User'a нет, обращаем к Hibernate (кэш 1-го уровня и БД)
-                user = userDAO.findById(id).get();
+                user = optionalUser.get();
                 // Сохраняем User'a в кэше 2-го уровня, чтобы в следующий раз достать его уже из кэша
                 cacheEngine.put(id, user);
             }

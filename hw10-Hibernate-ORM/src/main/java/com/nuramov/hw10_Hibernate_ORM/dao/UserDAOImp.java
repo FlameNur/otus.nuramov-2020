@@ -1,11 +1,13 @@
-package com.nuramov.hw10_Hibernate_ORM.DAO;
+package com.nuramov.hw10_Hibernate_ORM.dao;
 
 import com.nuramov.hw10_Hibernate_ORM.HibernateUtil;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
-import java.util.List;
+import java.util.Optional;
+
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
 
 /**
  * class UserDAOImp реализует интерфейс UserDAO
@@ -13,35 +15,32 @@ import java.util.List;
 public class UserDAOImp implements UserDAO {
 
     @Override
-    public User findById(long id) {
-        User user;
+    public Optional<User> findById(long id) {
+        Optional<User> optionalUser;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
-            try {
-                session.beginTransaction();
-                // Находим пользователя (User) по id
-                user = session.get(User.class, id);
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                session.getTransaction().rollback();
-                throw new RuntimeException(e);
-            }
+            // Для исключения возможности получения значения null и NullPointerException в будущем,
+            // воспользовались Optional - обертку вокруг User
+            optionalUser = Optional.ofNullable(session.get(User.class, id));
         }
-        return user;
+        return optionalUser;
     }
 
     @Override
-    public void save(User user) {
+    public long save(User user) {
+        // id User'a в БД
+        long id;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             try {
                 session.beginTransaction();
-                // Сохраняем пользователя (User) в БД
-                session.save(user);
+                // Сохраняем пользователя (User) в БД и возвращаем его id
+                id = (long) session.save(user);
                 session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();
                 throw new RuntimeException(e);
             }
         }
+        return id;
     }
 
     @Override

@@ -1,6 +1,8 @@
-package com.nuramov.hw10_Hibernate_ORM.DAO;
+package com.nuramov.hw10_Hibernate_ORM.dao;
 
 import com.nuramov.hw10_Hibernate_ORM.model.User;
+
+import java.util.Optional;
 
 /**
  * interface UserDAO позволяет создать в приложении слой, который отвечает только за доступ к данным
@@ -12,13 +14,13 @@ public interface UserDAO {
      * @param id - id пользователя (User)
      * @return - пользователя (User)
      */
-    User findById(long id);
+    Optional<User> findById(long id);
 
     /**
      * Метод save позволяет сохранить пользователя (User) в БД
      * @param user - пользователь (User), которого сохраняем в БД
      */
-    void save(User user);
+    long save(User user);
 
     /**
      * Метод update позволяет обновить данные пользователя (User) в БД

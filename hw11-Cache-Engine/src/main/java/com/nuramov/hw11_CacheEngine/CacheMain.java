@@ -32,7 +32,7 @@ public class CacheMain {
         System.out.println("Cache hits: " + cache.getHitCount());
         System.out.println("Cache misses: " + cache.getMissCount());
 
-        cache.dispose();
+        cache.timerStop();
     }
 
     // Метод lifeCacheExample определяет работу с кэшом по lifeTime/удаляет элементы из кэша по истечению lifeTime
@@ -73,7 +73,7 @@ public class CacheMain {
         System.out.println("Cache hits: " + cache.getHitCount());
         System.out.println("Cache misses: " + cache.getMissCount());
 
-        cache.dispose();
+        cache.timerStop();
     }
 
     private void idleCacheExample() throws InterruptedException {
@@ -114,6 +114,6 @@ public class CacheMain {
         System.out.println("Cache hits: " + cache.getHitCount());
         System.out.println("Cache misses: " + cache.getMissCount());
 
-        cache.dispose();
+        cache.timerStop();
     }
 }

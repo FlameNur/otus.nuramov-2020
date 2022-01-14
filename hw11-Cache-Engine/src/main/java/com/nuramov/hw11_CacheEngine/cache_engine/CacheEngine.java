@@ -37,7 +37,11 @@ public interface CacheEngine<K, V> {
 
     /**
      * Метод dispose позволяет удалить все элементы из кэша
-     * (в нашем примере dispose используется при работе с Timer, отключает его по окончанию работы)
      */
     void dispose();
+
+    /**
+     * Метод timerStop отключает Timer по окончанию работы
+     */
+    void timerStop();
 }

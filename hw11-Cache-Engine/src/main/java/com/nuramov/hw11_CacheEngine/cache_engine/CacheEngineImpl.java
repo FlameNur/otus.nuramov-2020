@@ -91,7 +91,11 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     @Override
     public void dispose() {
         elements.clear();
-        //timer.cancel();
+    }
+
+    @Override
+    public void timerStop() {
+        timer.cancel();
     }
 
     // При работе с lifeTime и idleTime можно планировать запуск задания на определённое время в будущем (с таймером)

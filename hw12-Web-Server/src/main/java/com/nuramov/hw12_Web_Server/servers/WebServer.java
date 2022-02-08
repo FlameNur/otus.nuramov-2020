@@ -23,7 +23,9 @@ import java.util.Collections;
 public class WebServer {
 
     public Server createServer(int port) throws MalformedURLException {
-        // Создаем context для обработки запросов
+        // ServletContext – это инфраструктурная часть, которая содержит сервлеты и прочие
+        // компоненты для обработки запросов. ServletContext привязывается к определенному адресу
+        // и обрабатывает все запросы, которые на этот адрес приходят
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
         // Добавляем servlet для обработки запросов "/publicInfo"
@@ -35,8 +37,7 @@ public class WebServer {
 
         Server server = new Server(port);
 
-        // Handler'ы в структуре Jetty обрабатывают запросы, на конкретный URL формируется свой Сontext,
-        // который добавляет servlet'ы
+        // Handler'ы в структуре Jetty обрабатывают запросы и добавляют servlet'ы
         server.setHandler(new HandlerList(context));
 
         HandlerList handlers = new HandlerList();
@@ -46,7 +47,7 @@ public class WebServer {
     }
 
     // Для работы с ресурсами (папка resources)
-    // Надо разобраться
+    // ResourceHandler (обработчик статики)
     private ResourceHandler createResourceHandler() {
         ResourceHandler resourceHandler = new ResourceHandler();
         resourceHandler.setDirectoriesListed(false);
@@ -61,7 +62,7 @@ public class WebServer {
         return resourceHandler;
     }
 
-    // Метод для аутентификации пользователя
+    // SecurityHandler (контроль доступа). Метод для аутентификации пользователя
     private SecurityHandler createSecurityHandler(ServletContextHandler context) throws MalformedURLException {
         // Создаем ограничения при аутентификации пользователя
         Constraint constraint = new Constraint();

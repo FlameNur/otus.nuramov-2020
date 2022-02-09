@@ -1,5 +1,7 @@
 package com.nuramov.hw12_Web_Server.servers;
 
+import com.nuramov.hw12_Web_Server.filters.SimpleFilter;
+import com.nuramov.hw12_Web_Server.servlets.PrivateInfo;
 import com.nuramov.hw12_Web_Server.servlets.PublicInfo;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -20,7 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 
-public class WebServer {
+public class WebServer_Jetty {
 
     public Server createServer(int port) throws MalformedURLException {
         // ServletContext – это инфраструктурная часть, которая содержит сервлеты и прочие
@@ -30,9 +32,10 @@ public class WebServer {
 
         // Добавляем servlet для обработки запросов "/publicInfo"
         context.addServlet(new ServletHolder(new PublicInfo()), "/publicInfo");
+        context.addServlet(new ServletHolder(new PrivateInfo()), "/privateInfo");
 
         // Добавляем простой фильтр для каждого запроса "/*"
-        //context.addFilter(new FilterHolder(new SimpleFilter()), "/*", null);
+        context.addFilter(new FilterHolder(new SimpleFilter()), "/*", null);
 
 
         Server server = new Server(port);
@@ -46,6 +49,7 @@ public class WebServer {
         return server;
     }
 
+    // Пока не понятно как с этим работать
     // Для работы с ресурсами (папка resources)
     // ResourceHandler (обработчик статики)
     private ResourceHandler createResourceHandler() {
@@ -53,8 +57,8 @@ public class WebServer {
         resourceHandler.setDirectoriesListed(false);
         resourceHandler.setWelcomeFiles(new String[]{"index.html"});
 
-        // ??? Возможно не сработает с WebServer.class
-        URL fileDir = WebServer.class.getClassLoader().getResource("static");
+        // Определяем директорию для ресурса
+        URL fileDir = WebServer_Jetty.class.getClassLoader().getResource("staticResources");
         if (fileDir == null) {
             throw new RuntimeException("File Directory not found");
         }
@@ -62,7 +66,12 @@ public class WebServer {
         return resourceHandler;
     }
 
-    // SecurityHandler (контроль доступа). Метод для аутентификации пользователя
+    /**
+     * Метод SecurityHandler реализует контроль доступа для аутентификации пользователя
+     * @param context -
+     * @return -
+     * @throws MalformedURLException -
+     */
     private SecurityHandler createSecurityHandler(ServletContextHandler context) throws MalformedURLException {
         // Создаем ограничения при аутентификации пользователя
         Constraint constraint = new Constraint();
@@ -85,8 +94,7 @@ public class WebServer {
         }
         if (propFile == null) {
             System.out.println("local realm config not found, looking into Resources");
-            // ??? Возможно не сработает с WebServer.class
-            propFile = WebServer.class.getClassLoader().getResource("realm.properties");
+            propFile = WebServer_Jetty.class.getClassLoader().getResource("realm.properties");
         }
 
         if (propFile == null) {

@@ -75,7 +75,7 @@ public class WebServer_Jetty {
     private SecurityHandler createSecurityHandler(ServletContextHandler context) throws MalformedURLException {
         // Создаем ограничения при аутентификации пользователя
         Constraint constraint = new Constraint();
-        constraint.setName("auth");
+        constraint.setName("authentication");
         constraint.setAuthenticate(true);
         constraint.setRoles(new String[]{"user", "admin"});
 

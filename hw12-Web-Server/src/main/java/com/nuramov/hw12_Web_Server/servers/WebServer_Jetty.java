@@ -52,6 +52,12 @@ public class WebServer_Jetty {
     // Пока не понятно как с этим работать
     // Для работы с ресурсами (папка resources)
     // ResourceHandler (обработчик статики)
+
+    /**
+     * Метод createResourceHandler() позволяет работать со статическим контентом
+     * Создаем пустую страничку приветствия Welcome Page на http://localhost:8080/
+     * @return - возвращает обработчик статического контента
+     */
     private ResourceHandler createResourceHandler() {
         ResourceHandler resourceHandler = new ResourceHandler();
         resourceHandler.setDirectoriesListed(false);
@@ -73,16 +79,19 @@ public class WebServer_Jetty {
      * @throws MalformedURLException -
      */
     private SecurityHandler createSecurityHandler(ServletContextHandler context) throws MalformedURLException {
-        // Создаем ограничения при аутентификации пользователя
+        // Создаем/описываем ограничения при аутентификации пользователя
         Constraint constraint = new Constraint();
         constraint.setName("authentication");
         constraint.setAuthenticate(true);
         constraint.setRoles(new String[]{"user", "admin"});
 
+        // Создаем ограничения при переходе на "/privateInfo/*"
         ConstraintMapping mapping = new ConstraintMapping();
         mapping.setPathSpec("/privateInfo/*");
         mapping.setConstraint(constraint);
 
+        // Указываем каким аутентификатором будем пользоваться
+        // BasicAuthenticator() - самый простой встроенный аутентификатор
         ConstraintSecurityHandler security = new ConstraintSecurityHandler();
         //как декодировать стороку с юзером:паролем https://www.base64decode.org/
         security.setAuthenticator(new BasicAuthenticator());

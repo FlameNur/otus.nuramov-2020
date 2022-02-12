@@ -49,10 +49,6 @@ public class WebServer_Jetty {
         return server;
     }
 
-    // Пока не понятно как с этим работать
-    // Для работы с ресурсами (папка resources)
-    // ResourceHandler (обработчик статики)
-
     /**
      * Метод createResourceHandler() позволяет работать со статическим контентом
      * Создаем пустую страничку приветствия Welcome Page на http://localhost:8080/

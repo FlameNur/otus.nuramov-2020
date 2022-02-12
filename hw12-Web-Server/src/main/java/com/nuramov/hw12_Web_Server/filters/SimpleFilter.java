@@ -4,6 +4,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.util.Date;
 
 public class SimpleFilter implements Filter {
 
@@ -18,10 +19,14 @@ public class SimpleFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
 
-        System.out.println("Запустили фильтр");
-        //System.out.println("Request uri:" + request.getRequestURI());
-        //System.out.println("Request user" + request.getUserPrincipal());
+        System.out.println("Данные по запросу фильтра фильтр");
+        // Получение IP адреса клиента
+        String ipAddress = request.getRemoteAddr();
 
+        // Выдаем IP адрес и текущее время
+        System.out.println("IP "+ ipAddress + ", Time " + new Date().toString());
+
+        // Передача запроса в цепочку фильтров
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

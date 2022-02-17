@@ -27,6 +27,12 @@
             <artifactId>jetty-security</artifactId>
             <version>11.0.7</version>
         </dependency>
+        <dependency>
+            <groupId>com.nuramov</groupId>
+            <artifactId>hw10-Hibernate-ORM</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 

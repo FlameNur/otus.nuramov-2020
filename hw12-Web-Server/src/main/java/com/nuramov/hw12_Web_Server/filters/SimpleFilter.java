@@ -19,12 +19,12 @@ public class SimpleFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
 
-        System.out.println("Данные по запросу фильтра фильтр");
+        System.out.println("Данные по запросу фильтра:");
         // Получение IP адреса клиента
         String ipAddress = request.getRemoteAddr();
 
         // Выдаем IP адрес и текущее время
-        System.out.println("IP "+ ipAddress + ", Time " + new Date().toString());
+        System.out.println("IP "+ ipAddress + ", Time " + new Date());
 
         // Передача запроса в цепочку фильтров
         filterChain.doFilter(servletRequest, servletResponse);

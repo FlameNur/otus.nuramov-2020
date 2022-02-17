@@ -3,6 +3,7 @@ package com.nuramov.hw12_Web_Server.servers;
 import com.nuramov.hw12_Web_Server.filters.SimpleFilter;
 import com.nuramov.hw12_Web_Server.servlets.PrivateInfo;
 import com.nuramov.hw12_Web_Server.servlets.PublicInfo;
+import com.nuramov.hw12_Web_Server.servlets.UserInfo;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -24,19 +25,25 @@ import java.util.Collections;
 
 public class WebServer_Jetty {
 
+    /**
+     * Метод createServer создает локальный сервер Jetty
+     * @param port - подключаемый порт
+     * @return - возвращаем готовый к работе сервер со всеми необходимыми параметрами
+     * @throws MalformedURLException
+     */
     public Server createServer(int port) throws MalformedURLException {
         // ServletContext – это инфраструктурная часть, которая содержит сервлеты и прочие
         // компоненты для обработки запросов. ServletContext привязывается к определенному адресу
         // и обрабатывает все запросы, которые на этот адрес приходят
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
-        // Добавляем servlet для обработки запросов "/publicInfo"
+        // Добавляем servlet для обработки запросов
         context.addServlet(new ServletHolder(new PublicInfo()), "/publicInfo");
         context.addServlet(new ServletHolder(new PrivateInfo()), "/privateInfo");
+        context.addServlet(new ServletHolder(new UserInfo()), "/userInfo");
 
         // Добавляем простой фильтр для каждого запроса "/*"
         context.addFilter(new FilterHolder(new SimpleFilter()), "/*", null);
-
 
         Server server = new Server(port);
 
@@ -50,7 +57,7 @@ public class WebServer_Jetty {
     }
 
     /**
-     * Метод createResourceHandler() позволяет работать со статическим контентом
+     * Метод createResourceHandler() позволяет работать со статическим контентом.
      * Создаем пустую страничку приветствия Welcome Page на http://localhost:8080/
      * @return - возвращает обработчик статического контента
      */

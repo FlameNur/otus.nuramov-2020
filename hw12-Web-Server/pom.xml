@@ -27,6 +27,20 @@
             <artifactId>jetty-security</artifactId>
             <version>11.0.7</version>
         </dependency>
+
+        <!-- Может есть что-то лучше... Кек!-->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <version>9.2.30.v20200428</version>
+        </dependency>
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+
         <dependency>
             <groupId>com.nuramov</groupId>
             <artifactId>hw10-Hibernate-ORM</artifactId>

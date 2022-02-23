@@ -33,8 +33,13 @@ public class UserInfo extends HttpServlet {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
         response.setStatus(HttpServletResponse.SC_OK);
 
-        String action = request.getServletPath();
+        // Пробуем
+        // Пока никак
+        RequestDispatcher dispatcher = request.getRequestDispatcher("user-list.html");
+        dispatcher.forward(request, response);
 
+
+        /*String action = request.getServletPath();
 
         try {
             switch (action) {
@@ -59,7 +64,7 @@ public class UserInfo extends HttpServlet {
             }
         } catch (SQLException ex) {
             throw new ServletException(ex);
-        }
+        }*/
     }
 
     private void listUser(HttpServletRequest request, HttpServletResponse response)
@@ -93,10 +98,7 @@ public class UserInfo extends HttpServlet {
 
         String name = request.getParameter("name");
         int age = Integer.parseInt(request.getParameter("age"));
-        String email = request.getParameter("email");
-        String country = request.getParameter("country");
 
-        //User newUser = new User(name, email, country);
         User newUser = new User(name, age);
         userDao.save(newUser);
         response.sendRedirect("list");
@@ -107,10 +109,7 @@ public class UserInfo extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         int age = Integer.parseInt(request.getParameter("age"));
         String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String country = request.getParameter("country");
 
-        //User user = new User(id, name, email, country);
         User user = new User(name, age);
 
         userDao.update(user);

@@ -4,6 +4,7 @@ import com.nuramov.hw12_Web_Server.filters.SimpleFilter;
 import com.nuramov.hw12_Web_Server.servlets.PrivateInfo;
 import com.nuramov.hw12_Web_Server.servlets.PublicInfo;
 import com.nuramov.hw12_Web_Server.servlets.UserInfo;
+import com.nuramov.hw12_Web_Server.servlets.UserSave;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -41,6 +42,7 @@ public class WebServer_Jetty {
         context.addServlet(new ServletHolder(new PublicInfo()), "/publicInfo");
         context.addServlet(new ServletHolder(new PrivateInfo()), "/privateInfo");
         context.addServlet(new ServletHolder(new UserInfo()), "/userInfo");
+        context.addServlet(new ServletHolder(new UserSave()), "/userSave");
 
         // Добавляем простой фильтр для каждого запроса "/*"
         context.addFilter(new FilterHolder(new SimpleFilter()), "/*", null);
@@ -96,7 +98,7 @@ public class WebServer_Jetty {
         // Указываем каким аутентификатором будем пользоваться
         // BasicAuthenticator() - самый простой встроенный аутентификатор
         ConstraintSecurityHandler security = new ConstraintSecurityHandler();
-        //как декодировать стороку с юзером:паролем https://www.base64decode.org/
+        //как декодировать строку с юзером:паролем https://www.base64decode.org/
         security.setAuthenticator(new BasicAuthenticator());
 
         URL propFile = null;

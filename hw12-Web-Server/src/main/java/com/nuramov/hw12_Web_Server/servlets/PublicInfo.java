@@ -27,8 +27,4 @@ public class PublicInfo extends HttpServlet {
         printWriter.print(resultAsString);
         printWriter.flush();
     }
-
-
-
-
 }

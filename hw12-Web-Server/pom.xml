@@ -41,6 +41,14 @@
         </dependency>
 
 
+        <!-- thymeleaf вроде без спринга -->
+        <!--<dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>3.0.15.RELEASE</version>
+        </dependency>-->
+
+
         <dependency>
             <groupId>com.nuramov</groupId>
             <artifactId>hw10-Hibernate-ORM</artifactId>

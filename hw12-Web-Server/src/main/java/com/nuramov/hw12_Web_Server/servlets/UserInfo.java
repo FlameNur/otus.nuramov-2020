@@ -3,6 +3,7 @@ package com.nuramov.hw12_Web_Server.servlets;
 import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImp_Web;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -31,12 +32,14 @@ public class UserInfo extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
-        response.setStatus(HttpServletResponse.SC_OK);
+        //response.setStatus(HttpServletResponse.SC_OK);
 
         // Пробуем
         // Пока никак
-        RequestDispatcher dispatcher = request.getRequestDispatcher("user-list.html");
-        dispatcher.forward(request, response);
+        String path = "/index.html";
+        ServletContext servletContext = getServletContext();
+        RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(path);
+        requestDispatcher.forward(request, response);
 
 
         /*String action = request.getServletPath();

@@ -7,7 +7,7 @@
 <body>
 The message is: ${msg}
 
-
+<!--Тут надо прописать метод и что делает, как я понял-->
 <form action="MyController?action=addUser" method="post">
 
     <label for="fname">First name:</label>
@@ -22,7 +22,8 @@ The message is: ${msg}
     <input id="email" type="text" name="email">
     <br>
 
-    <button type="submit">Submit</button>
+    <button formaction="http://localhost:8080/publicInfo" type="submit">Submit</button>
+    <!--<button formaction="http://localhost:8080/publicInfo">Submit</button>-->
 
 </form>
 

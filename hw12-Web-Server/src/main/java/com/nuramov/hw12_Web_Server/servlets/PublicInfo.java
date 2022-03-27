@@ -1,5 +1,6 @@
 package com.nuramov.hw12_Web_Server.servlets;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,5 +27,18 @@ public class PublicInfo extends HttpServlet {
         PrintWriter printWriter = response.getWriter();
         printWriter.print(resultAsString);
         printWriter.flush();
+    }
+
+    /**
+     * Метод doPost в данном случае нужен для того, чтобы при переходе по ссылке на него, обработать запрос и
+     * выполнить необходимые действия/заполнить формы. Сейчас просто вызываем метод doGet
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
     }
 }

@@ -1,9 +1,8 @@
 package com.nuramov.hw12_Web_Server.servers;
 
 import com.nuramov.hw12_Web_Server.filters.SimpleFilter;
-import com.nuramov.hw12_Web_Server.servlets.PrivateInfo;
 import com.nuramov.hw12_Web_Server.servlets.PublicInfo;
-import com.nuramov.hw12_Web_Server.servlets.UserInfo;
+import com.nuramov.hw12_Web_Server.servlets.UsersInfo;
 import com.nuramov.hw12_Web_Server.servlets.UserSave;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -40,8 +39,7 @@ public class WebServer_Jetty {
 
         // Добавляем servlet для обработки запросов
         context.addServlet(new ServletHolder(new PublicInfo()), "/publicInfo");
-        context.addServlet(new ServletHolder(new PrivateInfo()), "/privateInfo");
-        context.addServlet(new ServletHolder(new UserInfo()), "/userInfo");
+        context.addServlet(new ServletHolder(new UsersInfo()), "/usersInfo");
         context.addServlet(new ServletHolder(new UserSave()), "/userSave");
 
         // Добавляем простой фильтр для каждого запроса "/*"
@@ -90,9 +88,9 @@ public class WebServer_Jetty {
         constraint.setAuthenticate(true);
         constraint.setRoles(new String[]{"user", "admin"});
 
-        // Создаем ограничения при переходе на "/privateInfo/*"
+        // Создаем ограничения при переходе на "/usersInfo/*"
         ConstraintMapping mapping = new ConstraintMapping();
-        mapping.setPathSpec("/privateInfo/*");
+        mapping.setPathSpec("/usersInfo/*");
         mapping.setConstraint(constraint);
 
         // Указываем каким аутентификатором будем пользоваться

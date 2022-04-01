@@ -1,11 +1,15 @@
 package com.nuramov.hw12_Web_Server;
 
 import com.nuramov.hw12_Web_Server.servers.WebServer_Jetty;
-import com.nuramov.hw12_Web_Server.servlets.PrivateInfo;
-import com.nuramov.hw12_Web_Server.servlets.PublicInfo;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
 
+/**
+ * Запускаем сервер
+ * По ссылке "http://localhost:8080/" открываем страницу приветствия и переходим
+ * на страницу "/publicInfo" по кнопке "Submit"
+ * На странице PublicInfo может перейти на "userSave" (форма для добавления нового пользователя) или
+ * "usersInfo" (таблица со всеми пользователями)
+ */
 public class Main {
     private final static int PORT = 8080;
 

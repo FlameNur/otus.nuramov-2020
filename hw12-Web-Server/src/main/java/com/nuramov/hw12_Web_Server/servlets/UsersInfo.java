@@ -15,8 +15,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 
-@WebServlet("/userInfo")
-public class UserInfo extends HttpServlet {
+@WebServlet("/usersInfo")
+public class UsersInfo extends HttpServlet {
     private UserDAOImp_Web userDao;
 
     public void init() {

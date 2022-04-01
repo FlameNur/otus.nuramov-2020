@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+Fill the form: ${msg}
+
+<!--Тут надо прописать метод и что делает, как я понял-->
+<form action="addUser.html">
+
+    <label for="name">Name:</label>
+    <input id="name" type="text" name="name">
+    <br>
+
+    <label for="age">Age:</label>
+    <input id="age" type="text" name="age">
+    <br>
+
+    <label for="address">Address:</label>
+    <input id="address" type="text" name="address">
+    <br>
+
+    <label for="phone">Phone:</label>
+    <input id="phone" type="text" name="phone">
+    <br>
+
+    <button type="submit">Submit</button>
+    <!--Такой вариант с переходом на другую страницу-->
+    <!--<button formaction="http://localhost:8080/usersInfo" type="submit">Submit</button>-->
+
+</form>
+</body>
+</html>

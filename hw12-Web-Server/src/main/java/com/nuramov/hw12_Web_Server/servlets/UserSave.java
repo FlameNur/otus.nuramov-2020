@@ -21,12 +21,6 @@ import java.util.Map;
 
 @WebServlet("/userSave")
 public class UserSave extends HttpServlet {
-    private UserDAOImp_Web userDao;
-
-    public void init() {
-        userDao = new UserDAOImp_Web();
-    }
-
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -66,22 +60,5 @@ public class UserSave extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
-
-        try {
-            insertUser(request, response);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void insertUser(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException {
-
-        String name = request.getParameter("name");
-        int age = Integer.parseInt(request.getParameter("age"));
-
-        User newUser = new User(name, age);
-        userDao.save(newUser);
-        response.sendRedirect("http://localhost:8080/usersInfo");
     }
 }

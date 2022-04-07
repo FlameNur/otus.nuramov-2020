@@ -5,31 +5,34 @@
     <title>Test</title>
 </head>
 <body>
-Fill the form: ${msg}
+    Fill the form: ${msg}
 
-<!--Тут надо прописать метод и что делает, как я понял-->
-<form action="addUser.html">
+    <!--Тут надо прописать метод и что делает, как я понял-->
+    <!--<form action="addUser.html">-->
+    <form>
 
-    <label for="name">Name:</label>
-    <input id="name" type="text" name="name">
-    <br>
+        <label for="name">Name:</label>
+        <input id="name" type="text" name="name">
+        <br>
 
-    <label for="age">Age:</label>
-    <input id="age" type="text" name="age">
-    <br>
+        <label for="age">Age:</label>
+        <input id="age" type="text" name="age">
+        <br>
 
-    <label for="address">Address:</label>
-    <input id="address" type="text" name="address">
-    <br>
+        <label for="address">Address:</label>
+        <input id="address" type="text" name="address">
+        <br>
 
-    <label for="phone">Phone:</label>
-    <input id="phone" type="text" name="phone">
-    <br>
+        <label for="phone">Phone:</label>
+        <input id="phone" type="text" name="phone">
+        <br>
 
-    <button type="submit">Submit</button>
-    <!--Такой вариант с переходом на другую страницу-->
-    <!--<button formaction="http://localhost:8080/usersInfo" type="submit">Submit</button>-->
+        <!--Такой вариант без перехода на другую страницу. Данные останутся в текущем сервлете-->
+        <!--<button type="submit">Submit</button>-->
 
-</form>
+        <!--Такой вариант с переходом на другую страницу. Данные будут отправлены на другой сервлет-->
+        <button formaction="http://localhost:8080/usersInfo" type="submit">Submit</button>
+
+    </form>
 </body>
 </html>

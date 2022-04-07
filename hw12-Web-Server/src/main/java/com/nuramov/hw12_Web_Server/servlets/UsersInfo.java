@@ -1,7 +1,13 @@
 package com.nuramov.hw12_Web_Server.servlets;
 
 import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImp_Web;
+import com.nuramov.hw10_Hibernate_ORM.model.AddressDataSet;
+import com.nuramov.hw10_Hibernate_ORM.model.PhoneDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.Version;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -11,103 +17,98 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @WebServlet("/usersInfo")
 public class UsersInfo extends HttpServlet {
     private UserDAOImp_Web userDao;
+    Map<String, Object> templateData;
 
     public void init() {
         userDao = new UserDAOImp_Web();
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
+        templateData = new HashMap<>();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
-        //response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(HttpServletResponse.SC_OK);
 
-        // Пробуем
-        // Пока никак
-        String path = "/index.html";
-        ServletContext servletContext = getServletContext();
-        RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(path);
-        requestDispatcher.forward(request, response);
+        // Конфиги для Freemarker
+        Configuration configuration = new Configuration(new Version("2.3.31"));
 
+        configuration.setClassForTemplateLoading(UserSave.class, "/");
+        configuration.setDefaultEncoding("UTF-8");
 
-        /*String action = request.getServletPath();
+        try (Writer writer = new StringWriter()) {
+            Template template = configuration.getTemplate("listOfUsers.html");
+            template.process(templateData, writer);
 
+            response.getWriter().println(writer);
+        } catch (TemplateException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            switch (action) {
-                case "/new":
-                    showNewForm(request, response);
-                    break;
-                case "/insert":
-                    insertUser(request, response);
-                    break;
-                case "/delete":
-                    deleteUser(request, response);
-                    break;
-                case "/edit":
-                    showEditForm(request, response);
-                    break;
-                case "/update":
-                    updateUser(request, response);
-                    break;
-                default:
-                    listUser(request, response);
-                    break;
-            }
-        } catch (SQLException ex) {
-            throw new ServletException(ex);
-        }*/
+            insertUser(request,response);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        listUser(request, response);
+
+        doGet(request, response);
     }
 
-    private void listUser(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException, ServletException {
-        List<User> listUser = userDao.getAllUser();
-        request.setAttribute("listUser", listUser);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("user-list.jsp");
-        dispatcher.forward(request, response);
-    }
-
-    private void showNewForm(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("user-form.jsp");
-        dispatcher.forward(request, response);
-    }
-
-    private void showEditForm(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-
-        // Работаем через Optional
-        User existingUser = userDao.findById(id).orElse(null);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("user-form.jsp");
-        request.setAttribute("user", existingUser);
-        dispatcher.forward(request, response);
-
-    }
-
-    private void insertUser(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException {
+    private void insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
 
         String name = request.getParameter("name");
         int age = Integer.parseInt(request.getParameter("age"));
+        String phoneNumber = request.getParameter("phoneNumber");
+        String address = request.getParameter("address");
 
         User newUser = new User(name, age);
+
+        PhoneDataSet phoneDataSet = new PhoneDataSet();
+        phoneDataSet.setNumber(phoneNumber);
+
+        AddressDataSet addressDataSet = new AddressDataSet();
+        addressDataSet.setStreet(address);
+
+        newUser.setPhone(phoneDataSet);
+        newUser.setAddress(addressDataSet);
+
         userDao.save(newUser);
-        response.sendRedirect("list");
+
+        // Это уже не надо, вроде. Надо попробовать с этим сначала, чтобы сформировать ответ
+        //response.sendRedirect("http://localhost:8080/usersInfo");
     }
 
-    private void updateUser(HttpServletRequest request, HttpServletResponse response)
+    private void listUser(HttpServletRequest request, HttpServletResponse response) {
+        List<User> listUser = userDao.getAllUser();
+
+        //Пока не работает
+        User user = listUser.get(1);
+        templateData.put("test", user.getName());
+
+        // ??? Для чего не понятно пока
+        //request.setAttribute("listUser", listUser);
+
+
+    }
+
+
+    /*private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         int age = Integer.parseInt(request.getParameter("age"));
@@ -117,13 +118,13 @@ public class UsersInfo extends HttpServlet {
 
         userDao.update(user);
         response.sendRedirect("list");
-    }
+    }*/
 
-    private void deleteUser(HttpServletRequest request, HttpServletResponse response)
+    /*private void deleteUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         User userToDelete = userDao.findById(id).orElse(null);
         userDao.delete(userToDelete);
         response.sendRedirect("list");
-    }
+    }*/
 }

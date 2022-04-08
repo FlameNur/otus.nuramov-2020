@@ -3,14 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>Index Page</title>
+    <style type="text/css">
+        h1 {
+            text-align: center;
+            font-size: 380%;
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            color: chocolate;
+        }
+        h2 {
+            text-align: center;
+            text-decoration:underline;
+            font-size:200%;
+            color: darkcyan;
+        }
+        button {
+            /*Положение кнопки по центру*/
+            position: relative;
+            left: 50%;
+            transform: translate(-50%, 0);
+
+            /*Другие настройки*/
+            background: -moz-linear-gradient(#00BBD6, #EBFFFF);
+            background: -webkit-gradient(linear, 0 0, 0 100%, from(#00BBD6), to(#EBFFFF));
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
+            padding: 3px 7px;
+            color: #333;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            border: 1px solid #666;
+
+            /*Размер кнопки*/
+            width: 120px;
+            height: 60px;
+        }
+    </style>
 </head>
 <body>
     <h1>Welcome Page</h1>
-    <p>Переход на страницу "PublicInfo" </p>
+    <h2>Переходи на страницу "PublicInfo"</h2>
+
     <!--В качестве action должен выступать обработчик-->
     <form action="index.html">
         <!--Переходим по кнопке на другую страницу PublicInfo из начальной страницы-->
-        <button formaction="http://localhost:8080/publicInfo" type="submit">Submit</button>
+        <button formaction="http://localhost:8080/publicInfo" type="submit">Переход</button>
     </form>
 </body>
 </html>

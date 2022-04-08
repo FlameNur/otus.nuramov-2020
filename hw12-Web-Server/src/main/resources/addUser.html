@@ -3,14 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Test</title>
+    <style type="text/css">
+        h1 {
+            text-align: center;
+        }
+        form {
+            text-align: center;
+            line-height: 1.6; /* Межстрочное расстояние */
+        }
+        button {
+            /*Размер кнопки*/
+            width: 120px;
+            height: 60px;
+
+            /*Положение кнопки*/
+            margin-top: 20px;
+            margin-right: 20px;
+            margin-bottom: 30px;
+            margin-left: 40px;
+        }
+    </style>
 </head>
 <body>
-    Fill the form: ${msg}
+    <h1>Fill the form: ${msg}</h1>
 
     <!--Тут надо прописать метод и что делает, как я понял-->
     <!--<form action="addUser.html">-->
     <form>
-
         <label for="name">Name:</label>
         <input id="name" type="text" name="name">
         <br>
@@ -31,8 +50,7 @@
         <!--<button type="submit">Submit</button>-->
 
         <!--Такой вариант с переходом на другую страницу. Данные будут отправлены на другой сервлет-->
-        <button formaction="http://localhost:8080/usersInfo" type="submit">Submit</button>
-
+        <button formaction="http://localhost:8080/usersInfo" type="submit">Add new User</button>
     </form>
 </body>
 </html>

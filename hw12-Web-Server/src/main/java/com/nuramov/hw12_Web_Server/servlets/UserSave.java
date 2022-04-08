@@ -1,6 +1,8 @@
 package com.nuramov.hw12_Web_Server.servlets;
 
 import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImp_Web;
+import com.nuramov.hw10_Hibernate_ORM.model.AddressDataSet;
+import com.nuramov.hw10_Hibernate_ORM.model.PhoneDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 import freemarker.template.Configuration;
 import freemarker.template.Template;

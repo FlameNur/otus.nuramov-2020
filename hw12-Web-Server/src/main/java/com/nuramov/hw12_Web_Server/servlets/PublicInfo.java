@@ -28,14 +28,6 @@ public class PublicInfo extends HttpServlet {
         // Сообщает клиенту (веб-браузеру), какой это тип контента, чтобы он знал, что с ним делать
         response.setContentType("text/html");
 
-        // Сообщение на странице
-        String resultAsString = "<p>PublicInfo Page</p>";
-
-        // Выдаем сформированный ответ
-        PrintWriter printWriter = response.getWriter();
-        printWriter.print(resultAsString);
-        printWriter.flush();
-
         // Конфиги для Freemarker
         Configuration configuration = new Configuration(new Version("2.3.31"));
 

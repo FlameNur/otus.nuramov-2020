@@ -8,8 +8,6 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.Version;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,7 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.sql.SQLException;
@@ -29,11 +26,13 @@ import java.util.Map;
 @WebServlet("/usersInfo")
 public class UsersInfo extends HttpServlet {
     private UserDAOImp_Web userDao;
-    Map<String, Object> templateData;
+    private Map<String, Object> templateData;
+    private long id;
 
     public void init() {
         userDao = new UserDAOImp_Web();
         templateData = new HashMap<>();
+        id = 0;
     }
 
     @Override
@@ -48,29 +47,29 @@ public class UsersInfo extends HttpServlet {
         configuration.setDefaultEncoding("UTF-8");
 
         try (Writer writer = new StringWriter()) {
-            Template template = configuration.getTemplate("listOfUsers.html");
+            Template template = configuration.getTemplate("UsersInfo.html");
             template.process(templateData, writer);
 
             response.getWriter().println(writer);
         } catch (TemplateException e) {
             e.printStackTrace();
         }
-    }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Добавляем пользователя в БД
         try {
-            insertUser(request,response);
+            id = insertUser(request,response);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        listUser(request, response);
-
-        doGet(request, response);
     }
 
-    private void insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        listUser(request, response);
+    }
+
+    // Вроде, работает
+    private long insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
 
         String name = request.getParameter("name");
         int age = Integer.parseInt(request.getParameter("age"));
@@ -88,18 +87,21 @@ public class UsersInfo extends HttpServlet {
         newUser.setPhone(phoneDataSet);
         newUser.setAddress(addressDataSet);
 
-        userDao.save(newUser);
-
-        // Это уже не надо, вроде. Надо попробовать с этим сначала, чтобы сформировать ответ
-        //response.sendRedirect("http://localhost:8080/usersInfo");
+        long id = userDao.save(newUser);
+        return id;
     }
 
     private void listUser(HttpServletRequest request, HttpServletResponse response) {
         List<User> listUser = userDao.getAllUser();
 
-        //Пока не работает
-        User user = listUser.get(1);
-        templateData.put("test", user.getName());
+        User user = listUser.get((int) id);
+
+        // Пробовал вывести имя
+        String name = user.getName();
+        System.out.println(name);
+
+        // Пока не работает
+        templateData.put("name", user.getName());
 
         // ??? Для чего не понятно пока
         //request.setAttribute("listUser", listUser);

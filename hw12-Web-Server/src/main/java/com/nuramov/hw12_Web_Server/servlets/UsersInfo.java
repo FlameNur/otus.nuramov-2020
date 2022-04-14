@@ -46,6 +46,30 @@ public class UsersInfo extends HttpServlet {
         configuration.setClassForTemplateLoading(UserSave.class, "/");
         configuration.setDefaultEncoding("UTF-8");
 
+
+        // Добавляем пользователя в БД
+        try {
+            id = insertUser(request,response);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Так можно найти добавленного пользователя и вывести на консоль и страницу
+        User findedUser = userDao.findById(id).get();
+
+        templateData.put("name", findedUser.getName());
+        templateData.put("age", findedUser.getAge());
+        templateData.put("phone", findedUser.getPhone());
+        templateData.put("address", findedUser.getAddress());
+
+        System.out.println(findedUser);
+
+        //_________________________________________
+
+
+
+
+
         try (Writer writer = new StringWriter()) {
             Template template = configuration.getTemplate("UsersInfo.html");
             template.process(templateData, writer);
@@ -54,18 +78,15 @@ public class UsersInfo extends HttpServlet {
         } catch (TemplateException e) {
             e.printStackTrace();
         }
-
-        // Добавляем пользователя в БД
-        try {
-            id = insertUser(request,response);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        listUser(request, response);
+        // Пока работает и без этого
+
+        //doGet(request, response);
+
+        //listUser(request, response);
     }
 
     // Вроде, работает
@@ -99,14 +120,6 @@ public class UsersInfo extends HttpServlet {
         // Пробовал вывести имя
         String name = user.getName();
         System.out.println(name);
-
-        // Пока не работает
-        templateData.put("name", user.getName());
-
-        // ??? Для чего не понятно пока
-        //request.setAttribute("listUser", listUser);
-
-
     }
 
 

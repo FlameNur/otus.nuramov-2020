@@ -54,15 +54,23 @@ public class UsersInfo extends HttpServlet {
             e.printStackTrace();
         }
 
+
+
+        // Пробуем вывести список
+        //listUser(request, response);
+
+
+
+
+
         // Так можно найти добавленного пользователя и вывести на консоль и страницу
         User findedUser = userDao.findById(id).get();
 
         templateData.put("name", findedUser.getName());
         templateData.put("age", findedUser.getAge());
-        templateData.put("phone", findedUser.getPhone());
-        templateData.put("address", findedUser.getAddress());
 
-        System.out.println(findedUser);
+        templateData.put("phone", findedUser.getPhone().getNumber());
+        templateData.put("address", findedUser.getAddress().getStreet());
 
         //_________________________________________
 
@@ -94,7 +102,7 @@ public class UsersInfo extends HttpServlet {
 
         String name = request.getParameter("name");
         int age = Integer.parseInt(request.getParameter("age"));
-        String phoneNumber = request.getParameter("phoneNumber");
+        String phoneNumber = request.getParameter("phone");
         String address = request.getParameter("address");
 
         User newUser = new User(name, age);
@@ -115,11 +123,8 @@ public class UsersInfo extends HttpServlet {
     private void listUser(HttpServletRequest request, HttpServletResponse response) {
         List<User> listUser = userDao.getAllUser();
 
-        User user = listUser.get((int) id);
+        User userer = listUser.get((int) id);
 
-        // Пробовал вывести имя
-        String name = user.getName();
-        System.out.println(name);
     }
 
 

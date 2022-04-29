@@ -46,17 +46,6 @@ public class UserSave extends HttpServlet {
         } catch (TemplateException e) {
             e.printStackTrace();
         }
-
-        // Использовал redirect, чтобы перейти на страничку google - работает
-        //response.sendRedirect("https://www.google.com");
-
-        // на отдельные файлы .ftl или .html не переходит, только по адресу
-        //response.sendRedirect("http://localhost:8080/publicInfo");
-
-        // Пробуем через forward (переходы только внутри сервера) - так тоже не работает
-        //RequestDispatcher requestDispatcher = request.getRequestDispatcher("http://localhost:8080/publicInfo");
-        //requestDispatcher.forward(request, response);
-
     }
 
     @Override

@@ -60,6 +60,35 @@ public class UsersInfo extends HttpServlet {
         //listUser(request, response);
 
 
+        // Вариант работы с update и delete
+        // Надо проработать
+        String buttonValue = request.getParameter("buttonValue");
+
+        // Не работает при простом нажатии
+        if(buttonValue.equals("update")) {
+            System.out.println(buttonValue);
+            /*try {
+                updateUser(request, response);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }*/
+
+        } else if(buttonValue.equals("delete")) {
+            System.out.println(buttonValue);
+
+            /*try {
+                deleteUser(request, response);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }*/
+        } else {
+            System.out.println(buttonValue);
+
+        }
+
+
+
+
 
 
 
@@ -91,13 +120,20 @@ public class UsersInfo extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         // Пока работает и без этого
-
         //doGet(request, response);
-
         //listUser(request, response);
     }
 
     // Вроде, работает
+
+    /**
+     *
+     * @param request
+     * @param response
+     * @return
+     * @throws SQLException
+     * @throws IOException
+     */
     private long insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
 
         String name = request.getParameter("name");
@@ -120,6 +156,11 @@ public class UsersInfo extends HttpServlet {
         return id;
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     */
     private void listUser(HttpServletRequest request, HttpServletResponse response) {
         List<User> listUser = userDao.getAllUser();
 
@@ -127,8 +168,14 @@ public class UsersInfo extends HttpServlet {
 
     }
 
-
-    /*private void updateUser(HttpServletRequest request, HttpServletResponse response)
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws SQLException
+     * @throws IOException
+     */
+    private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         int age = Integer.parseInt(request.getParameter("age"));
@@ -137,14 +184,23 @@ public class UsersInfo extends HttpServlet {
         User user = new User(name, age);
 
         userDao.update(user);
-        response.sendRedirect("list");
-    }*/
 
-    /*private void deleteUser(HttpServletRequest request, HttpServletResponse response)
+    }
+
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws SQLException
+     * @throws IOException
+     */
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         User userToDelete = userDao.findById(id).orElse(null);
         userDao.delete(userToDelete);
-        response.sendRedirect("list");
-    }*/
+
+
+
+    }
 }

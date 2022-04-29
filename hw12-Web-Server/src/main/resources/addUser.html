@@ -27,9 +27,8 @@
 <body>
     <h1>Fill the form: ${msg}</h1>
 
-    <!--Тут надо прописать метод и что делает, как я понял-->
-    <!--<form action="addUser.html">-->
-    <form>
+    <!--action определяет куда будут переданы параметры-->
+    <form action="http://localhost:8080/usersInfo">
         <label for="name">Name:</label>
         <input id="name" type="text" name="name">
         <br>
@@ -50,7 +49,9 @@
         <!--<button type="submit">Submit</button>-->
 
         <!--Такой вариант с переходом на другую страницу. Данные будут отправлены на другой сервлет-->
-        <button formaction="http://localhost:8080/usersInfo" type="submit">Add new User</button>
+        <!--параметр formaction="http://localhost:8080/usersInfo" в button может напрямую перевести на нужную страницу-->
+        <!--при нажатии и передать все параметры-->
+        <button value="addUser" name="buttonValue" type="submit">Add new User</button>
     </form>
 </body>
 </html>

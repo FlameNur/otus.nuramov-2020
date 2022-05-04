@@ -13,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -30,7 +31,7 @@ public class UsersInfo extends HttpServlet {
     private long id;
 
     public void init() {
-        userDao = new UserDAOImp_Web();
+        //userDao = new UserDAOImp_Web();
         templateData = new HashMap<>();
         id = 0;
     }
@@ -40,6 +41,27 @@ public class UsersInfo extends HttpServlet {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
         response.setStatus(HttpServletResponse.SC_OK);
 
+
+
+
+        // Создаем сессию для работы с UserDAOImp_Web разных сервлетах,
+        // т.е. UserDAOImp_Web будет передаваться в рамках текущей сессии
+        HttpSession session = request.getSession();
+
+        // Получаем UserDAOImp_Web из сессии, если null, создаем новый объект
+        userDao = (UserDAOImp_Web) session.getAttribute("userDao");
+
+        if(userDao == null) {
+            userDao = new UserDAOImp_Web();
+        }
+
+        // Записываем в сессию объект UserDAOImp_Web
+        session.setAttribute("userDao", userDao);
+
+
+
+
+
         // Конфиги для Freemarker
         Configuration configuration = new Configuration(new Version("2.3.31"));
 
@@ -48,11 +70,12 @@ public class UsersInfo extends HttpServlet {
 
 
         // Добавляем пользователя в БД
-        try {
+        // Пробуем добавить на другом сервлете
+        /*try {
             id = insertUser(request,response);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
 
 
 
@@ -63,6 +86,11 @@ public class UsersInfo extends HttpServlet {
         // Вариант работы с update и delete
         // Надо проработать
         String buttonValue = request.getParameter("buttonValue");
+
+        // Пока так защищаемся от null
+        if(buttonValue == null) {
+            buttonValue = "ss";
+        }
 
         // Не работает при простом нажатии
         if(buttonValue.equals("update")) {
@@ -83,7 +111,6 @@ public class UsersInfo extends HttpServlet {
             }*/
         } else {
             System.out.println(buttonValue);
-
         }
 
 
@@ -91,18 +118,27 @@ public class UsersInfo extends HttpServlet {
 
 
 
-
+        // Какая-то ошибка тут после добавления сессии
+        // _____________________________________________________________
         // Так можно найти добавленного пользователя и вывести на консоль и страницу
-        User findedUser = userDao.findById(id).get();
+        /*User findedUser = userDao.findById(id).get();
 
         templateData.put("name", findedUser.getName());
         templateData.put("age", findedUser.getAge());
 
         templateData.put("phone", findedUser.getPhone().getNumber());
-        templateData.put("address", findedUser.getAddress().getStreet());
+        templateData.put("address", findedUser.getAddress().getStreet());*/
 
         //_________________________________________
 
+
+        // КОСТЫЛЬ для templateData. Надо разобраться почему не работает с сессией
+        templateData.put("name", "findedUser.getName()");
+        templateData.put("age", "findedUser.getAge()");
+
+        templateData.put("phone", "findedUser.getPhone().getNumber()");
+        templateData.put("address", "findedUser.getAddress().getStreet()");
+        //____________________________________________________________
 
 
 
@@ -134,7 +170,7 @@ public class UsersInfo extends HttpServlet {
      * @throws SQLException
      * @throws IOException
      */
-    private long insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+    /*private long insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
 
         String name = request.getParameter("name");
         int age = Integer.parseInt(request.getParameter("age"));
@@ -154,7 +190,7 @@ public class UsersInfo extends HttpServlet {
 
         long id = userDao.save(newUser);
         return id;
-    }
+    }*/
 
     /**
      *
@@ -175,7 +211,7 @@ public class UsersInfo extends HttpServlet {
      * @throws SQLException
      * @throws IOException
      */
-    private void updateUser(HttpServletRequest request, HttpServletResponse response)
+    /*private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         int age = Integer.parseInt(request.getParameter("age"));
@@ -185,7 +221,7 @@ public class UsersInfo extends HttpServlet {
 
         userDao.update(user);
 
-    }
+    }*/
 
     /**
      *
@@ -194,7 +230,7 @@ public class UsersInfo extends HttpServlet {
      * @throws SQLException
      * @throws IOException
      */
-    private void deleteUser(HttpServletRequest request, HttpServletResponse response)
+    /*private void deleteUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         User userToDelete = userDao.findById(id).orElse(null);
@@ -202,5 +238,5 @@ public class UsersInfo extends HttpServlet {
 
 
 
-    }
+    }*/
 }

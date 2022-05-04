@@ -28,7 +28,8 @@
     <h1>Fill the form: ${msg}</h1>
 
     <!--action определяет куда будут переданы параметры-->
-    <form action="http://localhost:8080/usersInfo">
+    <!--например, параметр action="http://localhost:8080/usersInfo" передает данные в сервлет "/usersInfo"-->
+    <form>
         <label for="name">Name:</label>
         <input id="name" type="text" name="name">
         <br>
@@ -52,6 +53,14 @@
         <!--параметр formaction="http://localhost:8080/usersInfo" в button может напрямую перевести на нужную страницу-->
         <!--при нажатии и передать все параметры-->
         <button value="addUser" name="buttonValue" type="submit">Add new User</button>
+    </form>
+
+
+
+<!--Пробуем так пока-->
+    <form>
+        <!--Ссылка на таблицу со всеми пользователями и переход на страницу "UsersInfo"-->
+        <h3><a href="http://localhost:8080/usersInfo">Список всех пользователей</a></h3>
     </form>
 </body>
 </html>

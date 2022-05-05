@@ -26,11 +26,6 @@ import java.util.Map;
 @WebServlet("/userSave")
 public class UserSave extends HttpServlet {
     private UserDAOImp_Web userDao;
-    private long id;
-
-    public void init() {
-        id = 0;
-    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -72,22 +67,22 @@ public class UserSave extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
+        // При дабавлении нового пользователя мы возвращаемся на ту же страницу, чтобы добавить нового
+        String buttonValue = request.getParameter("buttonValue");
+        if(buttonValue.equals("addUser")) {
+            doGet(request, response);
+        }
 
         try {
-            id = insertUser(request,response);
+            long id = insertUser(request,response);
+            System.out.println("Добавили нового пользователя с id: " + id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     *
-     * @param request
-     * @param response
-     * @return
-     * @throws SQLException
-     * @throws IOException
+     * Метод insertUser позволяет добавить нового пользователя в БД
      */
     private long insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
 
@@ -107,7 +102,6 @@ public class UserSave extends HttpServlet {
         newUser.setPhone(phoneDataSet);
         newUser.setAddress(addressDataSet);
 
-        long id = userDao.save(newUser);
-        return id;
+        return userDao.save(newUser);
     }
 }

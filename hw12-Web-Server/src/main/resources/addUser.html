@@ -29,7 +29,7 @@
 
     <!--action определяет куда будут переданы параметры-->
     <!--например, параметр action="http://localhost:8080/usersInfo" передает данные в сервлет "/usersInfo"-->
-    <form>
+    <form method="post">
         <label for="name">Name:</label>
         <input id="name" type="text" name="name">
         <br>
@@ -52,15 +52,12 @@
         <!--Такой вариант с переходом на другую страницу. Данные будут отправлены на другой сервлет-->
         <!--параметр formaction="http://localhost:8080/usersInfo" в button может напрямую перевести на нужную страницу-->
         <!--при нажатии и передать все параметры-->
-        <button value="addUser" name="buttonValue" type="submit">Add new User</button>
+        <button formaction="http://localhost:8080/userSave" value="addUser" name="buttonValue" type="submit">Add new User</button>
     </form>
 
-
-
-<!--Пробуем так пока-->
     <form>
-        <!--Ссылка на таблицу со всеми пользователями и переход на страницу "UsersInfo"-->
-        <h3><a href="http://localhost:8080/usersInfo">Список всех пользователей</a></h3>
+        <!--Кнопка для перехода на другую страницу "UsersInfo" со списком всех пользователей-->
+        <button formaction="http://localhost:8080/usersInfo" value="listOfUsers" name="buttonValue" type="submit">List of Users</button>
     </form>
 </body>
 </html>

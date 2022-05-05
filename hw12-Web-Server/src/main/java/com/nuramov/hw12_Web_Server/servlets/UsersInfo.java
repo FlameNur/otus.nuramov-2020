@@ -4,10 +4,7 @@ import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImp_Web;
 import com.nuramov.hw10_Hibernate_ORM.model.AddressDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.PhoneDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.Version;
+import freemarker.template.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -41,9 +38,6 @@ public class UsersInfo extends HttpServlet {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
         response.setStatus(HttpServletResponse.SC_OK);
 
-
-
-
         // Создаем сессию для работы с UserDAOImp_Web разных сервлетах,
         // т.е. UserDAOImp_Web будет передаваться в рамках текущей сессии
         HttpSession session = request.getSession();
@@ -58,29 +52,20 @@ public class UsersInfo extends HttpServlet {
         // Записываем в сессию объект UserDAOImp_Web
         session.setAttribute("userDao", userDao);
 
-
-
-
-
         // Конфиги для Freemarker
         Configuration configuration = new Configuration(new Version("2.3.31"));
 
-        configuration.setClassForTemplateLoading(UserSave.class, "/");
+        configuration.setClassForTemplateLoading(UsersInfo.class, "/");
         configuration.setDefaultEncoding("UTF-8");
 
+        // Позволяет работать с полями класса при вызове объекта из списка и использовании freemarker в html
+        // Надо бы разобраться почему deprecated
+        configuration.setObjectWrapper(new DefaultObjectWrapper());
 
-        // Добавляем пользователя в БД
-        // Пробуем добавить на другом сервлете
-        /*try {
-            id = insertUser(request,response);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
+        /*DefaultObjectWrapper wrapper = new DefaultObjectWrapper();
+        wrapper.setExposeFields(true);
+        configuration.setObjectWrapper(wrapper);*/
 
-
-
-        // Пробуем вывести список
-        //listUser(request, response);
 
 
         // Вариант работы с update и delete
@@ -92,55 +77,22 @@ public class UsersInfo extends HttpServlet {
             buttonValue = "ss";
         }
 
-        // Не работает при простом нажатии
-        if(buttonValue.equals("update")) {
-            System.out.println(buttonValue);
-            /*try {
-                updateUser(request, response);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }*/
-
-        } else if(buttonValue.equals("delete")) {
-            System.out.println(buttonValue);
-
-            /*try {
-                deleteUser(request, response);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }*/
-        } else {
-            System.out.println(buttonValue);
-        }
 
 
-
-
-
-
-        // Какая-то ошибка тут после добавления сессии
-        // _____________________________________________________________
         // Так можно найти добавленного пользователя и вывести на консоль и страницу
-        /*User findedUser = userDao.findById(id).get();
+        // Вместо id пока пишем 1 для проверки
+        User findedUser = userDao.findById(1).get();
 
         templateData.put("name", findedUser.getName());
         templateData.put("age", findedUser.getAge());
 
         templateData.put("phone", findedUser.getPhone().getNumber());
-        templateData.put("address", findedUser.getAddress().getStreet());*/
+        templateData.put("address", findedUser.getAddress().getStreet());
 
-        //_________________________________________
-
-
-        // КОСТЫЛЬ для templateData. Надо разобраться почему не работает с сессией
-        templateData.put("name", "findedUser.getName()");
-        templateData.put("age", "findedUser.getAge()");
-
-        templateData.put("phone", "findedUser.getPhone().getNumber()");
-        templateData.put("address", "findedUser.getAddress().getStreet()");
-        //____________________________________________________________
-
-
+        // Пробуем вывести список всех пользователей !!!!!!!!!!!!!!!!
+        //______________________________________
+        List<User> listUser = userDao.getAllUser();
+        templateData.put("list", listUser);
 
 
         try (Writer writer = new StringWriter()) {
@@ -155,42 +107,9 @@ public class UsersInfo extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        // Пока работает и без этого
-        //doGet(request, response);
-        //listUser(request, response);
+
     }
 
-    // Вроде, работает
-
-    /**
-     *
-     * @param request
-     * @param response
-     * @return
-     * @throws SQLException
-     * @throws IOException
-     */
-    /*private long insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-
-        String name = request.getParameter("name");
-        int age = Integer.parseInt(request.getParameter("age"));
-        String phoneNumber = request.getParameter("phone");
-        String address = request.getParameter("address");
-
-        User newUser = new User(name, age);
-
-        PhoneDataSet phoneDataSet = new PhoneDataSet();
-        phoneDataSet.setNumber(phoneNumber);
-
-        AddressDataSet addressDataSet = new AddressDataSet();
-        addressDataSet.setStreet(address);
-
-        newUser.setPhone(phoneDataSet);
-        newUser.setAddress(addressDataSet);
-
-        long id = userDao.save(newUser);
-        return id;
-    }*/
 
     /**
      *
@@ -199,9 +118,6 @@ public class UsersInfo extends HttpServlet {
      */
     private void listUser(HttpServletRequest request, HttpServletResponse response) {
         List<User> listUser = userDao.getAllUser();
-
-        User userer = listUser.get((int) id);
-
     }
 
     /**

@@ -44,20 +44,40 @@
 <body>
       <table class="table1">
             <tr>
+                <th>Id</th>
                 <th>Name</th>
                 <th>Age</th>
                 <th>PhoneNumber</th>
                 <th>Address</th>
             </tr>
-            <tr>
-                <td>${name}</td>
-                <td>${age}</td>
-                <td>${phone}</td>
-                <td>${address}</td>>
-            </tr>
+            <!--Если список пуст, то выводим пустую таблицу-->
+            <#if list?has_content>
+                <#list list as User>
+                      <tr>
+                          <td>${User.getId()}</td>
+                          <td>${User.getName()}</td>
+                          <td>${User.getAge()}</td>
+                          <td>${User.getPhone().getNumber()}</td>
+                          <td>${User.getAddress().getStreet()}</td>
+                      </tr>
+                </#list>
+            <#else>
+                  <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                  </tr>
+            </#if>
       </table>
       <table class="table2">
             <tr>
+                <td>
+                    <label for="id">ID:</label>
+                    <input id="id" type="text" name="id">
+                    <br>
+                </td>
                 <td>
                     <button value="update" name="buttonValue" type="submit">Update</button>
                 </td>
@@ -66,14 +86,5 @@
                 </td>
             </tr>
       </table>
-
-      <form>
-          <ul>
-              <#list list as User>
-                    <li>${User.name}</li>
-              </#list>
-          </ul>
-      </form>
-
 </body>
 </html>

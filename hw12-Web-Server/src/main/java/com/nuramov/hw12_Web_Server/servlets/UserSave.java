@@ -28,7 +28,7 @@ public class UserSave extends HttpServlet {
     private UserDAOImp_Web userDao;
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
         response.setStatus(HttpServletResponse.SC_OK);
 
@@ -74,8 +74,7 @@ public class UserSave extends HttpServlet {
         }
 
         try {
-            long id = insertUser(request,response);
-            System.out.println("Добавили нового пользователя с id: " + id);
+            insertUser(request,response);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -84,7 +83,7 @@ public class UserSave extends HttpServlet {
     /**
      * Метод insertUser позволяет добавить нового пользователя в БД
      */
-    private long insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+    private long insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException {
 
         String name = request.getParameter("name");
         int age = Integer.parseInt(request.getParameter("age"));

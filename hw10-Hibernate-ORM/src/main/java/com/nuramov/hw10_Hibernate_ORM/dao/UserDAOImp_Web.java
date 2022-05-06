@@ -65,7 +65,7 @@ public class UserDAOImp_Web implements UserDAO{
             try {
                 session.beginTransaction();
                 // Сначала присваиваем полю phone значение null, чтобы в случае удаления пользователя (User) из БД
-                // не был удален Phone, на котрого ссылаются другие пользователи
+                // не был удален Phone, на которого ссылаются другие пользователи
                 user.setPhone(null);
                 session.update(user);
                 // Удаляем пользователя (User) из БД

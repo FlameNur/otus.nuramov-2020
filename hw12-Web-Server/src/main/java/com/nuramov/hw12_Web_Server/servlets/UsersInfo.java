@@ -28,7 +28,7 @@ public class UsersInfo extends HttpServlet {
     private long id;
 
     public void init() {
-        //userDao = new UserDAOImp_Web();
+        // Создаем набор данных, используемый шаблоном
         templateData = new HashMap<>();
         id = 0;
     }
@@ -52,20 +52,12 @@ public class UsersInfo extends HttpServlet {
         // Записываем в сессию объект UserDAOImp_Web
         session.setAttribute("userDao", userDao);
 
-        // Конфиги для Freemarker
+        // Создаем объект конфигурации Freemarker
         Configuration configuration = new Configuration(new Version("2.3.31"));
 
+        // Задаем путь, по которому находится файл шаблона. Не совсем понятно что задавать, пока и так работает
         configuration.setClassForTemplateLoading(UsersInfo.class, "/");
         configuration.setDefaultEncoding("UTF-8");
-
-        // Позволяет работать с полями класса при вызове объекта из списка и использовании freemarker в html
-        // Надо бы разобраться почему deprecated
-        configuration.setObjectWrapper(new DefaultObjectWrapper());
-
-        /*DefaultObjectWrapper wrapper = new DefaultObjectWrapper();
-        wrapper.setExposeFields(true);
-        configuration.setObjectWrapper(wrapper);*/
-
 
 
         // Вариант работы с update и delete
@@ -79,24 +71,14 @@ public class UsersInfo extends HttpServlet {
 
 
 
-        // Так можно найти добавленного пользователя и вывести на консоль и страницу
-        // Вместо id пока пишем 1 для проверки
-        User findedUser = userDao.findById(1).get();
-
-        templateData.put("name", findedUser.getName());
-        templateData.put("age", findedUser.getAge());
-
-        templateData.put("phone", findedUser.getPhone().getNumber());
-        templateData.put("address", findedUser.getAddress().getStreet());
-
-        // Пробуем вывести список всех пользователей !!!!!!!!!!!!!!!!
-        //______________________________________
+        // Добавляем список всех пользователей
         List<User> listUser = userDao.getAllUser();
         templateData.put("list", listUser);
 
-
         try (Writer writer = new StringWriter()) {
+            // Загружаем шаблон и создаем объект шаблона
             Template template = configuration.getTemplate("UsersInfo.html");
+            // Вызов метода процесса объекта шаблона для вывода файла
             template.process(templateData, writer);
 
             response.getWriter().println(writer);
@@ -113,19 +95,6 @@ public class UsersInfo extends HttpServlet {
 
     /**
      *
-     * @param request
-     * @param response
-     */
-    private void listUser(HttpServletRequest request, HttpServletResponse response) {
-        List<User> listUser = userDao.getAllUser();
-    }
-
-    /**
-     *
-     * @param request
-     * @param response
-     * @throws SQLException
-     * @throws IOException
      */
     /*private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
@@ -141,18 +110,11 @@ public class UsersInfo extends HttpServlet {
 
     /**
      *
-     * @param request
-     * @param response
-     * @throws SQLException
-     * @throws IOException
      */
     /*private void deleteUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         User userToDelete = userDao.findById(id).orElse(null);
         userDao.delete(userToDelete);
-
-
-
     }*/
 }

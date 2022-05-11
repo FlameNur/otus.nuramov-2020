@@ -59,18 +59,6 @@ public class UsersInfo extends HttpServlet {
         configuration.setClassForTemplateLoading(UsersInfo.class, "/");
         configuration.setDefaultEncoding("UTF-8");
 
-
-        // Вариант работы с update и delete
-        // Надо проработать
-        String buttonValue = request.getParameter("buttonValue");
-
-        // Пока так защищаемся от null
-        if(buttonValue == null) {
-            buttonValue = "ss";
-        }
-
-
-
         // Добавляем список всех пользователей
         List<User> listUser = userDao.getAllUser();
         templateData.put("list", listUser);
@@ -89,32 +77,85 @@ public class UsersInfo extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        System.out.println("Проверка");
+        // Вариант работы с update и delete
+        // Надо проработать
+        String buttonValue = request.getParameter("buttonValue");
+        System.out.println("Значение кнопки: " + buttonValue);
+        //
+        if(buttonValue.equals("update")) {
+            try {
+                System.out.println("Кнопка нажата Update");
+                updateUser(request, response);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            doGet(request, response);
+        }
 
+        //
+        if(buttonValue.equals("delete")) {
+            try {
+                System.out.println("Кнопка нажата Delete");
+                deleteUser(request, response);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            doGet(request, response);
+        }
     }
 
-
     /**
-     *
+     * Метод updateUser позволяет обновить информацию о пользователе в БД
      */
-    /*private void updateUser(HttpServletRequest request, HttpServletResponse response)
+    private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        int age = Integer.parseInt(request.getParameter("age"));
+        int id = Integer.parseInt(request.getParameter("idToUpdate"));
+        User userToUpdate = userDao.findById(id).orElse(null);
+
+        // Надо доработать!!!!!!!!!!!!!!!!
+        if(userToUpdate == null) {
+            throw new IOException();
+        }
+
         String name = request.getParameter("name");
+        if(!name.equals("")) {
+            userToUpdate.setName(name);
+        }
 
-        User user = new User(name, age);
+        int age = Integer.parseInt(request.getParameter("age"));
+        if(age > 0) {
+            userToUpdate.setAge(age);
+        }
 
-        userDao.update(user);
+        String phoneNumber = request.getParameter("phone");
+        if(!phoneNumber.equals("")) {
+            PhoneDataSet phoneDataSet = new PhoneDataSet();
+            phoneDataSet.setNumber(phoneNumber);
+            userToUpdate.setPhone(phoneDataSet);
+        }
 
-    }*/
+        String address = request.getParameter("address");
+        if(!address.equals("")) {
+            AddressDataSet addressDataSet = new AddressDataSet();
+            addressDataSet.setStreet(address);
+            userToUpdate.setAddress(addressDataSet);
+        }
+
+        userDao.update(userToUpdate);
+    }
 
     /**
-     *
+     * Метод deleteUser позволяет удалить пользователя по заданному id
      */
-    /*private void deleteUser(HttpServletRequest request, HttpServletResponse response)
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
+
+        int id = Integer.parseInt(request.getParameter("idToDelete"));
+
+        System.out.println("Наш id " + id);
+
         User userToDelete = userDao.findById(id).orElse(null);
         userDao.delete(userToDelete);
-    }*/
+    }
 }

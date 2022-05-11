@@ -25,8 +25,8 @@
             text-align: center;  /* Выравниваем текст по центру таблицы  */
             width: 20%; /* Ширина таблицы */
             background: white; /* Цвет фона таблицы */
-            color: white; /* Цвет текста */
-            border-spacing: 10px; /* Расстояние между ячейками */
+            color: #333333; /* Цвет текста */
+            border-spacing: 1px; /* Расстояние между ячейками */
         }
         .table2 button {
             /*Размер кнопки*/
@@ -34,15 +34,16 @@
             height: 40px;
 
             /*Положение кнопки*/
-            margin-top: 20px;
+            margin-top: 5px;
             margin-right: 20px;
             margin-bottom: 30px;
-            margin-left: 40px;
+            margin-left: 20px;
         }
     </style>
 </head>
 <body>
-      <table class="table1">
+    <form method="get">
+        <table class="table1">
             <tr>
                 <th>Id</th>
                 <th>Name</th>
@@ -53,38 +54,49 @@
             <!--Если список пуст, то выводим пустую таблицу-->
             <#if list?has_content>
                 <#list list as User>
-                      <tr>
-                          <td>${User.getId()}</td>
-                          <td>${User.getName()}</td>
-                          <td>${User.getAge()}</td>
-                          <td>${User.getPhone().getNumber()}</td>
-                          <td>${User.getAddress().getStreet()}</td>
-                      </tr>
+                    <tr>
+                        <td>${User.getId()}</td>
+                        <td>${User.getName()}</td>
+                        <td>${User.getAge()}</td>
+                        <td>${User.getPhone().getNumber()}</td>
+                        <td>${User.getAddress().getStreet()}</td>
+                    </tr>
                 </#list>
             <#else>
-                  <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                  </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
             </#if>
-      </table>
-      <table class="table2">
+    </table>
+    </form>
+
+    <form method="post">
+        <table class="table2">
+            <tr>
+                <td>Enter id:</td>
+                <td>Enter id:</td>
+            </tr>
             <tr>
                 <td>
-                    <label for="id">ID:</label>
-                    <input id="id" type="text" name="id">
-                    <br>
+                    <input id="idToUpdate" type="text" size="4" name="idToUpdate">
                 </td>
+                <td>
+                    <input id="idToDelete" type="text" size="4" name="idToDelete">
+                </td>
+            </tr>
+            <tr>
                 <td>
                     <button value="update" name="buttonValue" type="submit">Update</button>
                 </td>
                 <td>
-                    <button value="delete" name="buttonValue" type="submit">Delete</button>
+                    <button formaction="http://localhost:8080/usersInfo" value="delete" name="buttonValue" type="submit">Delete</button>
                 </td>
             </tr>
-      </table>
+        </table>
+    </form>
 </body>
 </html>

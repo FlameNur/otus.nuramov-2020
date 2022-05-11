@@ -41,6 +41,7 @@ public class WebServer_Jetty {
         context.addServlet(new ServletHolder(new PublicInfo()), "/publicInfo");
         context.addServlet(new ServletHolder(new UsersInfo()), "/usersInfo");
         context.addServlet(new ServletHolder(new UserSave()), "/userSave");
+        context.addServlet(new ServletHolder(new UserSave()), "/userUpdate");
 
         // Добавляем простой фильтр для каждого запроса "/*"
         context.addFilter(new FilterHolder(new SimpleFilter()), "/*", null);

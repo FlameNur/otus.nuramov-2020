@@ -39,6 +39,25 @@
             margin-bottom: 30px;
             margin-left: 20px;
         }
+        .table3 {
+            margin: auto; /* Выравниваем таблицу по центру окна  */
+            text-align: center;  /* Выравниваем текст по центру таблицы  */
+            width: 20%; /* Ширина таблицы */
+            background: white; /* Цвет фона таблицы */
+            color: #333333; /* Цвет текста */
+            border-spacing: 1px; /* Расстояние между ячейками */
+        }
+        .table3 button {
+            /*Размер кнопки*/
+            width: 80px;
+            height: 40px;
+
+            /*Положение кнопки*/
+            margin-top: 5px;
+            margin-right: 20px;
+            margin-bottom: 30px;
+            margin-left: 20px;
+        }
     </style>
 </head>
 <body>
@@ -71,9 +90,10 @@
                     <td></td>
                 </tr>
             </#if>
-    </table>
+        </table>
     </form>
 
+    <!--Ниже таблица с возможностью ввода id для Delete и Update-->
     <form method="post">
         <table class="table2">
             <tr>
@@ -90,12 +110,21 @@
             </tr>
             <tr>
                 <td>
-                    <button value="update" name="buttonValue" type="submit">Update</button>
+                    <button formaction="http://localhost:8080/usersInfo" value="update" name="buttonValue" type="submit">Update</button>
                 </td>
                 <td>
                     <button formaction="http://localhost:8080/usersInfo" value="delete" name="buttonValue" type="submit">Delete</button>
                 </td>
             </tr>
+        </table>
+    </form>
+
+    <!--Ниже таблица с кнопкой для перехода на страницу для добавления нового пользователя-->
+    <form>
+        <table class="table3">
+            <td>
+                <button formaction="http://localhost:8080/userSave" type="submit">Add User</button>
+            </td>
         </table>
     </form>
 </body>

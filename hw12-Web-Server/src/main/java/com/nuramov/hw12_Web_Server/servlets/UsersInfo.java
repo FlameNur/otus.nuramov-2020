@@ -1,8 +1,6 @@
 package com.nuramov.hw12_Web_Server.servlets;
 
 import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImp_Web;
-import com.nuramov.hw10_Hibernate_ORM.model.AddressDataSet;
-import com.nuramov.hw10_Hibernate_ORM.model.PhoneDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 import freemarker.template.*;
 import jakarta.servlet.ServletException;
@@ -25,12 +23,11 @@ import java.util.Map;
 public class UsersInfo extends HttpServlet {
     private UserDAOImp_Web userDao;
     private Map<String, Object> templateData;
-    private long id;
+    private HttpSession session;
 
     public void init() {
         // Создаем набор данных, используемый шаблоном
         templateData = new HashMap<>();
-        id = 0;
     }
 
     @Override
@@ -40,7 +37,7 @@ public class UsersInfo extends HttpServlet {
 
         // Создаем сессию для работы с UserDAOImp_Web разных сервлетах,
         // т.е. UserDAOImp_Web будет передаваться в рамках текущей сессии
-        HttpSession session = request.getSession();
+        session = request.getSession();
 
         // Получаем UserDAOImp_Web из сессии, если null, создаем новый объект
         userDao = (UserDAOImp_Web) session.getAttribute("userDao");
@@ -77,7 +74,7 @@ public class UsersInfo extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        System.out.println("Проверка");
+        System.out.println("Проверка начала Post");
         // Вариант работы с update и delete
         // Надо проработать
         String buttonValue = request.getParameter("buttonValue");
@@ -90,7 +87,8 @@ public class UsersInfo extends HttpServlet {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            doGet(request, response);
+            // Без этого проверяем
+            //doGet(request, response);
         }
 
         //
@@ -110,39 +108,24 @@ public class UsersInfo extends HttpServlet {
      */
     private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
-        int id = Integer.parseInt(request.getParameter("idToUpdate"));
-        User userToUpdate = userDao.findById(id).orElse(null);
+        int idToUpdate = Integer.parseInt(request.getParameter("idToUpdate"));
+        User userToUpdate = userDao.findById(idToUpdate).orElse(null);
+
+        System.out.println("Проверка id для Update: " + idToUpdate);
 
         // Надо доработать!!!!!!!!!!!!!!!!
         if(userToUpdate == null) {
             throw new IOException();
         }
 
-        String name = request.getParameter("name");
-        if(!name.equals("")) {
-            userToUpdate.setName(name);
-        }
+        // Создаем сессию для работы с idToUpdate разных сервлетах,
+        // т.е. idToUpdate будет передаваться в рамках текущей сессии
+        session = request.getSession();
 
-        int age = Integer.parseInt(request.getParameter("age"));
-        if(age > 0) {
-            userToUpdate.setAge(age);
-        }
-
-        String phoneNumber = request.getParameter("phone");
-        if(!phoneNumber.equals("")) {
-            PhoneDataSet phoneDataSet = new PhoneDataSet();
-            phoneDataSet.setNumber(phoneNumber);
-            userToUpdate.setPhone(phoneDataSet);
-        }
-
-        String address = request.getParameter("address");
-        if(!address.equals("")) {
-            AddressDataSet addressDataSet = new AddressDataSet();
-            addressDataSet.setStreet(address);
-            userToUpdate.setAddress(addressDataSet);
-        }
-
-        userDao.update(userToUpdate);
+        // Записываем в сессию объект idToUpdate
+        session.setAttribute("idToUpdate", idToUpdate);
+        System.out.println("Еще одна проверка перед переходом на userUpdate");
+        response.sendRedirect("http://localhost:8080/userUpdate");
     }
 
     /**

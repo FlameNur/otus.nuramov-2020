@@ -24,10 +24,14 @@ public class UsersInfo extends HttpServlet {
     private UserDAOImp_Web userDao;
     private Map<String, Object> templateData;
     private HttpSession session;
+    private String message;
 
+    @Override
     public void init() {
         // Создаем набор данных, используемый шаблоном
         templateData = new HashMap<>();
+
+        message = "";
     }
 
     @Override
@@ -74,27 +78,19 @@ public class UsersInfo extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        System.out.println("Проверка начала Post");
-        // Вариант работы с update и delete
-        // Надо проработать
+        // Проверяем какая кнопка нажата - Update или Delete
         String buttonValue = request.getParameter("buttonValue");
-        System.out.println("Значение кнопки: " + buttonValue);
-        //
+
         if(buttonValue.equals("update")) {
             try {
-                System.out.println("Кнопка нажата Update");
                 updateUser(request, response);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            // Без этого проверяем
-            //doGet(request, response);
         }
 
-        //
         if(buttonValue.equals("delete")) {
             try {
-                System.out.println("Кнопка нажата Delete");
                 deleteUser(request, response);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -108,23 +104,22 @@ public class UsersInfo extends HttpServlet {
      */
     private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
-        int idToUpdate = Integer.parseInt(request.getParameter("idToUpdate"));
+        String idStr = request.getParameter("idToUpdate");
+        // Проверяем корректность введенного id
+        if(idCheck(response, idStr)) return;
+        int idToUpdate = Integer.parseInt(idStr);
+
         User userToUpdate = userDao.findById(idToUpdate).orElse(null);
-
-        System.out.println("Проверка id для Update: " + idToUpdate);
-
-        // Надо доработать!!!!!!!!!!!!!!!!
-        if(userToUpdate == null) {
-            throw new IOException();
-        }
+        // Проверяем наличие пользователя по введенному id (на null)
+        if(userCheck(response, userToUpdate)) return;
 
         // Создаем сессию для работы с idToUpdate разных сервлетах,
         // т.е. idToUpdate будет передаваться в рамках текущей сессии
         session = request.getSession();
-
         // Записываем в сессию объект idToUpdate
         session.setAttribute("idToUpdate", idToUpdate);
-        System.out.println("Еще одна проверка перед переходом на userUpdate");
+
+        // Поменяли на другой адрес и сервлет
         response.sendRedirect("http://localhost:8080/userUpdate");
     }
 
@@ -133,12 +128,59 @@ public class UsersInfo extends HttpServlet {
      */
     private void deleteUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
-
-        int id = Integer.parseInt(request.getParameter("idToDelete"));
-
-        System.out.println("Наш id " + id);
+        String idStr = request.getParameter("idToDelete");
+        // Проверяем корректность введенного id
+        if(idCheck(response, idStr)) return;
+        int id = Integer.parseInt(idStr);
 
         User userToDelete = userDao.findById(id).orElse(null);
+        // Проверяем наличие пользователя по введенному id (на null)
+        if(userCheck(response, userToDelete)) return;
+
         userDao.delete(userToDelete);
+    }
+
+    /**
+     * Метод idCheck позволяет проверить корректность введенного id
+     * @return - возвращает true, если введено некорректное значение
+     */
+    private boolean idCheck(HttpServletResponse response, String idStr) throws IOException {
+        boolean check = false;
+        int id;
+
+        if(idStr.equals("")) {
+            id = 0;
+        } else {
+            id = Integer.parseInt(idStr);
+        }
+
+        if(id <= 0) {
+            // Добавили сообщение в сессию, которое будет выведено при выводе страницы с ошибкой
+            message = "Enter a valid id value";
+            session.setAttribute("message", message);
+
+            response.sendRedirect("http://localhost:8080/exceptionServlet");
+            check = true;
+        }
+        return check;
+    }
+
+    /**
+     * Метод userCheck проверяет наличие пользователя по введенному id (на null)
+     * и выводит при этом соответсвующее сообщение
+     * @return - возвращает true, если пользователь не найден (null)
+     */
+    private boolean userCheck(HttpServletResponse response, User user) throws IOException {
+        boolean check = false;
+
+        if(user == null) {
+            // Добавили сообщение в сессию, которое будет выведено при выводе страницы с ошибкой
+            message = "User is not found";
+            session.setAttribute("message", message);
+
+            response.sendRedirect("http://localhost:8080/exceptionServlet");
+            check = true;
+        }
+        return check;
     }
 }

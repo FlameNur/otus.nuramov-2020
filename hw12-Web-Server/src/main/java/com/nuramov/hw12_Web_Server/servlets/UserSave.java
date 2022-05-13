@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.sql.SQLException;
@@ -26,6 +25,13 @@ import java.util.Map;
 @WebServlet("/userSave")
 public class UserSave extends HttpServlet {
     private UserDAOImp_Web userDao;
+    private HttpSession session;
+    private String message;
+
+    @Override
+    public void init() {
+        message = "";
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -34,7 +40,7 @@ public class UserSave extends HttpServlet {
 
         // Создаем сессию для работы с UserDAOImp_Web разных сервлетах,
         // т.е. UserDAOImp_Web будет передаваться в рамках текущей сессии
-        HttpSession session = request.getSession();
+        session = request.getSession();
 
         // Получаем UserDAOImp_Web из сессии, если null, создаем новый объект
         userDao = (UserDAOImp_Web) session.getAttribute("userDao");
@@ -53,7 +59,7 @@ public class UserSave extends HttpServlet {
         configuration.setDefaultEncoding("UTF-8");
 
         Map<String, Object> templateData = new HashMap<>();
-        templateData.put("msg", "New User");
+        templateData.put("msg", " add New User");
 
         try (Writer writer = new StringWriter()) {
             Template template = configuration.getTemplate("addUser.html");
@@ -66,7 +72,7 @@ public class UserSave extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // При дабавлении нового пользователя мы возвращаемся на ту же страницу, чтобы добавить нового
         String buttonValue = request.getParameter("buttonValue");
         if(buttonValue.equals("addUser")) {
@@ -83,12 +89,23 @@ public class UserSave extends HttpServlet {
     /**
      * Метод insertUser позволяет добавить нового пользователя в БД
      */
-    private long insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException {
-
+    private long insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        // Получаем и проверяем введенное имя пользователя
         String name = request.getParameter("name");
-        int age = Integer.parseInt(request.getParameter("age"));
+        if(nameCheck(response, name)) return 0;
+
+        // Получаем и проверяем введенный возраст пользователя
+        String ageStr = request.getParameter("age");
+        if(ageCheck(response, ageStr)) return 0;
+        int age = Integer.parseInt(ageStr);
+
+        // Получаем и проверяем введенный номер телефона пользователя
         String phoneNumber = request.getParameter("phone");
+        if(phoneNumberCheck(response,phoneNumber)) return 0;
+
+        // Получаем и проверяем введенный адрес пользователя
         String address = request.getParameter("address");
+        if(addressCheck(response, address)) return 0;
 
         User newUser = new User(name, age);
 
@@ -102,5 +119,84 @@ public class UserSave extends HttpServlet {
         newUser.setAddress(addressDataSet);
 
         return userDao.save(newUser);
+    }
+
+    /**
+     * Метод nameCheck проверяет корректность введенного имени
+     * @return - возвращает true, если введено некорректное значение
+     */
+    private boolean nameCheck(HttpServletResponse response, String name) throws IOException {
+        boolean check = false;
+
+        if(name.equals("")) {
+            // Добавили сообщение в сессию, которое будет выведено при выводе страницы с ошибкой
+            message = "Enter your name";
+            session.setAttribute("message", message);
+
+            response.sendRedirect("http://localhost:8080/exceptionServlet");
+            check = true;
+        }
+        return check;
+    }
+
+    /**
+     * Метод ageCheck проверяет корректность введенного возраста
+     * @return - возвращает true, если введено некорректное значение
+     */
+    private boolean ageCheck(HttpServletResponse response, String ageStr) throws IOException {
+        boolean check = false;
+        int age;
+
+        if(ageStr.equals("")) {
+            age = 0;
+        } else {
+            age = Integer.parseInt(ageStr);
+        }
+
+        if(age <= 0) {
+            // Добавили сообщение в сессию, которое будет выведено при выводе страницы с ошибкой
+            message = "Enter your age";
+            session.setAttribute("message", message);
+
+            response.sendRedirect("http://localhost:8080/exceptionServlet");
+            check = true;
+        }
+        return check;
+    }
+
+    /**
+     * Метод phoneNumberCheck проверяет корректность введенного номера телефона
+     * @return - возвращает true, если введено некорректное значение
+     */
+    private boolean phoneNumberCheck(HttpServletResponse response, String phoneNumber) throws IOException {
+        boolean check = false;
+
+        if(phoneNumber.equals("")) {
+            // Добавили сообщение в сессию, которое будет выведено при выводе страницы с ошибкой
+            message = "Enter your phone number";
+            session.setAttribute("message", message);
+
+            response.sendRedirect("http://localhost:8080/exceptionServlet");
+            check = true;
+        }
+        return check;
+    }
+
+    /**
+     * Метод addressCheck проверяет корректность введенного адреса
+     * @return - возвращает true, если введено некорректное значение
+     */
+    private boolean addressCheck(HttpServletResponse response, String address) throws IOException {
+        boolean check = false;
+
+        if(address.equals("")) {
+            // Добавили сообщение в сессию, которое будет выведено при выводе страницы с ошибкой
+            message = "Enter your address";
+            session.setAttribute("message", message);
+
+            response.sendRedirect("http://localhost:8080/exceptionServlet");
+            check = true;
+        }
+        return check;
     }
 }

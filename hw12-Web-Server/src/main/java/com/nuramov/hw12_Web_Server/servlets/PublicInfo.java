@@ -11,12 +11,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Выдаем некоторую открытую информацию и возможность перехода на другие страницы
+ */
 @WebServlet("/publicInfo")
 public class PublicInfo extends HttpServlet {
 
@@ -44,18 +46,5 @@ public class PublicInfo extends HttpServlet {
         } catch (TemplateException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Метод doPost в данном случае нужен для того, чтобы при переходе по ссылке на него, обработать запрос и
-     * выполнить необходимые действия/заполнить формы. Сейчас просто вызываем метод doGet
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
     }
 }

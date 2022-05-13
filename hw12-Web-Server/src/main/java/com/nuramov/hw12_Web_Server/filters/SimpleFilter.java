@@ -1,13 +1,17 @@
 package com.nuramov.hw12_Web_Server.filters;
 
 import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 import java.util.Date;
 
+/**
+ * Фильтр SimpleFilter на каждый запрос выдает в консоль IP адрес и время обращения
+ */
+@WebFilter
 public class SimpleFilter implements Filter {
-
     private ServletContext context;
 
     @Override
@@ -28,10 +32,5 @@ public class SimpleFilter implements Filter {
 
         // Передача запроса в цепочку фильтров
         filterChain.doFilter(servletRequest, servletResponse);
-    }
-
-    @Override
-    public void destroy() {
-
     }
 }

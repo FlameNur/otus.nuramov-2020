@@ -1,9 +1,7 @@
 package com.nuramov.hw12_Web_Server.servers;
 
 import com.nuramov.hw12_Web_Server.filters.SimpleFilter;
-import com.nuramov.hw12_Web_Server.servlets.PublicInfo;
-import com.nuramov.hw12_Web_Server.servlets.UsersInfo;
-import com.nuramov.hw12_Web_Server.servlets.UserSave;
+import com.nuramov.hw12_Web_Server.servlets.*;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -41,7 +39,9 @@ public class WebServer_Jetty {
         context.addServlet(new ServletHolder(new PublicInfo()), "/publicInfo");
         context.addServlet(new ServletHolder(new UsersInfo()), "/usersInfo");
         context.addServlet(new ServletHolder(new UserSave()), "/userSave");
-        context.addServlet(new ServletHolder(new UserSave()), "/userUpdate");
+        context.addServlet(new ServletHolder(new UserUpdate()), "/userUpdate");
+        context.addServlet(new ServletHolder(new MyExceptionServlet()), "/exceptionServlet");
+
 
         // Добавляем простой фильтр для каждого запроса "/*"
         context.addFilter(new FilterHolder(new SimpleFilter()), "/*", null);
@@ -78,9 +78,6 @@ public class WebServer_Jetty {
 
     /**
      * Метод SecurityHandler реализует контроль доступа для аутентификации пользователя
-     * @param context -
-     * @return -
-     * @throws MalformedURLException -
      */
     private SecurityHandler createSecurityHandler(ServletContextHandler context) throws MalformedURLException {
         // Создаем/описываем ограничения при аутентификации пользователя
@@ -105,6 +102,7 @@ public class WebServer_Jetty {
         if (realmFile.exists()) {
             propFile = realmFile.toURI().toURL();
         }
+
         if (propFile == null) {
             System.out.println("local realm config not found, looking into Resources");
             propFile = WebServer_Jetty.class.getClassLoader().getResource("realm.properties");

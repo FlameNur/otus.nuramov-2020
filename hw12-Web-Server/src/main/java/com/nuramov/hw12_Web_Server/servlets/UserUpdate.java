@@ -1,6 +1,6 @@
 package com.nuramov.hw12_Web_Server.servlets;
 
-import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImp_Web;
+import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImpWeb;
 import com.nuramov.hw10_Hibernate_ORM.model.AddressDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.PhoneDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
@@ -27,10 +27,15 @@ import java.util.Map;
  */
 @WebServlet("/userUpdate")
 public class UserUpdate extends HttpServlet {
-    private UserDAOImp_Web userDao;
+    private UserDAOImpWeb userDao;
     private HttpSession session;
     private int idToUpdate;
     private String message;
+    private Configuration configuration;
+
+    public UserUpdate(Configuration configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
     public void init() {
@@ -43,32 +48,27 @@ public class UserUpdate extends HttpServlet {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
         response.setStatus(HttpServletResponse.SC_OK);
 
-        // Создаем сессию для работы с UserDAOImp_Web разных сервлетах,
-        // т.е. UserDAOImp_Web будет передаваться в рамках текущей сессии
+        // Создаем сессию для работы с UserDAOImpWeb разных сервлетах,
+        // т.е. UserDAOImpWeb будет передаваться в рамках текущей сессии
         session = request.getSession();
 
-        // Получаем UserDAOImp_Web из сессии, если null, создаем новый объект
-        userDao = (UserDAOImp_Web) session.getAttribute("userDao");
+        // Получаем UserDAOImpWeb из сессии, если null, создаем новый объект
+        userDao = (UserDAOImpWeb) session.getAttribute("userDao");
 
         if(userDao == null) {
-            userDao = new UserDAOImp_Web();
+            userDao = new UserDAOImpWeb();
         }
 
-        // Конфиги для Freemarker
-        Configuration configuration = new Configuration(new Version("2.3.31"));
-
-        configuration.setClassForTemplateLoading(UserUpdate.class, "/");
-        configuration.setDefaultEncoding("UTF-8");
-
-        Map<String, Object> templateData = new HashMap<>();
+        //Map<String, Object> templateData = new HashMap<>();
 
         try (Writer writer = new StringWriter()) {
             Template template = configuration.getTemplate("infoForUpdating.html");
-            template.process(templateData, writer);
+            template.process(null, writer);
 
             response.getWriter().println(writer);
         } catch (TemplateException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -91,7 +91,7 @@ public class UserUpdate extends HttpServlet {
         idToUpdate = 0;
         // Записываем idToUpdate в текущую сессию
         session.setAttribute("idToUpdate", idToUpdate);
-        // Записываем в сессию объект UserDAOImp_Web
+        // Записываем в сессию объект UserDAOImpWeb
         session.setAttribute("userDao", userDao);
     }
 

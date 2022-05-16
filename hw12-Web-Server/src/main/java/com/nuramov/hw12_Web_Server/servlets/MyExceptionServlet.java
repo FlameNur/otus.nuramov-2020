@@ -1,6 +1,5 @@
 package com.nuramov.hw12_Web_Server.servlets;
 
-import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImp_Web;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -25,6 +24,11 @@ import java.util.Map;
 @WebServlet("/exceptionServlet")
 public class MyExceptionServlet extends HttpServlet {
     private String message;
+    private Configuration configuration;
+
+    public MyExceptionServlet(Configuration configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
     public void init() throws ServletException {
@@ -46,12 +50,6 @@ public class MyExceptionServlet extends HttpServlet {
             message = "No information";
         }
 
-        // Конфиги для Freemarker
-        Configuration configuration = new Configuration(new Version("2.3.31"));
-
-        configuration.setClassForTemplateLoading(UserSave.class, "/");
-        configuration.setDefaultEncoding("UTF-8");
-
         Map<String, Object> templateData = new HashMap<>();
         templateData.put("msg", message);
 
@@ -62,6 +60,7 @@ public class MyExceptionServlet extends HttpServlet {
             response.getWriter().println(writer);
         } catch (TemplateException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         // Обнулили сообщение перед тем, как записать в сессию

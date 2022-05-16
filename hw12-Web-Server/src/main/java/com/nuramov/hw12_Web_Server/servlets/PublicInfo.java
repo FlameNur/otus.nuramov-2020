@@ -21,6 +21,11 @@ import java.util.Map;
  */
 @WebServlet("/publicInfo")
 public class PublicInfo extends HttpServlet {
+    private Configuration configuration;
+
+    public PublicInfo(Configuration configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -30,21 +35,14 @@ public class PublicInfo extends HttpServlet {
         // Сообщает клиенту (веб-браузеру), какой это тип контента, чтобы он знал, что с ним делать
         response.setContentType("text/html");
 
-        // Конфиги для Freemarker
-        Configuration configuration = new Configuration(new Version("2.3.31"));
-
-        configuration.setClassForTemplateLoading(UserSave.class, "/");
-        configuration.setDefaultEncoding("UTF-8");
-
-        Map<String, Object> templateData = new HashMap<>();
-
         try (Writer writer = new StringWriter()) {
             Template template = configuration.getTemplate("publicInfo.html");
-            template.process(templateData, writer);
+            template.process(null, writer);
 
             response.getWriter().println(writer);
         } catch (TemplateException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

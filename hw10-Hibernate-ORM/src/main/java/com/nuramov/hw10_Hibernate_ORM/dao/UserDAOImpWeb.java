@@ -13,7 +13,7 @@ import java.util.Optional;
  * Работа класса UserDAOImp в web приложении реализована без слоя данных UserService,
  * отвечающего за выполнение бизнес-логики, а напрямую.
  */
-public class UserDAOImp_Web implements UserDAO{
+public class UserDAOImpWeb implements UserDAO{
 
     @Override
     public Optional<User> findById(long id) {

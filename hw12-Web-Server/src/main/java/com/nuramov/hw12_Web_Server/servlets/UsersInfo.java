@@ -1,6 +1,6 @@
 package com.nuramov.hw12_Web_Server.servlets;
 
-import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImp_Web;
+import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImpWeb;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 import freemarker.template.*;
 import jakarta.servlet.ServletException;
@@ -21,10 +21,15 @@ import java.util.Map;
 
 @WebServlet("/usersInfo")
 public class UsersInfo extends HttpServlet {
-    private UserDAOImp_Web userDao;
+    private UserDAOImpWeb userDao;
     private Map<String, Object> templateData;
     private HttpSession session;
     private String message;
+    private Configuration configuration;
+
+    public UsersInfo(Configuration configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
     public void init() {
@@ -39,26 +44,19 @@ public class UsersInfo extends HttpServlet {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
         response.setStatus(HttpServletResponse.SC_OK);
 
-        // Создаем сессию для работы с UserDAOImp_Web разных сервлетах,
-        // т.е. UserDAOImp_Web будет передаваться в рамках текущей сессии
+        // Создаем сессию для работы с UserDAOImpWeb разных сервлетах,
+        // т.е. UserDAOImpWeb будет передаваться в рамках текущей сессии
         session = request.getSession();
 
-        // Получаем UserDAOImp_Web из сессии, если null, создаем новый объект
-        userDao = (UserDAOImp_Web) session.getAttribute("userDao");
+        // Получаем UserDAOImpWeb из сессии, если null, создаем новый объект
+        userDao = (UserDAOImpWeb) session.getAttribute("userDao");
 
         if(userDao == null) {
-            userDao = new UserDAOImp_Web();
+            userDao = new UserDAOImpWeb();
         }
 
-        // Записываем в сессию объект UserDAOImp_Web
+        // Записываем в сессию объект UserDAOImpWeb
         session.setAttribute("userDao", userDao);
-
-        // Создаем объект конфигурации Freemarker
-        Configuration configuration = new Configuration(new Version("2.3.31"));
-
-        // Задаем путь, по которому находится файл шаблона. Не совсем понятно что задавать, пока и так работает
-        configuration.setClassForTemplateLoading(UsersInfo.class, "/");
-        configuration.setDefaultEncoding("UTF-8");
 
         // Добавляем список всех пользователей
         List<User> listUser = userDao.getAllUser();
@@ -73,6 +71,7 @@ public class UsersInfo extends HttpServlet {
             response.getWriter().println(writer);
         } catch (TemplateException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

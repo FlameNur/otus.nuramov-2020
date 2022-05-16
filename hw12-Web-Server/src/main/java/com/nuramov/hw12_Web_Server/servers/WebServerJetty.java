@@ -2,6 +2,8 @@ package com.nuramov.hw12_Web_Server.servers;
 
 import com.nuramov.hw12_Web_Server.filters.SimpleFilter;
 import com.nuramov.hw12_Web_Server.servlets.*;
+import freemarker.template.Configuration;
+import freemarker.template.Version;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -21,7 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 
-public class WebServer_Jetty {
+public class WebServerJetty {
 
     /**
      * Метод createServer создает локальный сервер Jetty
@@ -36,11 +38,12 @@ public class WebServer_Jetty {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
         // Добавляем servlet для обработки запросов
-        context.addServlet(new ServletHolder(new PublicInfo()), "/publicInfo");
-        context.addServlet(new ServletHolder(new UsersInfo()), "/usersInfo");
-        context.addServlet(new ServletHolder(new UserSave()), "/userSave");
-        context.addServlet(new ServletHolder(new UserUpdate()), "/userUpdate");
-        context.addServlet(new ServletHolder(new MyExceptionServlet()), "/exceptionServlet");
+        // В конструктор каждого сервлета добавлены конфиги Freemarker
+        context.addServlet(new ServletHolder(new PublicInfo(createFreemarkerConfiguration())), "/publicInfo");
+        context.addServlet(new ServletHolder(new UsersInfo(createFreemarkerConfiguration())), "/usersInfo");
+        context.addServlet(new ServletHolder(new UserSave(createFreemarkerConfiguration())), "/userSave");
+        context.addServlet(new ServletHolder(new UserUpdate(createFreemarkerConfiguration())), "/userUpdate");
+        context.addServlet(new ServletHolder(new MyExceptionServlet(createFreemarkerConfiguration())), "/exceptionServlet");
 
 
         // Добавляем простой фильтр для каждого запроса "/*"
@@ -68,7 +71,7 @@ public class WebServer_Jetty {
         resourceHandler.setWelcomeFiles(new String[]{"index.html"});
 
         // Определяем директорию для ресурса
-        URL fileDir = WebServer_Jetty.class.getClassLoader().getResource("staticResources");
+        URL fileDir = WebServerJetty.class.getClassLoader().getResource("staticResources");
         if (fileDir == null) {
             throw new RuntimeException("File Directory not found");
         }
@@ -105,7 +108,7 @@ public class WebServer_Jetty {
 
         if (propFile == null) {
             System.out.println("local realm config not found, looking into Resources");
-            propFile = WebServer_Jetty.class.getClassLoader().getResource("realm.properties");
+            propFile = WebServerJetty.class.getClassLoader().getResource("realm.properties");
         }
 
         if (propFile == null) {
@@ -117,5 +120,18 @@ public class WebServer_Jetty {
         security.setConstraintMappings(Collections.singletonList(mapping));
 
         return security;
+    }
+
+    /**
+     * Метод createFreemarkerConfiguration задает конфигурации Freemarker для каждого сервлета
+     */
+    private Configuration createFreemarkerConfiguration() {
+        // Создаем объект конфигурации Freemarker
+        Configuration configuration = new Configuration(new Version("2.3.31"));
+
+        // Задаем путь, по которому находится файл шаблона. Не совсем понятно что задавать, пока и так работает
+        configuration.setClassForTemplateLoading(UserSave.class, "/");
+        configuration.setDefaultEncoding("UTF-8");
+        return configuration;
     }
 }

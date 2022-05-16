@@ -1,6 +1,6 @@
 package com.nuramov.hw12_Web_Server;
 
-import com.nuramov.hw12_Web_Server.servers.WebServer_Jetty;
+import com.nuramov.hw12_Web_Server.servers.WebServerJetty;
 import org.eclipse.jetty.server.Server;
 
 /**
@@ -14,7 +14,7 @@ public class Main {
     private final static int PORT = 8080;
 
     public static void main(String[] args) throws Exception {
-        WebServer_Jetty webServerJetty = new WebServer_Jetty();
+        WebServerJetty webServerJetty = new WebServerJetty();
         Server server = webServerJetty.createServer(PORT);
 
         // Запускает новый поток для Server

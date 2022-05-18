@@ -82,7 +82,7 @@ public class UserDAOImpWeb implements UserDAO{
      * Метод getAllUser позволяет получить список всех User'ов
      * @return - список User'ов
      */
-    public List<User> getAllUser() {
+    public List<User> getAll() {
         List<User> listOfUser;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             try {

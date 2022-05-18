@@ -1,6 +1,8 @@
 package com.nuramov.hw12_Web_Server.servers;
 
+import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImpWeb;
 import com.nuramov.hw12_Web_Server.filters.SimpleFilter;
+import com.nuramov.hw12_Web_Server.services.UserServiceWeb;
 import com.nuramov.hw12_Web_Server.servlets.*;
 import freemarker.template.Configuration;
 import freemarker.template.Version;
@@ -24,6 +26,7 @@ import java.net.URL;
 import java.util.Collections;
 
 public class WebServerJetty {
+    private UserServiceWeb userServiceWeb;
 
     /**
      * Метод createServer создает локальный сервер Jetty
@@ -32,6 +35,9 @@ public class WebServerJetty {
      * @throws MalformedURLException
      */
     public Server createServer(int port) throws MalformedURLException {
+        // Создаем экземпляр класса UserServiceWeb для работы с БД
+        userServiceWeb = new UserServiceWeb(new UserDAOImpWeb());
+
         // ServletContext – это инфраструктурная часть, которая содержит сервлеты и прочие
         // компоненты для обработки запросов. ServletContext привязывается к определенному адресу
         // и обрабатывает все запросы, которые на этот адрес приходят
@@ -40,9 +46,9 @@ public class WebServerJetty {
         // Добавляем servlet для обработки запросов
         // В конструктор каждого сервлета добавлены конфиги Freemarker
         context.addServlet(new ServletHolder(new PublicInfo(createFreemarkerConfiguration())), "/publicInfo");
-        context.addServlet(new ServletHolder(new UsersInfo(createFreemarkerConfiguration())), "/usersInfo");
+        context.addServlet(new ServletHolder(new UsersInfo(createFreemarkerConfiguration(), userServiceWeb)), "/usersInfo");
         context.addServlet(new ServletHolder(new UserSave(createFreemarkerConfiguration())), "/userSave");
-        context.addServlet(new ServletHolder(new UserUpdate(createFreemarkerConfiguration())), "/userUpdate");
+        context.addServlet(new ServletHolder(new UserUpdate(createFreemarkerConfiguration(), userServiceWeb)), "/userUpdate");
         context.addServlet(new ServletHolder(new MyExceptionServlet(createFreemarkerConfiguration())), "/exceptionServlet");
 
 

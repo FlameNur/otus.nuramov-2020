@@ -23,16 +23,10 @@ import java.util.Map;
  */
 @WebServlet("/exceptionServlet")
 public class MyExceptionServlet extends HttpServlet {
-    private String message;
     private Configuration configuration;
 
     public MyExceptionServlet(Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    @Override
-    public void init() throws ServletException {
-        message = "";
     }
 
     @Override
@@ -44,7 +38,7 @@ public class MyExceptionServlet extends HttpServlet {
         // т.е. message будет передаваться в рамках текущей сессии
         HttpSession session = request.getSession();
 
-        message = (String) session.getAttribute("message");
+        String message = (String) session.getAttribute("message");
 
         if(message.equals("")) {
             message = "No information";
@@ -63,10 +57,7 @@ public class MyExceptionServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
 
-        // Обнулили сообщение перед тем, как записать в сессию
-        message = "";
-
-        // Записываем в сессию message
-        session.setAttribute("message", message);
+        // Записываем в сессию пустое сообщение
+        session.setAttribute("message", "");
     }
 }

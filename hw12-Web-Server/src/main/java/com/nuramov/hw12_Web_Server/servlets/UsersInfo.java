@@ -1,7 +1,8 @@
 package com.nuramov.hw12_Web_Server.servlets;
 
-import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImpWeb;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
+import com.nuramov.hw12_Web_Server.exceptions.MyException;
+import com.nuramov.hw12_Web_Server.services.UserServiceWeb;
 import freemarker.template.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,45 +22,24 @@ import java.util.Map;
 
 @WebServlet("/usersInfo")
 public class UsersInfo extends HttpServlet {
-    private UserDAOImpWeb userDao;
-    private Map<String, Object> templateData;
-    private HttpSession session;
-    private String message;
     private Configuration configuration;
+    private UserServiceWeb userServiceWeb;
 
-    public UsersInfo(Configuration configuration) {
+    public UsersInfo(Configuration configuration, UserServiceWeb userServiceWeb) {
         this.configuration = configuration;
+        this.userServiceWeb = userServiceWeb;
     }
 
     @Override
-    public void init() {
-        // Создаем набор данных, используемый шаблоном
-        templateData = new HashMap<>();
-
-        message = "";
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
         response.setStatus(HttpServletResponse.SC_OK);
 
-        // Создаем сессию для работы с UserDAOImpWeb разных сервлетах,
-        // т.е. UserDAOImpWeb будет передаваться в рамках текущей сессии
-        session = request.getSession();
-
-        // Получаем UserDAOImpWeb из сессии, если null, создаем новый объект
-        userDao = (UserDAOImpWeb) session.getAttribute("userDao");
-
-        if(userDao == null) {
-            userDao = new UserDAOImpWeb();
-        }
-
-        // Записываем в сессию объект UserDAOImpWeb
-        session.setAttribute("userDao", userDao);
-
         // Добавляем список всех пользователей
-        List<User> listUser = userDao.getAllUser();
+        List<User> listUser = userServiceWeb.getAllUser();
+
+        // Создаем набор данных, используемый шаблоном
+        Map<String, Object> templateData = new HashMap<>();
         templateData.put("list", listUser);
 
         try (Writer writer = new StringWriter()) {
@@ -77,49 +57,12 @@ public class UsersInfo extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        // Проверяем какая кнопка нажата - Update или Delete
-        String buttonValue = request.getParameter("buttonValue");
-
-        if(buttonValue.equals("update")) {
-            try {
-                updateUser(request, response);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        try {
+            deleteUser(request, response);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        if(buttonValue.equals("delete")) {
-            try {
-                deleteUser(request, response);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            doGet(request, response);
-        }
-    }
-
-    /**
-     * Метод updateUser позволяет обновить информацию о пользователе в БД
-     */
-    private void updateUser(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException {
-        String idStr = request.getParameter("idToUpdate");
-        // Проверяем корректность введенного id
-        if(idCheck(response, idStr)) return;
-        int idToUpdate = Integer.parseInt(idStr);
-
-        User userToUpdate = userDao.findById(idToUpdate).orElse(null);
-        // Проверяем наличие пользователя по введенному id (на null)
-        if(userCheck(response, userToUpdate)) return;
-
-        // Создаем сессию для работы с idToUpdate разных сервлетах,
-        // т.е. idToUpdate будет передаваться в рамках текущей сессии
-        session = request.getSession();
-        // Записываем в сессию объект idToUpdate
-        session.setAttribute("idToUpdate", idToUpdate);
-
-        // Поменяли на другой адрес и сервлет
-        response.sendRedirect("http://localhost:8080/userUpdate");
+        doGet(request, response);
     }
 
     /**
@@ -127,59 +70,20 @@ public class UsersInfo extends HttpServlet {
      */
     private void deleteUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
+        // Вызываем сессию, чтобы передать сообщение об ошибке
+        HttpSession session = request.getSession();
+        // Получаем введенный на странице id
         String idStr = request.getParameter("idToDelete");
-        // Проверяем корректность введенного id
-        if(idCheck(response, idStr)) return;
-        int id = Integer.parseInt(idStr);
 
-        User userToDelete = userDao.findById(id).orElse(null);
-        // Проверяем наличие пользователя по введенному id (на null)
-        if(userCheck(response, userToDelete)) return;
-
-        userDao.delete(userToDelete);
-    }
-
-    /**
-     * Метод idCheck позволяет проверить корректность введенного id
-     * @return - возвращает true, если введено некорректное значение
-     */
-    private boolean idCheck(HttpServletResponse response, String idStr) throws IOException {
-        boolean check = false;
-        int id;
-
-        if(idStr.equals("")) {
-            id = 0;
-        } else {
-            id = Integer.parseInt(idStr);
-        }
-
-        if(id <= 0) {
-            // Добавили сообщение в сессию, которое будет выведено при выводе страницы с ошибкой
-            message = "Enter a valid id value";
-            session.setAttribute("message", message);
-
+        User userToDelete = null;
+        try {
+            userToDelete = userServiceWeb.findUser(idStr);
+        } catch (MyException e) {
+            // Сообщения об ошибке формируются на стороне UserServiceWeb
+            session.setAttribute("message", e.getMessage());
             response.sendRedirect("http://localhost:8080/exceptionServlet");
-            check = true;
         }
-        return check;
-    }
 
-    /**
-     * Метод userCheck проверяет наличие пользователя по введенному id (на null)
-     * и выводит при этом соответсвующее сообщение
-     * @return - возвращает true, если пользователь не найден (null)
-     */
-    private boolean userCheck(HttpServletResponse response, User user) throws IOException {
-        boolean check = false;
-
-        if(user == null) {
-            // Добавили сообщение в сессию, которое будет выведено при выводе страницы с ошибкой
-            message = "User is not found";
-            session.setAttribute("message", message);
-
-            response.sendRedirect("http://localhost:8080/exceptionServlet");
-            check = true;
-        }
-        return check;
+        userServiceWeb.deleteUser(userToDelete);
     }
 }

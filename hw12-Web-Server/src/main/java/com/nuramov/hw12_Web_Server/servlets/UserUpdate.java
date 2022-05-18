@@ -1,13 +1,13 @@
 package com.nuramov.hw12_Web_Server.servlets;
 
-import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImpWeb;
 import com.nuramov.hw10_Hibernate_ORM.model.AddressDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.PhoneDataSet;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
+import com.nuramov.hw12_Web_Server.exceptions.MyException;
+import com.nuramov.hw12_Web_Server.services.UserServiceWeb;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import freemarker.template.Version;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,28 +19,19 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Сервлет UserUpdate обновляет информацию пользователя в БД по введенному id
  */
 @WebServlet("/userUpdate")
 public class UserUpdate extends HttpServlet {
-    private UserDAOImpWeb userDao;
-    private HttpSession session;
-    private int idToUpdate;
-    private String message;
     private Configuration configuration;
+    private UserServiceWeb userServiceWeb;
+    private String idStr;
 
-    public UserUpdate(Configuration configuration) {
+    public UserUpdate(Configuration configuration, UserServiceWeb userServiceWeb) {
         this.configuration = configuration;
-    }
-
-    @Override
-    public void init() {
-        idToUpdate = 0;
-        message = "";
+        this.userServiceWeb = userServiceWeb;
     }
 
     @Override
@@ -48,18 +39,9 @@ public class UserUpdate extends HttpServlet {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
         response.setStatus(HttpServletResponse.SC_OK);
 
-        // Создаем сессию для работы с UserDAOImpWeb разных сервлетах,
-        // т.е. UserDAOImpWeb будет передаваться в рамках текущей сессии
-        session = request.getSession();
-
-        // Получаем UserDAOImpWeb из сессии, если null, создаем новый объект
-        userDao = (UserDAOImpWeb) session.getAttribute("userDao");
-
-        if(userDao == null) {
-            userDao = new UserDAOImpWeb();
-        }
-
-        //Map<String, Object> templateData = new HashMap<>();
+        // Получаем id пользователя, которого надо обновить
+        idStr = request.getParameter("idToUpdate");
+        System.out.println("Наш idStr1" + idStr);
 
         try (Writer writer = new StringWriter()) {
             Template template = configuration.getTemplate("infoForUpdating.html");
@@ -81,18 +63,19 @@ public class UserUpdate extends HttpServlet {
             doGet(request, response);
         }
 
+        // Получаем id пользователя, которого надо обновить
+        idStr = request.getParameter("idToUpdate");
+        System.out.println("Наш idStr2" + idStr);
         try {
             updateUser(request,response);
+
+
+
+            // Возможно это просто добавить сюда и убрать верхнюю часть ???????????????????????
+            //doGet(request, response);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        // Обнуляем idToUpdate перед тем, как записать его снова в текущую сессию
-        idToUpdate = 0;
-        // Записываем idToUpdate в текущую сессию
-        session.setAttribute("idToUpdate", idToUpdate);
-        // Записываем в сессию объект UserDAOImpWeb
-        session.setAttribute("userDao", userDao);
     }
 
     /**
@@ -100,19 +83,37 @@ public class UserUpdate extends HttpServlet {
      */
     private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
-        // Получаем id пользователя, которого надо обновить
-        idToUpdate = (int) session.getAttribute("idToUpdate");
-        User userToUpdate = userDao.findById(idToUpdate).orElse(null);
-        // Надо ли еще раз проверять на null?
-        // Проверяем наличие пользователя по введенному id (на null)
-        if(userCheck(response, userToUpdate)) return;
+        // Вызываем сессию
+        // Возможно пригодится здесь
+        HttpSession session = request.getSession();
+
+        System.out.println("Наш idStr3" + idStr);
+
+
+
+        // ТОЛЬКО ДЛЯ ПРОВЕРКИ ПРОПИСАЛ 1  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        idStr = "1";
+        User userToUpdate = null;
+        try {
+            userToUpdate = userServiceWeb.findUser(idStr);
+        } catch (MyException e) {
+            // Сообщения об ошибке формируются на стороне UserServiceWeb
+            session.setAttribute("message", e.getMessage());
+            response.sendRedirect("http://localhost:8080/exceptionServlet");
+        }
 
         // Обновляем имя пользователя, если введено новое имя
         String name = request.getParameter("name");
-        if(name.equals("")) {
-            name = userToUpdate.getName();
+        try {
+            userToUpdate = userServiceWeb.nameCheck(name, userToUpdate);
+        } catch (MyException e) {
+            // Сообщения об ошибке формируются на стороне UserServiceWeb
+            session.setAttribute("message", e.getMessage());
+            response.sendRedirect("http://localhost:8080/exceptionServlet");
         }
-        userToUpdate.setName(name);
+
+
+
 
         // Обновляем возраст пользователя, если введено новое значение
         String ageStr = request.getParameter("age");
@@ -143,27 +144,11 @@ public class UserUpdate extends HttpServlet {
         addressDataSet.setStreet(address);
         userToUpdate.setAddress(addressDataSet);
 
+
+
+
         // Обновляем пользователя в БД
-        userDao.update(userToUpdate);
-    }
-
-    /**
-     * Метод userCheck проверяет наличие пользователя по введенному id (на null)
-     * и выводит при этом соответсвующее сообщение
-     * @return - возвращает true, если пользователь не найден (null)
-     */
-    private boolean userCheck(HttpServletResponse response, User user) throws IOException {
-        boolean check = false;
-
-        if(user == null) {
-            // Добавили сообщение в сессию, которое будет выведено при выводе страницы с ошибкой
-            message = "User is not found";
-            session.setAttribute("message", message);
-
-            response.sendRedirect("http://localhost:8080/exceptionServlet");
-            check = true;
-        }
-        return check;
+        userServiceWeb.updateUser(userToUpdate);
     }
 
     /**
@@ -182,8 +167,7 @@ public class UserUpdate extends HttpServlet {
 
         if(age <= 0) {
             // Добавили сообщение в сессию, которое будет выведено при выводе страницы с ошибкой
-            message = "Enter your age";
-            session.setAttribute("message", message);
+            //session.setAttribute("message", "Enter your age");
 
             response.sendRedirect("http://localhost:8080/exceptionServlet");
             check = true;

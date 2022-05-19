@@ -47,7 +47,7 @@ public class WebServerJetty {
         // В конструктор каждого сервлета добавлены конфиги Freemarker
         context.addServlet(new ServletHolder(new PublicInfo(createFreemarkerConfiguration())), "/publicInfo");
         context.addServlet(new ServletHolder(new UsersInfo(createFreemarkerConfiguration(), userServiceWeb)), "/usersInfo");
-        context.addServlet(new ServletHolder(new UserSave(createFreemarkerConfiguration())), "/userSave");
+        context.addServlet(new ServletHolder(new UserSave(createFreemarkerConfiguration(), userServiceWeb)), "/userSave");
         context.addServlet(new ServletHolder(new UserUpdate(createFreemarkerConfiguration(), userServiceWeb)), "/userUpdate");
         context.addServlet(new ServletHolder(new MyExceptionServlet(createFreemarkerConfiguration())), "/exceptionServlet");
 

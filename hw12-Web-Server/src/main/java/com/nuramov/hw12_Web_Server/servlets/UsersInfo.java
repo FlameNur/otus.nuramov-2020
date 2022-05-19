@@ -4,7 +4,6 @@ import com.nuramov.hw10_Hibernate_ORM.model.User;
 import com.nuramov.hw12_Web_Server.exceptions.MyException;
 import com.nuramov.hw12_Web_Server.services.UserServiceWeb;
 import freemarker.template.*;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,7 +46,6 @@ public class UsersInfo extends HttpServlet {
             Template template = configuration.getTemplate("UsersInfo.html");
             // Вызов метода процесса объекта шаблона для вывода файла
             template.process(templateData, writer);
-
             response.getWriter().println(writer);
         } catch (TemplateException e) {
             e.printStackTrace();
@@ -56,7 +54,7 @@ public class UsersInfo extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             deleteUser(request, response);
         } catch (SQLException e) {
@@ -83,7 +81,6 @@ public class UsersInfo extends HttpServlet {
             session.setAttribute("message", e.getMessage());
             response.sendRedirect("http://localhost:8080/exceptionServlet");
         }
-
         userServiceWeb.deleteUser(userToDelete);
     }
 }

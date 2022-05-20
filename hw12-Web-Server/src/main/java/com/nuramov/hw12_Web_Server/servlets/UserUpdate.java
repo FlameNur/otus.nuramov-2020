@@ -2,7 +2,7 @@ package com.nuramov.hw12_Web_Server.servlets;
 
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 import com.nuramov.hw12_Web_Server.exceptions.MyException;
-import com.nuramov.hw12_Web_Server.services.UserServiceWeb;
+import com.nuramov.hw12_Web_Server.services.UserServiceWebImp;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -23,12 +23,12 @@ import java.sql.SQLException;
 @WebServlet("/userUpdate")
 public class UserUpdate extends HttpServlet {
     private Configuration configuration;
-    private UserServiceWeb userServiceWeb;
+    private UserServiceWebImp userServiceWebImp;
     private String idStr;
 
-    public UserUpdate(Configuration configuration, UserServiceWeb userServiceWeb) {
+    public UserUpdate(Configuration configuration, UserServiceWebImp userServiceWebImp) {
         this.configuration = configuration;
-        this.userServiceWeb = userServiceWeb;
+        this.userServiceWebImp = userServiceWebImp;
     }
 
     @Override
@@ -84,14 +84,14 @@ public class UserUpdate extends HttpServlet {
 
         User userToUpdate = null;
         try {
-            userToUpdate = userServiceWeb.updateParametersCheck(idStr, name, ageStr, phoneNumber, address);
+            userToUpdate = userServiceWebImp.updateParametersCheck(idStr, name, ageStr, phoneNumber, address);
         } catch (MyException e) {
-            // Сообщения об ошибке формируются на стороне UserServiceWeb
+            // Сообщения об ошибке формируются на стороне UserServiceWebImp
             session.setAttribute("message", e.getMessage());
             response.sendRedirect("http://localhost:8080/exceptionServlet");
         }
 
         // Обновляем пользователя в БД
-        userServiceWeb.updateUser(userToUpdate);
+        userServiceWebImp.updateUser(userToUpdate);
     }
 }

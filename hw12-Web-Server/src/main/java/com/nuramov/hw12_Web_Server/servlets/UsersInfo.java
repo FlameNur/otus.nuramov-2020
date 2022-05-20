@@ -73,11 +73,11 @@ public class UsersInfo extends HttpServlet {
         // Получаем введенный на странице id
         String idStr = request.getParameter("idToDelete");
 
-        User userToDelete = null;
+        User userToDelete;
         try {
             userToDelete = userServiceWeb.findUser(idStr);
         } catch (MyException e) {
-            // Сообщения об ошибке формируются на стороне UserServiceWeb
+            // Сообщения об ошибке формируются на стороне UserServiceWebImp
             session.setAttribute("message", e.getMessage());
             response.sendRedirect("http://localhost:8080/exceptionServlet");
         }

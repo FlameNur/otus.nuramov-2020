@@ -1,6 +1,12 @@
 package com.nuramov.hw12_Web_Server;
 
+import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImpWeb;
 import com.nuramov.hw12_Web_Server.servers.WebServerJetty;
+import com.nuramov.hw12_Web_Server.services.UserServiceWeb;
+import com.nuramov.hw12_Web_Server.services.UserServiceWebImp;
+import com.nuramov.hw12_Web_Server.servlets.UserSave;
+import freemarker.template.Configuration;
+import freemarker.template.Version;
 import org.eclipse.jetty.server.Server;
 
 /**
@@ -14,8 +20,17 @@ public class Main {
     private final static int PORT = 8080;
 
     public static void main(String[] args) throws Exception {
+        // Создаем экземпляр класса UserServiceWebImp для работы с БД
+        UserServiceWeb userServiceWeb = new UserServiceWebImp(new UserDAOImpWeb());
+
+        // Создаем объект конфигурации Freemarker
+        Configuration configuration = new Configuration(new Version("2.3.31"));
+        // Задаем путь, по которому находится файл шаблона. Не совсем понятно что задавать, пока и так работает
+        configuration.setClassForTemplateLoading(UserSave.class, "/");
+        configuration.setDefaultEncoding("UTF-8");
+
         WebServerJetty webServerJetty = new WebServerJetty();
-        Server server = webServerJetty.createServer(PORT);
+        Server server = webServerJetty.createServer(PORT, userServiceWeb, configuration);
 
         // Запускает новый поток для Server
         server.start();

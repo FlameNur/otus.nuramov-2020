@@ -3,6 +3,7 @@ package com.nuramov.hw12_Web_Server.servers;
 import com.nuramov.hw10_Hibernate_ORM.dao.UserDAOImpWeb;
 import com.nuramov.hw12_Web_Server.filters.SimpleFilter;
 import com.nuramov.hw12_Web_Server.services.UserServiceWeb;
+import com.nuramov.hw12_Web_Server.services.UserServiceWebImp;
 import com.nuramov.hw12_Web_Server.servlets.*;
 import freemarker.template.Configuration;
 import freemarker.template.Version;
@@ -25,19 +26,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 
+/**
+ *
+ */
 public class WebServerJetty {
-    private UserServiceWeb userServiceWeb;
-
     /**
      * Метод createServer создает локальный сервер Jetty
      * @param port - подключаемый порт
      * @return - возвращаем готовый к работе сервер со всеми необходимыми параметрами
      * @throws MalformedURLException
      */
-    public Server createServer(int port) throws MalformedURLException {
-        // Создаем экземпляр класса UserServiceWeb для работы с БД
-        userServiceWeb = new UserServiceWeb(new UserDAOImpWeb());
-
+    public Server createServer(int port, UserServiceWeb userServiceWeb, Configuration configuration) throws MalformedURLException {
         // ServletContext – это инфраструктурная часть, которая содержит сервлеты и прочие
         // компоненты для обработки запросов. ServletContext привязывается к определенному адресу
         // и обрабатывает все запросы, которые на этот адрес приходят
@@ -45,11 +44,11 @@ public class WebServerJetty {
 
         // Добавляем servlet для обработки запросов
         // В конструктор каждого сервлета добавлены конфиги Freemarker
-        context.addServlet(new ServletHolder(new PublicInfo(createFreemarkerConfiguration())), "/publicInfo");
-        context.addServlet(new ServletHolder(new UsersInfo(createFreemarkerConfiguration(), userServiceWeb)), "/usersInfo");
-        context.addServlet(new ServletHolder(new UserSave(createFreemarkerConfiguration(), userServiceWeb)), "/userSave");
-        context.addServlet(new ServletHolder(new UserUpdate(createFreemarkerConfiguration(), userServiceWeb)), "/userUpdate");
-        context.addServlet(new ServletHolder(new MyExceptionServlet(createFreemarkerConfiguration())), "/exceptionServlet");
+        context.addServlet(new ServletHolder(new PublicInfo(configuration)), "/publicInfo");
+        context.addServlet(new ServletHolder(new UsersInfo(configuration, userServiceWeb)), "/usersInfo");
+        context.addServlet(new ServletHolder(new UserSave(configuration, userServiceWeb)), "/userSave");
+        context.addServlet(new ServletHolder(new UserUpdate(configuration, userServiceWeb)), "/userUpdate");
+        context.addServlet(new ServletHolder(new MyExceptionServlet(configuration)), "/exceptionServlet");
 
 
         // Добавляем простой фильтр для каждого запроса "/*"
@@ -126,18 +125,5 @@ public class WebServerJetty {
         security.setConstraintMappings(Collections.singletonList(mapping));
 
         return security;
-    }
-
-    /**
-     * Метод createFreemarkerConfiguration задает конфигурации Freemarker для каждого сервлета
-     */
-    private Configuration createFreemarkerConfiguration() {
-        // Создаем объект конфигурации Freemarker
-        Configuration configuration = new Configuration(new Version("2.3.31"));
-
-        // Задаем путь, по которому находится файл шаблона. Не совсем понятно что задавать, пока и так работает
-        configuration.setClassForTemplateLoading(UserSave.class, "/");
-        configuration.setDefaultEncoding("UTF-8");
-        return configuration;
     }
 }

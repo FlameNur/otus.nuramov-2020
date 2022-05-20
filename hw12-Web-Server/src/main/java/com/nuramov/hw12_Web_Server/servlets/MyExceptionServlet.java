@@ -30,7 +30,7 @@ public class MyExceptionServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
         response.setStatus(HttpServletResponse.SC_OK);
 

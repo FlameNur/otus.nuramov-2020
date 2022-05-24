@@ -73,7 +73,7 @@ public class UsersInfo extends HttpServlet {
         // Получаем введенный на странице id
         String idStr = request.getParameter("idToDelete");
 
-        User userToDelete;
+        User userToDelete = null;
         try {
             userToDelete = userServiceWeb.findUser(idStr);
         } catch (MyException e) {

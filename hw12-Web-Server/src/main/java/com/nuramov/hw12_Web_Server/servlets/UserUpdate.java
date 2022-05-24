@@ -2,6 +2,7 @@ package com.nuramov.hw12_Web_Server.servlets;
 
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 import com.nuramov.hw12_Web_Server.exceptions.MyException;
+import com.nuramov.hw12_Web_Server.services.UserServiceWeb;
 import com.nuramov.hw12_Web_Server.services.UserServiceWebImp;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -23,12 +24,12 @@ import java.sql.SQLException;
 @WebServlet("/userUpdate")
 public class UserUpdate extends HttpServlet {
     private Configuration configuration;
-    private UserServiceWebImp userServiceWebImp;
+    private UserServiceWeb userServiceWeb;
     private String idStr;
 
-    public UserUpdate(Configuration configuration, UserServiceWebImp userServiceWebImp) {
+    public UserUpdate(Configuration configuration, UserServiceWeb userServiceWeb) {
         this.configuration = configuration;
-        this.userServiceWebImp = userServiceWebImp;
+        this.userServiceWeb = userServiceWeb;
     }
 
     @Override
@@ -84,7 +85,7 @@ public class UserUpdate extends HttpServlet {
 
         User userToUpdate = null;
         try {
-            userToUpdate = userServiceWebImp.updateParametersCheck(idStr, name, ageStr, phoneNumber, address);
+            userToUpdate = userServiceWeb.updateParametersCheck(idStr, name, ageStr, phoneNumber, address);
         } catch (MyException e) {
             // Сообщения об ошибке формируются на стороне UserServiceWebImp
             session.setAttribute("message", e.getMessage());
@@ -92,6 +93,6 @@ public class UserUpdate extends HttpServlet {
         }
 
         // Обновляем пользователя в БД
-        userServiceWebImp.updateUser(userToUpdate);
+        userServiceWeb.updateUser(userToUpdate);
     }
 }

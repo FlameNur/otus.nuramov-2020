@@ -56,8 +56,5 @@ public class MyExceptionServlet extends HttpServlet {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-
-        // Записываем в сессию пустое сообщение
-        session.setAttribute("message", "");
     }
 }

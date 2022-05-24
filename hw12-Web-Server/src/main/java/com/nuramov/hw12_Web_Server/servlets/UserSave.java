@@ -2,7 +2,7 @@ package com.nuramov.hw12_Web_Server.servlets;
 
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 import com.nuramov.hw12_Web_Server.exceptions.MyException;
-import com.nuramov.hw12_Web_Server.services.UserServiceWebImp;
+import com.nuramov.hw12_Web_Server.services.UserServiceWeb;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -21,11 +21,11 @@ import java.util.Map;
 @WebServlet("/userSave")
 public class UserSave extends HttpServlet {
     private Configuration configuration;
-    private UserServiceWebImp userServiceWebImp;
+    private UserServiceWeb userServiceWeb;
 
-    public UserSave(Configuration configuration, UserServiceWebImp userServiceWebImp) {
+    public UserSave(Configuration configuration, UserServiceWeb userServiceWeb) {
         this.configuration = configuration;
-        this.userServiceWebImp = userServiceWebImp;
+        this.userServiceWeb = userServiceWeb;
     }
 
     @Override
@@ -75,12 +75,12 @@ public class UserSave extends HttpServlet {
 
         User newUser = null;
         try {
-            newUser = userServiceWebImp.insertParametersCheck(name, ageStr, phoneNumber, address);
+            newUser = userServiceWeb.insertParametersCheck(name, ageStr, phoneNumber, address);
         } catch (MyException e) {
             // Сообщения об ошибке формируются на стороне UserServiceWebImp
             session.setAttribute("message", e.getMessage());
             response.sendRedirect("http://localhost:8080/exceptionServlet");
         }
-        userServiceWebImp.saveUser(newUser);
+        userServiceWeb.saveUser(newUser);
     }
 }

@@ -1,6 +1,6 @@
 package com.nuramov.hw12_Web_Server.exceptions;
 
-public class MyException extends Exception{
+public class MyException extends RuntimeException{
     private String message;
 
     public MyException(String message) {

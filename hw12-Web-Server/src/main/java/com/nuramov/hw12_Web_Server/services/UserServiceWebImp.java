@@ -27,23 +27,26 @@ public class UserServiceWebImp implements UserServiceWeb {
         int id = Integer.parseInt(idStr);
         // Из Optional<User> optionalUser получаем User'a или null
         // Если при положительном значении id не смогли найти пользователя в БД, то выдаем ошибку
-        User user = this.userDao.findById(id).orElseThrow(() -> new MyException("User is not found"));
-
-        return user;
+        return this.userDao.findById(id).orElseThrow(() -> new MyException("User is not found"));
     }
 
     @Override
-    public long saveUser(User user) {
+    public long saveUser(String name, String age, String phoneNumber, String address)
+            throws MyException {
+        User user = insertParametersCheck(name, age, phoneNumber, address);
         return this.userDao.save(user);
     }
 
     @Override
-    public void deleteUser(User user) {
+    public void deleteUser(String id) throws MyException {
+        User user = findUser(id);
         this.userDao.delete(user);
     }
 
     @Override
-    public void updateUser(User user) {
+    public void updateUser(String id, String name, String age, String phoneNumber, String address)
+            throws MyException {
+        User user = updateParametersCheck(id, name, age, phoneNumber, address);
         this.userDao.update(user);
     }
 
@@ -52,22 +55,40 @@ public class UserServiceWebImp implements UserServiceWeb {
         return this.userDao.getAll();
     }
 
-    @Override
-    public User insertParametersCheck(String name, String ageStr, String phoneNumber, String address)
+    /**
+     * Метод insertParametersCheck позволяет проверить параметры нового пользователя
+     * на корректность перед тем, как сохранить его в БД
+     * @param name - имя пользователя
+     * @param age - возраст пользователя
+     * @param phoneNumber - телефонный номер пользователя
+     * @param address - адрес пользователя
+     * @return - возвращает пользователя, которого можно сохранить в БД
+     * @throws MyException - выдает ошибку с соответствующим сообщением при нижеследующих проверках
+     */
+    private User insertParametersCheck(String name, String age, String phoneNumber, String address)
             throws MyException {
         User newUser = new User();
 
         // Проверяем все введенные параметры нового пользователя прежде чем добавить его в БД
         nameCheck(name, newUser);
-        ageCheck(ageStr, newUser);
+        ageCheck(age, newUser);
         phoneNumberCheck(phoneNumber, newUser);
         addressCheck(address, newUser);
 
         return newUser;
     }
 
-    @Override
-    public User updateParametersCheck(String id, String name, String ageStr, String phoneNumber, String address)
+    /**
+     * Метод updateParametersCheck позволяет проверить параметры пользователя, которые предстоит обновить и ввести в БД
+     * @param id - id пользователя
+     * @param name - имя пользователя
+     * @param age - возраст пользователя
+     * @param phoneNumber - телефонный номер пользователя
+     * @param address - адрес пользователя
+     * @return - возвращает пользователя с обновленными параметрами
+     * @throws MyException - выдает ошибку с соответствующим сообщением при нижеследующих проверках
+     */
+    private User updateParametersCheck(String id, String name, String age, String phoneNumber, String address)
             throws MyException {
         // Проверяем id
         User user = findUser(id);
@@ -78,9 +99,9 @@ public class UserServiceWebImp implements UserServiceWeb {
         nameCheck(name, user);
 
         // Если новый возраст не введен, сохраняем старый возраст
-        if(ageStr.equals("")) ageStr = String.valueOf(user.getAge());
+        if(age.equals("")) age = String.valueOf(user.getAge());
         // Проверяем возраст на корректность
-        ageCheck(ageStr, user);
+        ageCheck(age, user);
 
         // Если новый телефонный номер не введен, сохраняем старый телефонный номер
         if(phoneNumber.equals("")) phoneNumber = user.getPhone().getNumber();
@@ -102,7 +123,7 @@ public class UserServiceWebImp implements UserServiceWeb {
      */
     private void idCheck(String idStr) throws MyException {
         // Если пустое поле, "id = 0" или "нечисловое значение", то выдаем ошибку с соответствующим сообщением
-        if(idStr.equals("") || idStr.equals("0") || !Pattern.matches("\\b[\\d]+\\b", idStr)) {
+        if(idStr == null || idStr.equals("") || idStr.equals("0") || !Pattern.matches("\\b[\\d]+\\b", idStr)) {
             throw new MyException("Enter a valid id value");
         }
     }

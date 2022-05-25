@@ -7,6 +7,7 @@ import com.nuramov.hw12_Web_Server.services.UserServiceWebImp;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +26,7 @@ import java.sql.SQLException;
 public class UserUpdate extends HttpServlet {
     private Configuration configuration;
     private UserServiceWeb userServiceWeb;
-    private String idStr;
+    private String id;
 
     public UserUpdate(Configuration configuration, UserServiceWeb userServiceWeb) {
         this.configuration = configuration;
@@ -36,9 +37,6 @@ public class UserUpdate extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Устанавливаем код успешного ответа (стандартно - ок = 200)
         response.setStatus(HttpServletResponse.SC_OK);
-
-        // Получаем id пользователя, которого надо обновить
-        idStr = request.getParameter("idToUpdate");
 
         try (Writer writer = new StringWriter()) {
             Template template = configuration.getTemplate("infoForUpdating.html");
@@ -53,11 +51,22 @@ public class UserUpdate extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        doGet(request, response);
+
+
+        // Получаем id пользователя, которого надо обновить
+        String idStr = request.getParameter("idToUpdate");
+        System.out.println("Параметр idStr в методе POST: " + idStr);
+        if(idStr != null) {
+            User userToUpdate = userServiceWeb.findUser(idStr);
+        }
+
+
         // Обновляем информацию пользователя при нажатии кнопки "Update" и передаче параметра "buttonValue"
         String buttonValue = request.getParameter("buttonValue");
         if(buttonValue.equals("userUpdate")) {
             try {
-                updateUser(request,response);
+                updateUser(request,response, idStr);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -69,7 +78,7 @@ public class UserUpdate extends HttpServlet {
     /**
      * Метод updateUser позволяет обновить информацию о пользователе в БД
      */
-    private void updateUser(HttpServletRequest request, HttpServletResponse response)
+    private void updateUser(HttpServletRequest request, HttpServletResponse response, String idStr)
             throws SQLException, IOException {
         // Вызываем сессию для передачи сообщения об ошибке
         HttpSession session = request.getSession();
@@ -83,16 +92,13 @@ public class UserUpdate extends HttpServlet {
         // Обновляем адрес пользователя, если введен новый адрес
         String address = request.getParameter("address");
 
-        User userToUpdate = null;
         try {
-            userToUpdate = userServiceWeb.updateParametersCheck(idStr, name, ageStr, phoneNumber, address);
+            // Обновляем пользователя в БД
+            userServiceWeb.updateUser(idStr, name, ageStr, phoneNumber, address);
         } catch (MyException e) {
             // Сообщения об ошибке формируются на стороне UserServiceWebImp
             session.setAttribute("message", e.getMessage());
             response.sendRedirect("http://localhost:8080/exceptionServlet");
         }
-
-        // Обновляем пользователя в БД
-        userServiceWeb.updateUser(userToUpdate);
     }
 }

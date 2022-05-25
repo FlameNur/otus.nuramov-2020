@@ -39,10 +39,7 @@ public class MyExceptionServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         String message = (String) session.getAttribute("message");
-
-        if(message.equals("")) {
-            message = "No information";
-        }
+        if(message == null || message.equals("")) message = "No information";
 
         Map<String, Object> templateData = new HashMap<>();
         templateData.put("msg", message);

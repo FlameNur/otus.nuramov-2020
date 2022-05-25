@@ -22,52 +22,33 @@ public interface UserServiceWeb {
 
     /**
      * Метод saveUser позволяет сохранить нового пользователя в БД
-     * @param user - новый пользователь
+     * @param name - имя пользователя
+     * @param age - возраст пользователя
+     * @param phoneNumber - телефонный номер пользователя
+     * @param address - адрес пользователя
      * @return - возвращает id сохраненного пользователя
      */
-    long saveUser(User user);
+    long saveUser(String name, String age, String phoneNumber, String address);
 
     /**
      * Метод deleteUser позволяет удалить пользователя из БД
-     * @param user - пользователь, которого необходимо удалить
+     * @param id - id пользователя, которого необходимо удалить
      */
-    void deleteUser(User user);
+    void deleteUser(String id);
 
     /**
      * Метод updateUser позволяет обновить информацию пользователя в БД
-     * @param user - пользователь, чью информацию необходимо обновить
+     * @param id - id пользователя
+     * @param name - имя пользователя
+     * @param age - возраст пользователя
+     * @param phoneNumber - телефонный номер пользователя
+     * @param address - адрес пользователя
      */
-    void updateUser(User user);
+    void updateUser(String id, String name, String age, String phoneNumber, String address);
 
     /**
      * Метод getAllUser позволяет вывести список всех пользователей
      * @return - список всех пользователей
      */
     List<User> getAllUser();
-
-    /**
-     * Метод insertParametersCheck позволяет проверить параметры нового пользователя
-     * на корректность перед тем, как сохранить его в БД
-     * @param name - имя пользователя
-     * @param ageStr - возраст пользователя
-     * @param phoneNumber - телефонный номер пользователя
-     * @param address - адрес пользователя
-     * @return - возвращает пользователя, которого можно сохранить в БД
-     * @throws MyException - выдает ошибку с соответствующим сообщением при нижеследующих проверках
-     */
-    User insertParametersCheck(String name, String ageStr, String phoneNumber, String address)
-            throws MyException;
-
-    /**
-     * Метод updateParametersCheck позволяет проверить параметры пользователя, которые предстоит обновить и ввести в БД
-     * @param id - id пользователя
-     * @param name - имя пользователя
-     * @param ageStr - возраст пользователя
-     * @param phoneNumber - телефонный номер пользователя
-     * @param address - адрес пользователя
-     * @return - возвращает пользователя с обновленными параметрами
-     * @throws MyException - выдает ошибку с соответствующим сообщением при нижеследующих проверках
-     */
-    User updateParametersCheck(String id, String name, String ageStr, String phoneNumber, String address)
-            throws MyException;
 }

@@ -132,8 +132,8 @@
     </form>
 
     <!--Ниже таблица с возможностью ввода id для Update и перехода на страницу userUpdate-->
-    <form>
-        <table class = "table3">
+    <form method="post">
+        <table class="table3">
             <tr>
                 <td>Enter id:</td>
             </tr>
@@ -144,7 +144,7 @@
             </tr>
             <tr>
                 <td>
-                    <button formaction="http://localhost:8080/userUpdate" type="submit">Update</button>
+                    <button formaction="http://localhost:8080/userUpdate" value="idToUpdateButton" name="buttonValue" type="submit">Update</button>
                 </td>
             </tr>
         </table>

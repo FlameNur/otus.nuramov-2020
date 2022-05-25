@@ -73,14 +73,12 @@ public class UserSave extends HttpServlet {
         // Получаем и проверяем введенный адрес пользователя
         String address = request.getParameter("address");
 
-        User newUser = null;
         try {
-            newUser = userServiceWeb.insertParametersCheck(name, ageStr, phoneNumber, address);
+            userServiceWeb.saveUser(name, ageStr, phoneNumber, address);
         } catch (MyException e) {
             // Сообщения об ошибке формируются на стороне UserServiceWebImp
             session.setAttribute("message", e.getMessage());
             response.sendRedirect("http://localhost:8080/exceptionServlet");
         }
-        userServiceWeb.saveUser(newUser);
     }
 }

@@ -58,25 +58,6 @@
             margin-bottom: 30px;
             margin-left: 20px;
         }
-        .table4 {
-            margin: auto; /* Выравниваем таблицу по центру окна  */
-            text-align: center;  /* Выравниваем текст по центру таблицы  */
-            width: 20%; /* Ширина таблицы */
-            background: white; /* Цвет фона таблицы */
-            color: #333333; /* Цвет текста */
-            border-spacing: 1px; /* Расстояние между ячейками */
-        }
-        .table4 button {
-            /*Размер кнопки*/
-            width: 80px;
-            height: 40px;
-
-            /*Положение кнопки*/
-            margin-top: 5px;
-            margin-right: 20px;
-            margin-bottom: 30px;
-            margin-left: 20px;
-        }
     </style>
 </head>
 <body>
@@ -131,31 +112,12 @@
         </table>
     </form>
 
-    <!--Ниже таблица с возможностью ввода id для Update и перехода на страницу userUpdate-->
-    <form method="post">
-        <table class="table3">
-            <tr>
-                <td>Enter id:</td>
-            </tr>
-            <tr>
-                <td>
-                    <input id="idToUpdate" type="text" size="4" name="idToUpdate">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button formaction="http://localhost:8080/userUpdate" value="idToUpdateButton" name="buttonValue" type="submit">Update</button>
-                </td>
-            </tr>
-        </table>
-    </form>
-
-    <!--Ниже таблица с кнопкой для перехода на страницу для добавления нового пользователя-->
+    <!--Ниже таблица с кнопками для перехода на страницы для обновления информации пользователя и
+        добавления нового пользователя-->
     <form>
-        <table class="table4">
-            <td>
-                <button formaction="http://localhost:8080/userSave" type="submit">Add User</button>
-            </td>
+        <table class="table3">
+            <td><button formaction="http://localhost:8080/userUpdate" type="submit">Update</button></td>
+            <td><button formaction="http://localhost:8080/userSave" type="submit">Add User</button></td>
         </table>
     </form>
 </body>

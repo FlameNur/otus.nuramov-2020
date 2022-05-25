@@ -26,7 +26,6 @@ import java.sql.SQLException;
 public class UserUpdate extends HttpServlet {
     private Configuration configuration;
     private UserServiceWeb userServiceWeb;
-    private String id;
 
     public UserUpdate(Configuration configuration, UserServiceWeb userServiceWeb) {
         this.configuration = configuration;
@@ -51,38 +50,30 @@ public class UserUpdate extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        doGet(request, response);
-
-
-        // Получаем id пользователя, которого надо обновить
-        String idStr = request.getParameter("idToUpdate");
-        System.out.println("Параметр idStr в методе POST: " + idStr);
-        if(idStr != null) {
-            User userToUpdate = userServiceWeb.findUser(idStr);
-        }
-
-
         // Обновляем информацию пользователя при нажатии кнопки "Update" и передаче параметра "buttonValue"
         String buttonValue = request.getParameter("buttonValue");
         if(buttonValue.equals("userUpdate")) {
             try {
-                updateUser(request,response, idStr);
+                updateUser(request,response);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             doGet(request, response);
-            response.sendRedirect("http://localhost:8080/usersInfo");
+            // Можно сделать сразу переход на страницу usersInfo после обновления информации
+            //response.sendRedirect("http://localhost:8080/usersInfo");
         }
     }
 
     /**
      * Метод updateUser позволяет обновить информацию о пользователе в БД
      */
-    private void updateUser(HttpServletRequest request, HttpServletResponse response, String idStr)
+    private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
         // Вызываем сессию для передачи сообщения об ошибке
         HttpSession session = request.getSession();
 
+        // Получаем id пользователя, которого надо обновить
+        String idStr = request.getParameter("id");
         // Обновляем имя пользователя, если введено новое имя
         String name = request.getParameter("name");
         // Обновляем возраст пользователя, если введено новое значение

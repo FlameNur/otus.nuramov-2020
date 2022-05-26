@@ -4,12 +4,16 @@ import com.nuramov.hw10_Hibernate_ORM.HibernateUtil;
 import com.nuramov.hw10_Hibernate_ORM.model.User;
 import org.hibernate.Session;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
- * class UserDAOImp реализует интерфейс UserDAO и позволяет работать с БД H2 через Hibernate
+ * class UserDAOImp реализует интерфейс UserDAO и позволяет работать с БД H2 через Hibernate в web приложении
+ * Дополнительно реализован метод getAllUser для вывода списка всех User'ов
+ * Работа класса UserDAOImp в web приложении реализована без слоя данных UserService,
+ * отвечающего за выполнение бизнес-логики, а напрямую.
  */
-public class UserDAOImp implements UserDAO {
+public class UserDAOImpWeb implements UserDAO{
 
     @Override
     public Optional<User> findById(long id) {
@@ -72,5 +76,26 @@ public class UserDAOImp implements UserDAO {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    /**
+     * Метод getAllUser позволяет получить список всех User'ов
+     * @return - список User'ов
+     */
+    public List<User> getAll() {
+        List<User> listOfUser;
+        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+            try {
+                session.beginTransaction();
+
+                // Получаем список всех User'ов через запрос
+                listOfUser = session.createQuery("from User").getResultList();
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+                throw new RuntimeException(e);
+            }
+        }
+        return listOfUser;
     }
 }

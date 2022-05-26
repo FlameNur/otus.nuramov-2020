@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UserUpdate</title>
+    <style type="text/css">
+        h1 {
+            text-align: center;
+        }
+        form {
+            text-align: center;
+            line-height: 1.6; /* Межстрочное расстояние */
+        }
+        button {
+            /*Размер кнопки*/
+            width: 120px;
+            height: 60px;
+
+            /*Положение кнопки*/
+            margin-top: 20px;
+            margin-right: 20px;
+            margin-bottom: 30px;
+            margin-left: 40px;
+        }
+    </style>
+</head>
+<body>
+    <form method="post">
+        <label for="idToUpdate">Id:</label>
+        <input id="idToUpdate" type="text" name="id">
+        <br>
+
+        <label for="name">Name:</label>
+        <input id="name" type="text" name="name">
+        <br>
+
+        <label for="age">Age:</label>
+        <input id="age" type="text" name="age">
+        <br>
+
+        <label for="address">Address:</label>
+        <input id="address" type="text" name="address">
+        <br>
+
+        <label for="phone">Phone:</label>
+        <input id="phone" type="text" name="phone">
+        <br>
+
+        <!--Такой вариант без перехода на другую страницу. Данные останутся в текущем сервлете-->
+        <!--<button type="submit">Submit</button>-->
+
+        <!--Такой вариант с переходом на другую страницу. Данные будут отправлены на другой сервлет-->
+        <!--параметр formaction="http://localhost:8080/usersInfo" в button может напрямую перевести на нужную страницу-->
+        <!--при нажатии и передать все параметры-->
+        <button formaction="http://localhost:8080/userUpdate" value="userUpdate" name="buttonValue" type="submit">Update</button>
+    </form>
+
+    <form>
+        <!--Кнопка для перехода на другую страницу "UsersInfo" со списком всех пользователей-->
+        <button formaction="http://localhost:8080/usersInfo" type="submit">List of Users</button>
+    </form>
+</body>
+</html>
